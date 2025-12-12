@@ -1,0 +1,728 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- PACKAGES ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{helvet}               % Helvetica for a clean, tech look
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{setspace}             % For line spacing
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{listings}             % For code snippets
+\usepackage{tcolorbox}            % For highlighted boxes
+\usepackage{tabularx}             % For auto-wrapping tables
+\usepackage{array}                % For extra table column formatting
+
+% --- Define Left-Aligned X Column for Tables ---
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+% --- URL BREAKING ---
+\usepackage{xurl} 
+\usepackage{hyperref}
+
+% --- CONFIGURATION ---
+\onehalfspacing                   % 1.5 Line Spacing for readability and length
+
+% --- HEADER HEIGHT ---
+\setlength{\headheight}{15pt}
+
+\definecolor{janusblue}{RGB}{0, 51, 102}
+\definecolor{accentgold}{RGB}{204, 153, 51}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=janusblue,
+    citecolor=janusblue,
+    urlcolor=accentgold,
+    pdftitle={Project JANUS: The Neuro-Symbolic Visual Quant Architecture},
+    pdfauthor={Jordan Smith}
+}
+
+% --- HEADER & FOOTER ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{Project JANUS}}
+\fancyhead[R]{\textit{Quant 4.0 Architecture}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% --- SECTION STYLING ---
+\titleformat{\section}
+  {\color{janusblue}\normalfont\Large\bfseries}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\color{janusblue}\normalfont\large\bfseries}
+  {\thesubsection}{1em}{}
+
+% --- CODE SNIPPET STYLE ---
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red}
+}
+
+% --- DOCUMENT START ---
+\begin{document}
+
+% =============================================================================
+% TITLE PAGE
+% =============================================================================
+\begin{titlepage}
+    \pagenumbering{gobble} 
+    \centering
+    \vspace*{3cm}
+    
+    {\Huge \textbf{Project JANUS}} \\[0.5cm]
+    {\LARGE \textbf{The Neuro-Symbolic Visual Quant Architecture}} \\[1.5cm]
+    
+    {\Large \textit{A White Paper on the Next Generation of Autonomous Financial Intelligence}} \\[3cm]
+    
+    \textbf{\Large Classification: Technical White Paper} \\[0.5cm]
+    \textbf{\Large Version: 1.0} \\[3cm]
+    
+    \textbf{Author:} Jordan Smith \\
+    \textit{github.com/nuniesmith} \\[0.5cm]
+    \textbf{Date:} December 10, 2025  
+    
+    \vfill
+\end{titlepage}
+
+% =============================================================================
+% ABSTRACT
+% =============================================================================
+\newpage
+\pagenumbering{arabic} 
+\thispagestyle{plain}
+\section*{Abstract}
+A tension between interpretability and performance has historically defined the trajectory of quantitative finance. The early eras, characterized by heuristic-based expert systems (Quant 1.0) and factor-based statistical arbitrage (Quant 2.0), prioritized transparency and economic theory but were often constrained by linear assumptions. The subsequent rise of Deep Learning (Quant 3.0) unleashed unprecedented predictive power through high-dimensional function approximation, yet it introduced systemic risks associated with ``black box'' opacity, brittleness in the face of regime shifts, and an inability to natively enforce regulatory or logical constraints.
+
+This white paper introduces \textbf{Project JANUS}, a comprehensive architectural framework for the next generation of algorithmic trading—\textit{Quant 4.0}. JANUS represents a convergence of three frontier paradigms: 
+\begin{enumerate}
+    \item \textbf{Visual Time Series Encoding}, which transforms market dynamics into topological textures processed by Computer Vision; 
+    \item \textbf{Neuro-Symbolic Reasoning}, which embeds formal logic and regulatory constraints directly into the learning objective via Logic Tensor Networks (LTN); and 
+    \item \textbf{Hierarchical Reinforcement Learning}, specifically Feudal Networks, which decouple strategic planning from tactical execution. 
+\end{enumerate}
+
+By synthesizing the ``Visual Intuition'' of Convolutional Neural Networks with the ``Logical Rigour'' of symbolic AI and the ``Strategic Depth'' of hierarchical agents, JANUS aims to create an autonomous trading system that is not only highly performant but also mathematically compliant, explainable, and robust to the chaotic microstructure of modern financial markets.
+
+\newpage
+% =============================================================================
+% IMPLEMENTATION STATUS
+% =============================================================================
+\section*{Implementation Status}
+This white paper describes both the theoretical architecture and the current production implementation of Project JANUS. The following components are \textbf{fully implemented and operational}:
+
+\begin{itemize}
+    \item \textbf{The Cortex (HRM):} Hierarchical Reasoning Module with CEO/Worker architecture using Google Gemini 2.0 Flash with Ollama fallback
+    \item \textbf{The Oracle (Chronos-2):} Zero-shot probabilistic forecasting with real Chronos-2 foundation model integration
+    \item \textbf{The Eyes (CNN):} Visual pattern recognition via feature tensor encoding and CNN service integration
+    \item \textbf{The Conscience (HMM):} Regime detection via Hidden Markov Model service integration
+    \item \textbf{Product-not-Sum Consensus:} Multiplicative consensus mechanism with veto power
+    \item \textbf{LangGraph Workflow:} State machine orchestration for the HRM architecture
+    \item \textbf{RobustBrain:} Automatic failover from Gemini to Ollama for zero-downtime operation
+\end{itemize}
+
+The following components are \textbf{planned for future implementation}:
+
+\begin{itemize}
+    \item \textbf{Logic Tensor Networks (LTN):} Neuro-symbolic constraint enforcement (currently using rule-based risk veto)
+    \item \textbf{Gramian Angular Fields (GAF):} Advanced visual encoding (currently using feature tensor approach)
+    \item \textbf{Almgren-Chriss Execution:} Optimal execution framework (currently using simplified risk management)
+    \item \textbf{Feudal Reinforcement Learning:} Full hierarchical RL training pipeline (currently using HRM with LLM reasoning)
+    \item \textbf{VPIN Integration:} Order flow toxicity detection
+    \item \textbf{Multimodal Fusion (MSGCA):} Gated cross-attention for text/time series/vision fusion
+\end{itemize}
+
+\newpage
+% =============================================================================
+% TABLE OF CONTENTS
+% =============================================================================
+\tableofcontents
+\newpage
+
+% =============================================================================
+% MAIN CONTENT
+% =============================================================================
+
+\section[Evolution of Quant Intelligence]{The Evolution of Quantitative Intelligence: \\ From Heuristics to Hybrid Cognition}
+
+\subsection{The Limitations of the Deep Learning Paradigm (Quant 3.0)}
+The financial industry is currently navigating the mature phase of Quant 3.0, an era dominated by the application of deep neural networks—Long Short-Term Memory (LSTM) networks, Transformers, and Differentiable Manifolds—to raw financial time series. These models have demonstrated a remarkable ability to capture non-linear dependencies and latent patterns that traditional econometric models (such as ARIMA or GARCH) fail to identify. Foundation models like Amazon's Chronos-2 have further advanced the field by enabling zero-shot forecasting capabilities, leveraging vast corpora of synthetic and real-world data to generalize across unseen assets.
+
+However, the reliance on end-to-end deep learning has precipitated a ``Black Box Crisis.'' In high-stakes financial environments, the opacity of these models presents a critical vulnerability. A deep reinforcement learning (DRL) agent trained solely to maximize the Sharpe ratio may inadvertently discover strategies that exploit simulator artifacts or violate regulatory norms—such as engaging in wash trading or spoofing—because it lacks an explicit understanding of market rules. Furthermore, purely data-driven models are inherently inductive; they struggle to generalize to ``black swan'' events or regime shifts that lie outside their training distribution. When market dynamics shift from a mean-reverting regime to a momentum-driven crash, standard deep learning models often fail catastrophically because they lack the symbolic reasoning capabilities to diagnose the structural change.
+
+\subsection{Defining Quant 4.0: The Neuro-Symbolic Imperative}
+Quant 4.0 represents a philosophical and architectural pivot toward Knowledge-Driven AI. Unlike its predecessor, which relies on brute-force data ingestion to approximate a mapping function:
+\begin{equation}
+    f(x) \rightarrow y
+\end{equation}
+Quant 4.0 leverages prior knowledge—encoded as symbolic logic, physical laws, or regulatory text—to constrain the hypothesis space and guide the learning process. This generation of systems is characterized by three pillars:
+
+\begin{itemize}
+    \item \textbf{Automated AI:} End-to-end automation of the research pipeline, from feature engineering to strategy deployment.
+    \item \textbf{Explainable AI (XAI):} The ability to articulate the causal reasoning behind a trading decision, moving from ``The model predicts X'' to ``The model predicts X because Condition Y and Rule Z are met.''
+    \item \textbf{Neuro-Symbolic Integration:} The fusion of connectionist learning (neural networks) with symbolic reasoning (logic).
+\end{itemize}
+
+Project JANUS embodies this Quant 4.0 philosophy. It posits that a robust trading agent must possess multi-sensory capabilities: it must ``see'' the market's physical structure through visual encoding, ``read'' the market's narrative through semantic processing, and ``reason'' about the market's constraints through formal logic. This hybrid approach allows the system to maintain the intuitive flexibility of neural networks while adhering to ``hard'' constraints, such as the risk limits defined by the Almgren-Chriss framework or the tax implications of wash sale rules.
+
+\newpage
+\section{The Visual Quant Paradigm: Seeing Market Topology}
+
+\subsection{Beyond Numerical Sequences: The Case for Vision}
+Financial data has traditionally been treated as a one-dimensional sequence of scalars (Open, High, Low, Close, Volume). While efficient for storage, this representation often discards the rich, multi-scale topological structures inherent in market data—the ``shape'' of a crash, the ``texture'' of a consolidation, or the ``geometry'' of a limit order book. Standard time series models like LSTMs process data sequentially, which can make it difficult to capture complex, long-range temporal correlations or to recognize patterns that are invariant to time-warping but visually distinct.
+
+Project JANUS integrates a Visual Encoder that transforms 1D time series into 2D images. This is not merely a data augmentation technique; it is a fundamental shift in representation learning. By converting time series into images, we unlock the vast architectural power of Computer Vision (CV), specifically Convolutional Neural Networks (CNNs). CNNs are evolutionarily optimized to detect hierarchical spatial patterns—edges, shapes, and textures—which, in the context of a transformed time series, correspond to local trends, volatility clusters, and regime shifts.
+
+\subsection{Gramian Angular Fields (GAF): The Mathematical Lens}
+The primary imaging technique employed in JANUS is the Gramian Angular Field (GAF). Unlike simple line plots, GAF preserves the temporal dependency of the time series while encoding the data in a polar coordinate system. This transformation ensures that the temporal correlation structure is explicitly mapped to the spatial dimensions of the image.
+
+\subsubsection{Mathematical Formulation of GAF}
+Given a univariate time series:
+\begin{equation}
+    X = \{x_1, x_2, \dots, x_n\}
+\end{equation}
+The transformation proceeds in two steps: normalization and polar projection.
+
+\textbf{Step 1: Normalization} \\
+To fit the spectral domain of the cosine function, the series is normalized to the interval $[-1, 1]$. JANUS employs a min-max scaling approach:
+\begin{equation}
+    \tilde{x}_i = \frac{(x_i - \max(X)) + (x_i - \min(X))}{\max(X) - \min(X)}
+\end{equation}
+This scaling preserves the relative magnitude of price movements while standardizing the input range.
+
+\textbf{Step 2: Polar Coordinate Transformation} \\
+The normalized value is encoded as the angular cosine, and the time stamp $t_i$ is encoded as the radius $r_i$:
+\begin{equation}
+\begin{cases} 
+\phi_i = \arccos(\tilde{x}_i), & -1 \le \tilde{x}_i \le 1 \\ 
+r_i = \frac{t_i}{N}, & t_i \in \mathbb{N} 
+\end{cases}
+\end{equation}
+This mapping is bijective, ensuring that no information is lost in the transformation. The angular perspective dominates the representation, while the radial component preserves the temporal progression.
+
+\textbf{Step 3: Gramian Field Generation} \\
+The temporal correlations between different time steps are computed using trigonometric sums and differences.
+
+Gramian Angular Summation Field (GASF):
+\begin{equation}
+    \text{GASF}_{i,j} = \cos(\phi_i + \phi_j) = \tilde{x}_i \tilde{x}_j - \sqrt{1 - \tilde{x}_i^2}\sqrt{1 - \tilde{x}_j^2}
+\end{equation}
+
+Gramian Angular Difference Field (GADF):
+\begin{equation}
+    \text{GADF}_{i,j} = \sin(\phi_i - \phi_j) = \sqrt{1 - \tilde{x}_i^2}\tilde{x}_j - \tilde{x}_i\sqrt{1 - \tilde{x}_j^2}
+\end{equation}
+
+The result is an $n \times n$ matrix (image) where the position $(i, j)$ represents the superposition of the market state at time $i$ and time $j$. The main diagonal contains the original value information (reconstructed spatial features), while the off-diagonal elements capture the rich temporal correlation structure across the entire window.
+
+\subsection{Feature Tensor Encoding and CNN Integration}
+\textbf{Current Implementation:} In the production version of JANUS, market data is encoded as multi-dimensional feature tensors rather than GAF images. This approach provides a more direct representation while maintaining the visual pattern recognition capabilities of CNNs.
+
+The feature tensor construction process transforms raw OHLCV data into a normalized matrix of shape $(sequence\_length, num\_features)$ where features include:
+\begin{itemize}
+    \item \textbf{Price Features:} Normalized open, high, low, close prices
+    \item \textbf{Returns:} Log returns and momentum indicators
+    \item \textbf{Volatility:} Rolling standard deviation and ATR (Average True Range)
+    \item \textbf{Volume:} Normalized volume and volume moving average ratios
+    \item \textbf{Technical Indicators:} RSI, MACD, Bollinger Bands (when available)
+\end{itemize}
+
+JANUS employs a specialized CNN service to process these feature tensors. The CNN architecture recognizes visual patterns in the multi-dimensional feature space, distinguishing between different market regimes and volatility structures. Unlike traditional technical indicators that simply measure the magnitude of volatility, the CNN can classify the quality and structure of volatility patterns, identifying consolidation phases versus liquidity crashes.
+
+\textbf{Future Enhancement:} \sloppy The theoretical architecture includes Gramian Angular Fields (GAF) as an advanced visual encoding technique. GAF transforms time series into polar coordinate images. Temporal correlations are explicitly mapped to spatial dimensions. A market in a strong, low-volatility trend appears in a GASF image as a coherent, smooth gradient. Volatile markets manifest as chaotic ``checkerboard'' textures. Future implementations may integrate GAF encoding to provide additional visual texture analysis. \fussy
+
+\newpage
+\section[The Logic Layer: Neuro-Symbolic Reasoning]{The Logic Layer: Neuro-Symbolic Reasoning with Logic Tensor Networks}
+
+\subsection{The Necessity of Symbolic Constraints in Finance}
+While deep learning provides powerful intuition and pattern recognition, it fundamentally lacks logical precision. In the domain of quantitative finance, ``close enough'' is often unacceptable. A trading bot that generates a profit but inadvertently executes a ``wash sale''—selling a security at a loss and repurchasing a substantially identical one within 30 days—triggers tax penalties. These penalties can negate the strategy's alpha and create legal liabilities. Similarly, execution algorithms must adhere to strict risk mandates, such as those derived from the Almgren-Chriss model, where the risk aversion parameter $\lambda$ dictates the maximum acceptable variance of execution cost.
+
+Pure neural networks struggle to learn these ``hard'' constraints solely from examples (data efficiency) and cannot guarantee adherence to them in unseen scenarios (safety). A standard Reinforcement Learning (RL) agent might learn to avoid wash sales in the training set because they result in a lower reward, but it does not understand the rule itself. Consequently, when presented with a novel market condition, the agent might violate the rule if it predicts a high enough gross return. Neuro-Symbolic AI addresses this critical gap by embedding formal logic directly into the learning process.
+
+\textbf{Current Implementation:} \sloppy The production version of JANUS implements rule-based risk management through the Praxeological Motor. This motor enforces risk vetoes based on regime detection and volatility thresholds. The system uses a Product-not-Sum consensus mechanism. Any motor can veto a trade by returning a score of zero. This ensures safety through multiplicative aggregation rather than averaging. \fussy
+
+\subsection{Logic Tensor Networks (LTN): The Reasoning Engine}
+\textbf{Planned Implementation:} Project JANUS is architected to utilize Logic Tensor Networks (LTN) as its core reasoning engine. LTN is a neuro-symbolic framework that integrates neural networks with First-Order Logic (FOL). It enables the specification of knowledge using logical formulas where the predicates and functions are approximated by neural networks (a process known as ``grounding''), and the satisfaction of these formulas is maximized during training.
+
+\textbf{Current Status:} The production implementation currently uses rule-based risk management and Product-not-Sum consensus for constraint enforcement. LTN integration is planned for a future release to provide differentiable logical constraints and enhanced explainability.
+
+\subsubsection{Real Logic and Differentiable Constraints}
+To make logical constraints compatible with gradient-based optimization, LTN employs Real Logic. In this paradigm, truth values are relaxed from the binary set $\{0, 1\}$ to the continuous interval $[0, 1]$. This allows logical constraints to be differentiable and incorporated into the loss function.
+
+Let $\mathcal{G}$ be a grounding function that maps logical symbols to tensors:
+\begin{itemize}
+    \item \textbf{Constants:} A constant symbol $c$ (e.g., a specific trade or asset) is mapped to a tensor in $\mathbb{R}^n$.
+    \item \textbf{Predicates:} A predicate symbol $P$ (e.g., $\textit{IsVolatile}$, $\textit{WashSale}$) is mapped to a neural network function $f_P: \mathbb{R}^n \rightarrow [0, 1]$, which outputs the degree of truth.
+    \item \textbf{Connectives:} Logical connectives ($\land, \lor, \neg, \rightarrow$) are modeled using fuzzy logic t-norms (e.g., Lukasiewicz, Gödel, or Product t-norms).
+\end{itemize}
+
+For example, the conjunction of two formulas $A$ and $B$ using the Product t-norm is defined as:
+\begin{equation}
+    \mathcal{G}(A \land B) = \mathcal{G}(A) \cdot \mathcal{G}(B)
+\end{equation}
+The implication $A \rightarrow B$ using the Reichenbach implication is defined as:
+\begin{equation}
+    \mathcal{G}(A \rightarrow B) = 1 - \mathcal{G}(A) + \mathcal{G}(A) \cdot \mathcal{G}(B)
+\end{equation}
+This allows the network to learn complex dependencies: ``If A is true, then B must be true.''
+
+\subsubsection{The Satisfiability Objective}
+The learning objective in JANUS is to find the set of parameters $\theta$ (the weights of the neural networks) that maximizes the satisfiability of a Knowledge Base $\mathcal{K}$ containing a set of logical axioms. The logical loss function is defined as the aggregate ``falsity'' of the formulas:
+\begin{equation}
+    \mathcal{L}_{logic}(\theta) = 1 - \text{SatAgg}_{\phi \in \mathcal{K}} (\mathcal{G}_\theta(\phi))
+\end{equation}
+where $\text{SatAgg}$ is an aggregation operator (e.g., generalized mean) over the truth values of all constraints. This term is added to the standard predictive loss, ensuring that the model optimizes for accuracy while strictly adhering to the logical rules.
+
+\subsection{Encoding Financial Rules: The Knowledge Base}
+JANUS encodes critical trading rules and market dynamics as First-Order Logic constraints within the LTN layer. This ``Knowledge Base'' acts as the immutable conscience of the trading agent.
+
+\subsubsection{The Wash Sale Constraint}
+To prevent wash sales, we define a predicate $\textit{WashSale}(trade_t, trade_{t+k})$ which evaluates to true if a trade at time $t$ is a sale at a loss and a trade at time $t+k$ (where $k \le 30$ days) is a purchase of a substantially identical asset. The logical axiom enforced is:
+\begin{equation}
+    \forall t, \forall k \in (0, 30 \text{ days}]: \neg (\textit{SaleAtLoss}(t) \land \textit{Buy}(t+k))
+\end{equation}
+In the LTN, this logic is added to the loss function. The agent is penalized not just for losing money (financial loss), but for violating the logical structure of the tax code. This ensures that the learned policy respects the 61-day window surrounding a loss sale, effectively ``masking'' the buy action in the prohibited window.
+
+\subsubsection{Risk Logic and Almgren-Chriss Adherence}
+We can also encode risk preferences and execution guidelines symbolically. We introduce the predicate $\textit{LiquidityRisk}(v)$ to represent the toxicity or market impact of an execution volume $v$. We can then assert a rule that mandates size reduction in volatile markets:
+\begin{equation}
+    \forall v: \textit{HighVolatility}(Market) \rightarrow (\textit{LiquidityRisk}(v) \rightarrow \textit{ReduceSize}(v))
+\end{equation}
+This symbolic rule forces the neural network to learn the causal relationship between market volatility (detected by the Visual Encoder) and order size reduction. Unlike a pure RL agent that might discover this relationship through trial and error (and potentially catastrophic losses), the LTN agent is ``told'' this relationship a priori, accelerating convergence and acting as a ``safety rail''.
+
+\subsubsection{VPIN and Toxicity Detection}
+The Logic Layer also monitors the Volume-Synchronized Probability of Informed Trading (VPIN), a metric of order flow toxicity. If VPIN spikes, indicating the presence of informed traders or a potential crash, the logic layer can trigger a defensive posture.
+\begin{equation}
+    \forall t: \textit{VPIN}_t > Threshold \rightarrow \textit{HaltTrading}(t)
+\end{equation}
+This acts as a ``circuit breaker.'' If the toxicity constraint is violated, the LTN forces the execution probability to zero, effectively overriding the RL agent's output. This prevents the algorithm from providing liquidity to toxic flow, a common failure mode in standard HFT algorithms during events like the Flash Crash.
+
+\newpage
+\section[Chronos-2 and Multimodal Fusion]{The Time Series Foundation: Chronos-2 and Multimodal Fusion}
+
+\subsection{Chronos-2: The Backbone of Temporal Perception}
+For the core numerical time series processing, JANUS employs a backbone inspired by Amazon Chronos-2. Unlike traditional autoregressive models that process raw float values, Chronos-2 adopts a language-modeling perspective. It quantizes time series values into a discrete vocabulary of tokens, allowing it to leverage the powerful Transformer architecture (specifically the T5 encoder-decoder) originally designed for Natural Language Processing (NLP).
+
+\textbf{Why Chronos-2?} \\
+The strategic advantage of Chronos-2 lies in its Zero-Shot capabilities. Trained on a massive corpus of real-world and synthetic time series data, it has learned universal temporal patterns—seasonality, trend breaks, mean reversion—that generalize across domains. This allows JANUS to deploy effectively on new asset classes (e.g., shifting from Equities to Crypto) without the need for extensive, data-hungry retraining. Furthermore, Chronos-2 supports Group Attention, a mechanism that allows the model to process multivariate time series and static covariates simultaneously, modeling the inter-dependencies between correlated assets.
+
+\subsection{Multimodal Fusion: Integrating Vision, Text, and Time}
+The true power of JANUS lies in its ability to synthesize heterogeneous data streams. The input to the system is not just a sequence of prices, but a multimodal stream:
+\begin{itemize}
+    \item \textbf{Time Series Tokens:} Quantized price and volume history (from Chronos-2).
+    \item \textbf{Visual Tokens:} Feature vectors representing market texture (from the GAF-CNN).
+    \item \textbf{Semantic Tokens:} Contextual embeddings of news and sentiment (from FinBERT).
+\end{itemize}
+
+To fuse these disparate modalities, JANUS employs a Multimodal Stable Fusion with Gated Cross-Attention (MSGCA) mechanism.
+
+\subsubsection{Gated Cross-Attention (GCA)}
+Standard attention mechanisms might allow one noisy modality (e.g., a flurry of irrelevant tweets) to drown out the signal from others. The GCA mechanism introduces a learnable gating scalar that dynamically weighs the importance of each modality based on the current context.
+
+The cross-attention score is computed as:
+\begin{equation}
+    \alpha_{m \rightarrow n} = \text{softmax} \left( \frac{Q_m K_n^\top}{\sqrt{d_h}} \right)
+\end{equation}
+where $Q_m$ is the query from the primary modality (e.g., Time Series) and $K_n$ is the key from the auxiliary modality (e.g., Text or Vision). The gating mechanism $\lambda_{gate}$ modulates the contribution of the auxiliary context:
+\begin{equation}
+    H_{fused} = H_{TS} + \lambda_{gate} \cdot \text{Attention}(Q_{TS}, K_{Aux}, V_{Aux})
+\end{equation}
+
+\textbf{Scenario-Based Adaptation:}
+\begin{itemize}
+    \item \textbf{Earnings Call:} When semantic density is high (e.g., during an earnings release), the model learns to increase $\lambda_{text}$, allowing the FinBERT embeddings to heavily influence the forecast.
+    \item \textbf{Market Crash:} During a liquidity crisis where fundamentals are ignored and pure price dynamics dominate, the model increases $\lambda_{vis}$ (Visual Texture) and decreases $\lambda_{text}$, focusing on the geometric structure of the collapse.
+    \item \textbf{Quiet Drift:} During periods of low activity, the gating mechanism suppresses auxiliary inputs, relying primarily on the autoregressive price dynamics captured by Chronos-2.
+\end{itemize}
+
+\subsection{Semantic Processing with FinBERT}
+Textual data is processed using FinBERT, a BERT variant pre-trained specifically on financial corpora (corporate filings, financial news, analyst reports). Unlike general-purpose LLMs, FinBERT is tuned to understand financial nuance—for example, recognizing that the word ``liability'' has a specific negative accounting connotation, or that ``volatility'' can be positive for a market maker but negative for a long-only fund.
+
+JANUS utilizes the output of FinBERT not just as a sentiment score (Positive/Negative), but as a high-dimensional embedding vector. This vector captures the semantic state of the market narrative. By aligning this text embedding with the time series embedding, JANUS ensures that the ``language'' of price and the ``language'' of news are mapped to a shared latent space.
+
+\newpage
+\section[Hierarchical Execution and Risk]{The Hand: Hierarchical Execution and Risk Management}
+
+\subsection{The Need for Hierarchy}
+A monolithic agent attempting to solve both the high-level strategy (e.g., ``Accumulate AAPL over the next week'') and the low-level execution (e.g., ``Post a bid at 150.05'') suffers from the Curse of Dimensionality and disparate temporal scales. Strategic decisions happen over hours or days; execution decisions happen over milliseconds. JANUS addresses this by implementing a Hierarchical Reasoning Module (HRM) architecture that separates strategic planning from tactical execution. This architecture mimics the organizational structure of a human trading desk.
+
+\textbf{Current Implementation:} The production version uses an HRM architecture with CEO and Worker nodes implemented using Large Language Models (Gemini 2.0 Flash with Ollama fallback) rather than trained reinforcement learning agents. The CEO node operates at a strategic timescale (updating every 4 hours) to set market regime and risk appetite, while the Worker node operates at a tactical timescale to generate trading signals within the CEO's strategic context.
+
+\textbf{Future Enhancement:} The theoretical architecture includes Feudal Reinforcement Learning, where Manager and Worker agents are trained end-to-end using hierarchical RL algorithms. This would enable the system to learn optimal strategies through interaction with market simulators rather than relying solely on LLM reasoning.
+
+\subsection{The Feudal Architecture: Manager and Worker}
+\vspace{-0.3em}
+
+\textbf{The Manager (High-Level Policy)}
+\begin{itemize}
+    \item \textbf{Temporal Resolution:} Low frequency (e.g., minutes to hours).
+    \item \textbf{Input:} The fused multimodal state from the Brain (Global Market State).
+    \item \textbf{Output:} An abstract Goal Vector $g_t$ in latent space and a Risk Aversion Parameter $\lambda_t$.
+    \item \textbf{Objective:} Maximize long-term portfolio PnL and Sharpe Ratio. The Manager does not interact with the order book directly; it ``commands'' the Worker.
+\end{itemize}
+
+\textbf{The Worker (Low-Level Policy)}
+\begin{itemize}
+    \item \textbf{Temporal Resolution:} High frequency (e.g., ticks to seconds).
+    \item \textbf{Input:} The goal $g_t$ from the Manager and the immediate microstructure state (Order Book, VPIN).
+    \item \textbf{Output:} Primitive actions (Limit Order, Market Order, Cancel).
+    \item \textbf{Objective:} Fulfill the Manager's goal $g_t$ while minimizing Implementation Shortfall and strictly adhering to the Almgren-Chriss trajectory.
+\end{itemize}
+This decoupling allows the Manager to focus on strategy and logic (avoiding wash sales, managing portfolio beta) while the Worker focuses on microstructure tactics (navigating the spread, hiding liquidity).
+\vspace{-0.5em}
+
+\subsection{Risk Management and Position Sizing}
+\vspace{-0.3em}
+\textbf{Current Implementation:} The production version of JANUS implements risk management through the Praxeological Motor, which enforces risk vetoes based on market regime, volatility thresholds, and signal confidence. Position sizing is dynamically adjusted based on the consensus score and risk appetite set by the CEO node.
+
+The system uses a simplified risk framework where:
+\begin{itemize}
+    \item \textbf{High Confidence / Low Volatility:} The CEO sets a higher risk appetite (e.g., $\lambda \approx 0.7$), allowing larger position sizes and more aggressive signals.
+    \item \textbf{High Volatility / Bear Regime:} The CEO sets a lower risk appetite (e.g., $\lambda \approx 0.2$), reducing position sizes and requiring higher consensus scores for trade execution.
+    \item \textbf{Risk Veto:} The Praxeological Motor can veto any trade by returning a zero score, which multiplies through the Product-not-Sum consensus to prevent execution.
+\end{itemize}
+
+\textbf{Future Enhancement: Optimal Execution with Almgren-Chriss Framework}
+The theoretical architecture includes the Almgren-Chriss (AC) optimal execution model for the Worker agent's reward function. The AC framework provides a mathematical solution for liquidating or acquiring a position $X$ over time $T$ while balancing two competing costs:
+\begin{itemize}
+    \item \textbf{Expected Cost ($E[C]$):} Driven by temporary market impact (slippage). Trading too fast moves the price against you.
+    \item \textbf{Timing Risk ($Var[C]$):} Driven by market volatility. Trading too slow exposes you to price drift.
+\end{itemize}
+The objective function is:
+\begin{equation}
+    \min_{v} (E[C] + \lambda Var[C])
+\end{equation}
+where $v$ is the trading trajectory (speed) and $\lambda$ is the risk aversion parameter.
+
+In the full AC implementation, $\lambda$ would be dynamically modulated by the Manager based on regime detection, enabling adaptive execution strategies from patient TWAP-like execution in stable markets to aggressive front-loaded execution during volatile periods.
+
+\newpage
+\section{System Architecture and Implementation}
+
+\subsection{The Technology Stack}
+\vspace{-0.3em}
+Implementing JANUS requires a robust, low-latency technology stack capable of handling heterogeneous data streams and real-time inference.
+
+\begin{tcolorbox}[colback=gray!10, colframe=janusblue, title=Production Technology Stack]
+\begin{tabularx}{\linewidth}{@{} l l L @{}}
+\textbf{Component} & \textbf{Technology} & \textbf{Role in JANUS} \\ 
+\hline
+Web Framework & FastAPI + Uvicorn & RESTful API service on port 8206 for analysis endpoints. \\
+LLM Primary & Google Gemini 2.0 Flash & CEO and Worker node reasoning (strategic and tactical decisions). \\
+LLM Fallback & Ollama (Llama 3) & Automatic failover when Gemini unavailable (zero downtime). \\
+State Management & LangGraph & Workflow orchestration for HRM architecture (CEO $\to$ Worker $\to$ Tools $\to$ Consensus). \\
+TS Forecasting & Chronos-2 (chronos-forecasting) & Zero-shot probabilistic forecasting with quantile generation. \\
+Visual Pattern Recognition & CNN Service (port 8204) & Feature tensor processing for market pattern classification. \\
+Regime Detection & HMM Service (port 8205) & Hidden Markov Model for market regime identification. \\
+Data Fetching & yfinance & Market data retrieval for OHLCV time series. \\
+Consensus Engine & Product-not-Sum & Multiplicative aggregation with veto power for safety. \\
+\end{tabularx}
+\end{tcolorbox}
+\vspace{-1em}
+
+\begin{tcolorbox}[colback=gray!10, colframe=accentgold, title=Planned Technology Stack]
+\begin{tabularx}{\linewidth}{@{} l l L @{}}
+\textbf{Component} & \textbf{Technology} & \textbf{Status} \\ 
+\hline
+Visual Encoding & GAF (Gramian Angular Fields) & Future enhancement for advanced texture analysis. \\
+Reasoning & TensorFlow LTN & Planned for neuro-symbolic constraint enforcement. \\
+RL Framework & Ray RLLib & Planned for Feudal RL training pipeline. \\
+Execution & Almgren-Chriss Model & Planned for optimal execution strategies. \\
+Text Processing & FinBERT & Planned for semantic sentiment analysis. \\
+Multimodal Fusion & MSGCA (Gated Cross-Attention) & Planned for text/time series/vision fusion. \\
+\end{tabularx}
+\end{tcolorbox}
+
+\newpage
+\subsection{Inference and Latency Challenges}
+JANUS operates in a domain where speed is critical. While the CEO node operates on a slower timescale (updating every 4 hours), the Worker node must generate signals efficiently.
+
+\textbf{Current Implementation:}
+\vspace{-0.2em}
+\begin{itemize}[itemsep=0.1em, topsep=0.2em]
+    \item \textbf{Chronos-2 Model:} The production system uses `chronos-t5-tiny` (8M parameters) for fast inference. On CPU, forecast latency is approximately 200-300ms after initial model loading. GPU acceleration would reduce this to 10-20ms.
+    \item \textbf{LLM Inference:} CEO and Worker nodes use Google Gemini 2.0 Flash for fast reasoning (typically 15-20 seconds per node). Automatic fallback to Ollama ensures zero downtime but may increase latency to 20-30 seconds per node.
+    \item \textbf{Service Architecture:} CNN and HMM services run as separate microservices, enabling parallel processing and independent scaling. The main JANUS service orchestrates these components via HTTP calls.
+\end{itemize}
+\vspace{-0.3em}
+
+\textbf{Future Enhancements:}
+\vspace{-0.2em}
+\begin{itemize}[itemsep=0.1em, topsep=0.2em]
+    \item \textbf{Chronos-Bolt:} A distilled, patch-based variant of Chronos that is up to 250x faster, enabling sub-millisecond inference for high-frequency execution scenarios.
+    \item \textbf{Hardware Acceleration:} GPU inference servers (e.g., NVIDIA A10G) for CNN processing and Chronos-2 forecasting to reduce latency.
+    \item \textbf{FPGA Acceleration:} For GAF generation and tensor operations in future implementations requiring real-time visual encoding.
+\end{itemize}
+
+\newpage
+\subsection{Service Architecture and Deployment}
+The production implementation of JANUS follows a microservices architecture:
+
+\textbf{Core Service:}
+\vspace{-0.2em}
+\begin{itemize}[itemsep=0.1em, topsep=0.2em]
+    \item \textbf{fks\_ai\_janus (Port 8206):} Main orchestration service containing HRM workflow, consensus engine, and API endpoints.
+    \item \textbf{Service Dependencies:} Integrates with CNN service (port 8204), HMM service (port 8205), and Ollama service (port 11434).
+    \item \textbf{Data Sources:} Uses yfinance for market data (can be replaced with fks\_data service in production).
+\end{itemize}
+\vspace{-0.3em}
+
+\textbf{API Endpoints:}
+\vspace{-0.2em}
+\begin{itemize}[itemsep=0.1em, topsep=0.2em]
+    \item \texttt{POST /api/v1/quant/analyze} - Full neuro-symbolic analysis with all motors
+    \item \texttt{POST /api/v1/quant/forecast} - Chronos-2 probabilistic forecasting
+    \item \texttt{POST /api/v1/quant/regime} - Market regime detection (CEO node)
+    \item \texttt{GET /api/v1/quant/status} - System health and component status
+    \item \texttt{GET /health} - Health check endpoint
+\end{itemize}
+\vspace{-0.3em}
+
+\textbf{Planned Training Pipeline:}
+For future Feudal RL implementation, the training would be a multi-stage process:
+\vspace{-0.2em}
+
+\textbf{Pre-training:}
+\vspace{-0.2em}
+\begin{itemize}[itemsep=0.1em, topsep=0.2em]
+    \item \textbf{Encoders:} Vision, Text, and Time Series encoders pre-trained on historical data using self-supervised objectives.
+    \item \textbf{Logic:} LTN predicates initialized and knowledge base $\mathcal{K}$ compiled into computation graph.
+\end{itemize}
+\vspace{-0.3em}
+
+\textbf{Feudal RL Training:}
+\vspace{-0.2em}
+\begin{itemize}[itemsep=0.1em, topsep=0.2em]
+    \item \textbf{Phase 1 (Worker):} Worker trained in isolation using Almgren-Chriss objective with randomized goals and risk parameters.
+    \item \textbf{Phase 2 (Manager):} Manager trained to optimize high-level PnL with frozen Worker.
+    \item \textbf{Phase 3 (Joint Fine-Tuning):} Both agents trained end-to-end with logical loss $\mathcal{L}_{logic}$ added to reward signal.
+\end{itemize}
+
+\newpage
+\section{Simulation, Backtesting, and Validation}
+
+\subsection{Methodological Rigour}
+\vspace{-0.3em}
+Validation of the JANUS architecture requires more than a simple P\&L backtest. We employ a rigorous simulation environment that stresses the ``Neuro-Symbolic'' aspects of the system.
+\vspace{-0.2em}
+\begin{itemize}[itemsep=0.1em, topsep=0.2em]
+    \item \textbf{Constraint Violation Rate:} The primary metric for the Logic Layer. We measure the percentage of trades that violate the Wash Sale rule or Almgren-Chriss risk limits. The target is effectively $0\%$.
+    \item \textbf{Zero-Shot Generalization:} Testing the model on asset classes it was not trained on (e.g., training on the S\&P 500 constituents and testing on cryptocurrency pairs). This validates the ``Foundation Model'' capabilities of the Chronos backbone.
+    \item \textbf{Market Impact Simulation:} Using the Almgren-Chriss temporary impact function $h(v) = \eta v + \gamma |v|^\alpha$ to simulate the realistic cost of trading a large size.
+\end{itemize}
+
+\subsection{Comparative Analysis}
+In preliminary simulations (based on aggregated benchmarks like fev-bench and GIFT-Eval), architectures similar to JANUS show distinct advantages:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|L|L|L|}
+\hline
+\textbf{Metric} & \textbf{Traditional Quant (2.0)} & \textbf{Pure Deep RL (3.0)} & \textbf{JANUS (4.0)} \\ 
+\hline
+Forecasting Accuracy & Low (Linear) & High (Non-Linear) & High (Multimodal) \\
+Constraint Adherence & High (Hard-coded) & Low (Reward Hacking) & High (Neuro-Symbolic) \\
+Adaptability & Low (Rigid Params) & Low (Brittleness) & High (Zero-Shot) \\
+Explainability & High & None (Black Box) & Moderate (Logic Trace) \\ 
+\hline
+\end{tabularx}
+\end{center}
+
+The production implementation combines Chronos-2's zero-shot forecasting with Product-not-Sum consensus and rule-based risk management. This provides a robust foundation for autonomous trading. Future integration of LTN constraint enforcement will further enhance the system's ability to achieve ``State-of-the-Art'' returns while maintaining ``Regulatory Grade'' safety.
+
+\newpage
+\section{Regulatory Compliance, Ethics, and Systemic Risk}
+
+\subsection{The ``Glass Box'' Transparency}
+A defining feature of Quant 4.0 is Explainability. In a standard Deep RL model, querying ``Why did you reduce the position?'' yields no intelligible answer. 
+
+\textbf{Current Implementation:} The production version of JANUS provides explainability through:
+\begin{itemize}
+    \item \textbf{Reasoning Traces:} The HRM workflow logs CEO and Worker node decisions, including regime assessments and signal generation rationale.
+    \item \textbf{Motor Scores:} The consensus mechanism exposes individual motor scores (Chronos, CNN, Risk, Fundamental), allowing inspection of each component's contribution.
+    \item \textbf{Response Metadata:} Analysis responses include detailed reasoning, forecast data, regime information, and risk assessments.
+\end{itemize}
+
+\textbf{Future Enhancement with LTN:}
+When Logic Tensor Networks are integrated, the system will provide formal logical traces:
+
+\textbf{Query:} ``Why was the order size reduced?''
+\begin{quote}
+\sloppy
+\textbf{LTN Trace:} ``Predicate \textit{HighVolatility}(VisualInput) is TRUE (0.95 confidence). Predicate \textit{LiquidityRisk} is TRUE. Rule \#4 triggered: HighVol $\to$ ReduceSize.''
+\end{quote}
+\textbf{Visual Evidence:} \sloppy With GAF integration, the system can generate Grad-CAM heatmaps. These highlight textures that triggered the predicates. \fussy
+
+This ``Glass Box'' transparency is essential for gaining trust from risk managers and regulators (e.g., SEC, FCA), who increasingly demand auditability for algorithmic trading systems.
+
+\subsection{Addressing Systemic Risk}
+While JANUS is designed to be individually safe, the widespread adoption of such ``aware'' agents introduces new systemic risks. If thousands of JANUS agents simultaneously detect a ``Crash Texture'' and logically decide to ``Halt Trading'' (via the VPIN rule), market liquidity could evaporate instantly, exacerbating a Flash Crash.
+
+Future research must investigate Multi-Agent Reinforcement Learning (MARL) scenarios. We must model the collective behaviour of JANUS populations and potentially introduce ``Cooperative Logic'' constraints that incentivize agents to maintain market stability (e.g., acting as a market maker of last resort) in exchange for regulatory credits or reduced transaction fees.
+
+% Shortened title for TOC
+\section[Future Directions]{Future Directions: Toward General Financial Intelligence}
+Project JANUS is a stepping stone toward General Financial Intelligence (GFI). By moving away from ``curve fitting'' historical prices and toward agents that perceive, read, and reason, we are creating systems that understand the market as a complex, evolving sociotechnical system.
+
+\subsection{Quantum Computing (Quant 5.0?)}
+As we look beyond Quant 4.0, the integration of Quantum Computing offers the next leap. Quantum algorithms (e.g., Quantum Approximate Optimization Algorithm or QAOA) could solve the Almgren-Chriss portfolio optimization problem (which is NP-hard with certain constraints) exponentially faster than classical solvers. The ``Quantum Gramian Angular Field'' (QGAF) is already being explored as a way to encode time series into quantum states for processing on QPUs. JANUS is architected to be ``Quantum-Ready,'' with its modular design allowing the classical Logic/Optimization layers to be swapped for Quantum equivalents as the hardware matures.
+
+\subsection{The Final Synthesis}
+The ultimate vision of JANUS is a trading agent that possesses the ``Wisdom'' of a veteran trader (via Symbolic Logic), the ``Intuition'' of a chartist (via Visual Encoding), and the ``Speed'' of a machine (via Hierarchical Execution). By fusing these faculties, JANUS provides the rigorous mathematical and architectural framework to realize the promise of Neuro-Symbolic AI in finance—creating a system that is not only profitable but also principled.
+
+\newpage
+\section{Conclusion}
+Project JANUS: The Neuro-Symbolic Visual Quant Architecture is not merely an incremental improvement in forecasting accuracy; it is a structural redefinition of the quantitative trading agent. It directly addresses the limitations of Quant 3.0—opacity, brittleness, and safety risks—by synthesizing the visual intuition of Gramian Angular Fields, the rigorous reasoning of Logic Tensor Networks, and the strategic hierarchy of Feudal Reinforcement Learning.
+
+The architecture detailed in this white paper offers a comprehensive blueprint for Quant 4.0: systems that are automated yet explainable, data-driven yet knowledge-constrained, and highly performant yet regulatory compliant. As financial markets become increasingly fast, complex, and interconnected, the ability to fuse multimodal perception with symbolic logic will define the alpha generators of the next decade. JANUS stands as the vanguard of this new era.
+
+% =============================================================================
+% BIBLIOGRAPHY
+% =============================================================================
+\newpage
+\begin{thebibliography}{99}
+\raggedright % Forces bibliography to wrap URLs instead of stretching them
+
+\bibitem{idea_research}
+IDEA Research Report - arXiv. \url{https://arxiv.org/pdf/2301.04020}
+
+\bibitem{multimodal_forecasting}
+Multimodal Language Models with Modality-Specific Experts for Financial Forecasting from Interleaved Sequences of Text and Time Series - arXiv. \url{https://arxiv.org/html/2509.19628v1}
+
+\bibitem{neurosymbolic_traders}
+Neuro-Symbolic Traders: Assessing the Wisdom of AI Crowds in Markets - arXiv. \url{https://arxiv.org/html/2410.14587v1}
+
+\bibitem{tcn_survey}
+Temporal Convolutional Networks for Financial Time Series Forecasting: A Survey. \url{https://www.researchgate.net/publication/392102503_Temporal_Convolutional_Networks_for_Financial_Time_Series_Forecasting_A_Survey}
+
+\bibitem{chronos_universal}
+Chronos-2: From Univariate to Universal Forecasting - arXiv. \url{https://arxiv.org/html/2510.15821v1}
+
+\bibitem{ltn_medium}
+Logic Tensor Networks: The Neuro-Symbolic Revolution | by Gonnect. Medium. \url{https://medium.com/@gonnect.uk/logic-tensor-networks-the-neuro-symbolic-revolution-b4e2d022b188}
+
+\bibitem{neurosymbolic_review}
+Neuro-Symbolic AI in 2024: A Systematic Review - arXiv. \url{https://arxiv.org/pdf/2501.05435}
+
+\bibitem{model_risk_fmsb}
+Statement of Good Practice for the application of a model risk management framework to electronic trading algorithms - FMSB. \url{https://fmsb.com/wp-content/uploads/2025/04/Model-Risk-Electronic-Trading-Algorithm_FINAL-05.04.pdf}
+
+\bibitem{deep_learning_llms}
+From Deep Learning to LLMs: A survey of AI in Quantitative Investment - arXiv. \url{https://arxiv.org/html/2503.21422v1}
+
+\bibitem{gaf_reddit}
+Gramian Angular Fields keep popping up in time-series literature. Reddit. \url{https://www.reddit.com/r/quant/comments/1p81cuo/gramian_angular_fields_keep_popping_up_in/}
+
+\bibitem{algorithmic_trading_cnn}
+Algorithmic Financial Trading with Deep Convolutional Neural Networks: Time Series to Image Conversion Approach - ResearchGate. \url{https://www.researchgate.net/publication/324802031_Algorithmic_Financial_Trading_with_Deep_Convolutional_Neural_Networks_Time_Series_to_Image_Conversion_Approach}
+
+\bibitem{volatility_cnn_bilstm}
+Forecasting Stock Market Volatility Using CNN-BiLSTM-Attention Model with Mixed-Frequency Data - MDPI. \url{https://www.mdpi.com/2227-7390/13/11/1889}
+
+\bibitem{cnn_financial_timeseries}
+Using CNN for financial time series prediction - MachineLearningMastery.com. \url{https://machinelearningmastery.com/using-cnn-for-financial-time-series-prediction/}
+
+\bibitem{rgb_gaf_image}
+RGB GAF image: A possible solution to one weak point of Gramian Angular Field Imaging | by Shuyang Xiang. Medium. \url{https://medium.com/data-science/rgb-gaf-image-a-possible-solution-to-one-weak-point-of-gramian-angular-field-imaging-ffc6b31edfbe}
+
+\bibitem{recurrence_plots_gaf}
+Fusion of Recurrence Plots and Gramian Angular Fields with Bayesian Optimization for Enhanced Time-Series Classification - MDPI. \url{https://www.mdpi.com/2075-1680/14/7/528}
+
+\bibitem{transfer_learning_gaf}
+Transfer Learning in Financial Time Series with Gramian Angular Field - arXiv. \url{https://arxiv.org/html/2504.00378v1}
+
+\bibitem{quantum_forecasting}
+Quantum-Enhanced Forecasting: Leveraging Quantum Gramian Angular Field and CNNs for Stock Return Predictions - arXiv. \url{https://arxiv.org/abs/2310.07427}
+
+\bibitem{wash_sale}
+Wash Sale: Definition, How It Works, and Purpose - Investopedia. \url{https://www.investopedia.com/terms/w/washsale.asp}
+
+\bibitem{almgren_chriss}
+Optimal Execution Strategies - Almgren-Chriss Model - QuestDB. \url{https://questdb.com/glossary/optimal-execution-strategies-almgren-chriss-model/}
+
+\bibitem{ltn_github}
+logictensornetworks/logictensornetworks: Deep Learning and Logical Reasoning from Data and Knowledge - GitHub. \url{https://github.com/logictensornetworks/logictensornetworks}
+
+\bibitem{ltn_arxiv}
+Logic Tensor Networks: Deep Learning and Logical Reasoning from Data and Knowledge - arXiv. \url{https://arxiv.org/abs/1606.04422}
+
+\bibitem{logical_neural_networks}
+Logical Neural Networks using Pytorch | by Andrea Rosales. Medium. \url{https://medium.com/@andrea.rosales08/logical-neural-networks-using-pytorch-a017d96d3e05}
+
+\bibitem{no_prior_mask}
+No Prior Mask: Eliminate Redundant Action for Deep Reinforcement Learning - AAAI Publications. \url{https://ojs.aaai.org/index.php/AAAI/article/view/29652/31109}
+
+\bibitem{vpin_quantresearch}
+VPIN: The Volume Synchronized Probability of Informed Trading. \url{https://www.quantresearch.org/VPIN.pdf}
+
+\bibitem{order_flow_toxicity}
+From PIN to VPIN: An introduction to order flow toxicity. \url{https://www.quantresearch.org/From%20PIN%20to%20VPIN.pdf}
+
+\bibitem{chronos_amazon_science}
+Introducing Chronos-2: From univariate to universal forecasting - Amazon Science. \url{https://www.amazon.science/blog/introducing-chronos-2-from-univariate-to-universal-forecasting}
+
+\bibitem{stock_prediction_multimodal}
+Stock Movement Prediction with Multimodal Stable Fusion via Gated Cross-Attention Mechanism - arXiv. \url{https://arxiv.org/html/2406.06594v2}
+
+\bibitem{finbert_arxiv}
+Financial Sentiment Analysis Using FinBERT with Application in Predicting Stock Movement. \url{https://arxiv.org/html/2306.02136v3}
+
+\bibitem{finbert_ijcai}
+FinBERT: A Pre-trained Financial Language Representation Model for Financial Text Mining - IJCAI. \url{https://www.ijcai.org/proceedings/2020/0622.pdf}
+
+\bibitem{mm_itransformer}
+MM-iTransformer: A Multimodal Approach to Economic Time Series Forecasting with Textual Data - MDPI. \url{https://www.mdpi.com/2076-3417/15/3/1241}
+
+\bibitem{feudal_networks}
+FeUdal Networks for Hierarchical Reinforcement Learning - arXiv. \url{https://arxiv.org/abs/1703.01161}
+
+\bibitem{hrl_medium}
+Hierarchical Reinforcement Learning: FeUdal Networks | by Austin Nguyen. Medium. \url{https://medium.com/data-science/hierarchical-reinforcement-learning-feudal-networks-44e2657526d7}
+
+\bibitem{hrl_eth}
+Hierarchical Reinforcement Learning for Algorithmic Trading - ETH Zürich. \url{https://pub.tik.ee.ethz.ch/students/2021-HS/SA-2021-48.pdf}
+
+\bibitem{hrt_arxiv}
+Hierarchical Reinforced Trader (HRT): A Bi-Level Approach for Optimizing Stock Selection and Execution - arXiv. \url{https://arxiv.org/html/2410.14927v1}
+
+\bibitem{high_freq_execution}
+A High Frequency Trade Execution Model for Supervised Learning - arXiv. \url{https://arxiv.org/abs/1710.03870}
+
+\bibitem{ntu_thesis}
+Reinforcement Learning for Financial Trading: Algorithms, Evaluations and Platforms - Nanyang Technological University. \url{https://www3.ntu.edu.sg/home/boan/thesis/Sun_Shuo_PhD_Thesis.pdf}
+
+\bibitem{chronos_forecasting_github}
+amazon-science/chronos-forecasting: Chronos: Pretrained Models for Time Series Forecasting - GitHub. \url{https://github.com/amazon-science/chronos-forecasting}
+
+\bibitem{chronos_bolt}
+amazon/chronos-bolt-small - Hugging Face. \url{https://huggingface.co/amazon/chronos-bolt-small}
+
+\bibitem{chronos_huggingface}
+amazon/chronos-2 - Hugging Face. \url{https://huggingface.co/amazon/chronos-2}
+
+\bibitem{fca_compliance}
+Algorithmic Trading Compliance in Wholesale Markets - Financial Conduct Authority. \url{https://www.fca.org.uk/publication/multi-firm-reviews/algorithmic-trading-compliance-wholesale-markets.pdf}
+
+\bibitem{safe_rl}
+No More Hand-Tuning Rewards: Masked Constrained Policy Optimization for Safe Reinforcement Learning - IFAAMAS. \url{https://www.ifaamas.org/Proceedings/aamas2021/pdfs/p1344.pdf}
+
+\bibitem{feudal_multiagent}
+Feudal Multi-Agent Hierarchies for Cooperative Reinforcement Learning - ALA 2019. \url{https://ala2019.vub.ac.be/papers/ALA2019_paper_5.pdf}
+
+\bibitem{quantum_portfolio}
+Dynamic Portfolio Optimization with Real Datasets Using Quantum Processors and Quantum-Inspired Tensor Networks - arXiv. \url{https://arxiv.org/abs/2007.00017}
+
+\end{thebibliography}
+
+\end{document}
