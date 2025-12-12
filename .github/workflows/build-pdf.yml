@@ -1,0 +1,54 @@
+name: Build PDF from LaTeX
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.pdf'  # Ignore PDF changes to prevent infinite loops
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  build-latex:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required to push commits
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Compile LaTeX to PDF
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: project_janus/project_janus.tex
+          latexmk_use_xelatex: false
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+      
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Project_JANUS.pdf
+          path: project_janus/project_janus.pdf
+          retention-days: 30
+      
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      
+      - name: Commit and push PDF
+        run: |
+          git add project_janus/project_janus.pdf
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-generate PDF from LaTeX [skip ci]"
+            git push
+          fi
+
