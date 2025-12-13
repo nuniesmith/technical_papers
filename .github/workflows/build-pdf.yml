@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # Fetch full history for proper git operations
       
       - name: Compile LaTeX to PDF
         uses: xu-cheng/latex-action@v3
@@ -62,11 +62,38 @@ jobs:
       
       - name: Commit and push PDF
         run: |
+          # Show current git status
+          echo "Current branch: $(git branch --show-current)"
+          echo "Current ref: ${{ github.ref }}"
+          
+          # Add the PDF file
           git add ${{ steps.find_pdf.outputs.pdf_path }}
+          
+          # Show what will be committed
+          git status
+          git diff --staged --stat
+          
+          # Check if there are changes to commit
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "No changes to commit - PDF is already up to date"
           else
+            echo "Committing PDF changes..."
             git commit -m "Auto-generate PDF from LaTeX [skip ci]"
-            git push
+            
+            # Determine the branch to push to
+            BRANCH=${GITHUB_REF#refs/heads/}
+            echo "Pushing to branch: $BRANCH"
+            
+            # Push the changes
+            git push origin HEAD:$BRANCH || {
+              echo "Push failed, trying with full ref..."
+              git push origin HEAD:${{ github.ref }} || {
+                echo "Push failed. Error details:"
+                git remote -v
+                exit 1
+              }
+            }
+            
+            echo "PDF successfully pushed to repository"
           fi
 
