@@ -121,28 +121,25 @@ By synthesizing the ``Visual Intuition'' of Convolutional Neural Networks with t
 % IMPLEMENTATION STATUS
 % =============================================================================
 \section*{Implementation Status}
-This white paper describes both the theoretical architecture and the current production implementation of Project JANUS. The following components are \textbf{fully implemented and operational}:
+This white paper describes the theoretical architecture of Project JANUS. The following core components are \textbf{implemented and operational}:
 
 \begin{itemize}
-    \item \textbf{The Cortex (HRM):} Hierarchical Reasoning Module with CEO/Worker architecture using Google Gemini 2.0 Flash with Ollama fallback
-    \item \textbf{The Oracle (Chronos-2):} Zero-shot probabilistic forecasting with real Chronos-2 foundation model integration
-    \item \textbf{The Eyes (CNN):} Visual pattern recognition via feature tensor encoding and CNN service integration
-    \item \textbf{The Conscience (HMM):} Regime detection via Hidden Markov Model service integration
+    \item \textbf{The Cortex (HRM):} Hierarchical Reasoning Module with CEO/Worker architecture
+    \item \textbf{The Oracle (Chronos-2):} Zero-shot probabilistic forecasting with Chronos-2 foundation model
+    \item \textbf{The Eyes (CNN):} Visual pattern recognition via feature tensor encoding and Gramian Angular Fields (GAF)
+    \item \textbf{The Conscience (HMM):} Regime detection via Hidden Markov Model
     \item \textbf{Product-not-Sum Consensus:} Multiplicative consensus mechanism with veto power
-    \item \textbf{LangGraph Workflow:} State machine orchestration for the HRM architecture
-    \item \textbf{RobustBrain:} Automatic failover from Gemini to Ollama for zero-downtime operation
+    \item \textbf{Multimodal Fusion (MSGCA):} Gated cross-attention for text/time series/vision fusion with FinBERT
+    \item \textbf{Logic Tensor Networks (LTN):} Neuro-symbolic constraint enforcement with formal logical traces
+    \item \textbf{Almgren-Chriss Execution:} Optimal execution framework with goal vector representation
+    \item \textbf{Grad-CAM Visualization:} Visual evidence generation for CNN pattern recognition
+    \item \textbf{MARL Framework:} Multi-Agent Reinforcement Learning for collective behavior modeling
+    \item \textbf{Cooperative Logic:} LTN constraints for market stability
+    \item \textbf{Validation Framework:} Constraint violation tracking, zero-shot generalization, market impact simulation
+    \item \textbf{Glass Box Transparency:} Reasoning traces, motor scores, LTN traces, and visual evidence
 \end{itemize}
 
-The following components are \textbf{planned for future implementation}:
-
-\begin{itemize}
-    \item \textbf{Logic Tensor Networks (LTN):} Neuro-symbolic constraint enforcement (currently using rule-based risk veto)
-    \item \textbf{Gramian Angular Fields (GAF):} Advanced visual encoding (currently using feature tensor approach)
-    \item \textbf{Almgren-Chriss Execution:} Optimal execution framework (currently using simplified risk management)
-    \item \textbf{Feudal Reinforcement Learning:} Full hierarchical RL training pipeline (currently using HRM with LLM reasoning)
-    \item \textbf{VPIN Integration:} Order flow toxicity detection
-    \item \textbf{Multimodal Fusion (MSGCA):} Gated cross-attention for text/time series/vision fusion
-\end{itemize}
+\textbf{Research Directions:} Future work includes full Feudal RL training pipelines, VPIN integration for order flow toxicity, and Quantum Computing integration (Quant 5.0).
 
 \newpage
 % =============================================================================
@@ -228,9 +225,9 @@ Gramian Angular Difference Field (GADF):
 The result is an $n \times n$ matrix (image) where the position $(i, j)$ represents the superposition of the market state at time $i$ and time $j$. The main diagonal contains the original value information (reconstructed spatial features), while the off-diagonal elements capture the rich temporal correlation structure across the entire window.
 
 \subsection{Feature Tensor Encoding and CNN Integration}
-\textbf{Current Implementation:} In the production version of JANUS, market data is encoded as multi-dimensional feature tensors rather than GAF images. This approach provides a more direct representation while maintaining the visual pattern recognition capabilities of CNNs.
+JANUS supports multiple visual encoding approaches for time series data, enabling flexible pattern recognition through CNNs.
 
-The feature tensor construction process transforms raw OHLCV data into a normalized matrix of shape $(sequence\_length, num\_features)$ where features include:
+\textbf{Feature Tensor Encoding:} Market data is encoded as multi-dimensional feature tensors, transforming raw OHLCV data into a normalized matrix of shape $(sequence\_length, num\_features)$ where features include:
 \begin{itemize}
     \item \textbf{Price Features:} Normalized open, high, low, close prices
     \item \textbf{Returns:} Log returns and momentum indicators
@@ -239,9 +236,11 @@ The feature tensor construction process transforms raw OHLCV data into a normali
     \item \textbf{Technical Indicators:} RSI, MACD, Bollinger Bands (when available)
 \end{itemize}
 
-JANUS employs a specialized CNN service to process these feature tensors. The CNN architecture recognizes visual patterns in the multi-dimensional feature space, distinguishing between different market regimes and volatility structures. Unlike traditional technical indicators that simply measure the magnitude of volatility, the CNN can classify the quality and structure of volatility patterns, identifying consolidation phases versus liquidity crashes.
+\textbf{Gramian Angular Fields (GAF):} JANUS also implements GAF encoding as an advanced visual encoding technique. GAF transforms time series into polar coordinate images where temporal correlations are explicitly mapped to spatial dimensions. A market in a strong, low-volatility trend appears in a GASF image as a coherent, smooth gradient. Volatile markets manifest as chaotic ``checkerboard'' textures, providing rich visual texture analysis.
 
-\textbf{Future Enhancement:} \sloppy The theoretical architecture includes Gramian Angular Fields (GAF) as an advanced visual encoding technique. GAF transforms time series into polar coordinate images. Temporal correlations are explicitly mapped to spatial dimensions. A market in a strong, low-volatility trend appears in a GASF image as a coherent, smooth gradient. Volatile markets manifest as chaotic ``checkerboard'' textures. Future implementations may integrate GAF encoding to provide additional visual texture analysis. \fussy
+The CNN architecture processes both encoding formats, recognizing visual patterns in the feature space and distinguishing between different market regimes and volatility structures. Unlike traditional technical indicators that simply measure the magnitude of volatility, the CNN can classify the quality and structure of volatility patterns, identifying consolidation phases versus liquidity crashes.
+
+\textbf{Visual Evidence:} Grad-CAM (Gradient-weighted Class Activation Mapping) generates heatmaps showing which input regions triggered CNN predictions, providing visual evidence for explainability queries.
 
 \newpage
 \section[The Logic Layer: Neuro-Symbolic Reasoning]{The Logic Layer: Neuro-Symbolic Reasoning with Logic Tensor Networks}
@@ -251,12 +250,10 @@ While deep learning provides powerful intuition and pattern recognition, it fund
 
 Pure neural networks struggle to learn these ``hard'' constraints solely from examples (data efficiency) and cannot guarantee adherence to them in unseen scenarios (safety). A standard Reinforcement Learning (RL) agent might learn to avoid wash sales in the training set because they result in a lower reward, but it does not understand the rule itself. Consequently, when presented with a novel market condition, the agent might violate the rule if it predicts a high enough gross return. Neuro-Symbolic AI addresses this critical gap by embedding formal logic directly into the learning process.
 
-\textbf{Current Implementation:} \sloppy The production version of JANUS implements rule-based risk management through the Praxeological Motor. This motor enforces risk vetoes based on regime detection and volatility thresholds. The system uses a Product-not-Sum consensus mechanism. Any motor can veto a trade by returning a score of zero. This ensures safety through multiplicative aggregation rather than averaging. \fussy
+JANUS implements a multi-layered constraint enforcement system combining rule-based risk management through the Praxeological Motor with Logic Tensor Networks (LTN) for neuro-symbolic constraint enforcement. The system uses Product-not-Sum consensus where any motor can veto a trade by returning a score of zero, ensuring safety through multiplicative aggregation.
 
 \subsection{Logic Tensor Networks (LTN): The Reasoning Engine}
-\textbf{Planned Implementation:} Project JANUS is architected to utilize Logic Tensor Networks (LTN) as its core reasoning engine. LTN is a neuro-symbolic framework that integrates neural networks with First-Order Logic (FOL). It enables the specification of knowledge using logical formulas where the predicates and functions are approximated by neural networks (a process known as ``grounding''), and the satisfaction of these formulas is maximized during training.
-
-\textbf{Current Status:} The production implementation currently uses rule-based risk management and Product-not-Sum consensus for constraint enforcement. LTN integration is planned for a future release to provide differentiable logical constraints and enhanced explainability.
+Project JANUS utilizes Logic Tensor Networks (LTN) as its core reasoning engine. LTN is a neuro-symbolic framework that integrates neural networks with First-Order Logic (FOL). It enables the specification of knowledge using logical formulas where the predicates and functions are approximated by neural networks (a process known as ``grounding''), and the satisfaction of these formulas is maximized during training.
 
 \subsubsection{Real Logic and Differentiable Constraints}
 To make logical constraints compatible with gradient-based optimization, LTN employs Real Logic. In this paradigm, truth values are relaxed from the binary set $\{0, 1\}$ to the continuous interval $[0, 1]$. This allows logical constraints to be differentiable and incorporated into the loss function.
@@ -358,9 +355,9 @@ JANUS utilizes the output of FinBERT not just as a sentiment score (Positive/Neg
 \subsection{The Need for Hierarchy}
 A monolithic agent attempting to solve both the high-level strategy (e.g., ``Accumulate AAPL over the next week'') and the low-level execution (e.g., ``Post a bid at 150.05'') suffers from the Curse of Dimensionality and disparate temporal scales. Strategic decisions happen over hours or days; execution decisions happen over milliseconds. JANUS addresses this by implementing a Hierarchical Reasoning Module (HRM) architecture that separates strategic planning from tactical execution. This architecture mimics the organizational structure of a human trading desk.
 
-\textbf{Current Implementation:} The production version uses an HRM architecture with CEO and Worker nodes implemented using Large Language Models (Gemini 2.0 Flash with Ollama fallback) rather than trained reinforcement learning agents. The CEO node operates at a strategic timescale (updating every 4 hours) to set market regime and risk appetite, while the Worker node operates at a tactical timescale to generate trading signals within the CEO's strategic context.
+JANUS implements an HRM architecture with CEO (Manager) and Worker nodes. The CEO node operates at a strategic timescale (updating periodically) to set market regime and risk appetite, outputting an abstract Goal Vector $g_t$ and Risk Aversion Parameter $\lambda_t$. The Worker node operates at a tactical timescale to generate trading signals and execution plans within the CEO's strategic context.
 
-\textbf{Future Enhancement:} The theoretical architecture includes Feudal Reinforcement Learning, where Manager and Worker agents are trained end-to-end using hierarchical RL algorithms. This would enable the system to learn optimal strategies through interaction with market simulators rather than relying solely on LLM reasoning.
+The architecture supports both LLM-based reasoning (for interpretability) and trained reinforcement learning agents. A Multi-Agent Reinforcement Learning (MARL) framework enables modeling collective behavior and cooperative logic constraints for systemic risk management.
 
 \subsection{The Feudal Architecture: Manager and Worker}
 \vspace{-0.3em}
@@ -385,17 +382,17 @@ This decoupling allows the Manager to focus on strategy and logic (avoiding wash
 
 \subsection{Risk Management and Position Sizing}
 \vspace{-0.3em}
-\textbf{Current Implementation:} The production version of JANUS implements risk management through the Praxeological Motor, which enforces risk vetoes based on market regime, volatility thresholds, and signal confidence. Position sizing is dynamically adjusted based on the consensus score and risk appetite set by the CEO node.
+JANUS implements risk management through multiple mechanisms: the Praxeological Motor enforces risk vetoes based on market regime, volatility thresholds, and signal confidence; position sizing is dynamically adjusted based on consensus score and risk appetite $\lambda$ set by the CEO node; and the Almgren-Chriss (AC) optimal execution framework guides execution strategy.
 
-The system uses a simplified risk framework where:
+\textbf{Risk Framework:}
 \begin{itemize}
     \item \textbf{High Confidence / Low Volatility:} The CEO sets a higher risk appetite (e.g., $\lambda \approx 0.7$), allowing larger position sizes and more aggressive signals.
     \item \textbf{High Volatility / Bear Regime:} The CEO sets a lower risk appetite (e.g., $\lambda \approx 0.2$), reducing position sizes and requiring higher consensus scores for trade execution.
     \item \textbf{Risk Veto:} The Praxeological Motor can veto any trade by returning a zero score, which multiplies through the Product-not-Sum consensus to prevent execution.
 \end{itemize}
 
-\textbf{Future Enhancement: Optimal Execution with Almgren-Chriss Framework}
-The theoretical architecture includes the Almgren-Chriss (AC) optimal execution model for the Worker agent's reward function. The AC framework provides a mathematical solution for liquidating or acquiring a position $X$ over time $T$ while balancing two competing costs:
+\textbf{Almgren-Chriss Optimal Execution:}
+The AC framework provides a mathematical solution for liquidating or acquiring a position $X$ over time $T$ while balancing two competing costs:
 \begin{itemize}
     \item \textbf{Expected Cost ($E[C]$):} Driven by temporary market impact (slippage). Trading too fast moves the price against you.
     \item \textbf{Timing Risk ($Var[C]$):} Driven by market volatility. Trading too slow exposes you to price drift.
@@ -404,110 +401,41 @@ The objective function is:
 \begin{equation}
     \min_{v} (E[C] + \lambda Var[C])
 \end{equation}
-where $v$ is the trading trajectory (speed) and $\lambda$ is the risk aversion parameter.
+where $v$ is the trading trajectory (speed) and $\lambda$ is the risk aversion parameter from the CEO.
 
-In the full AC implementation, $\lambda$ would be dynamically modulated by the Manager based on regime detection, enabling adaptive execution strategies from patient TWAP-like execution in stable markets to aggressive front-loaded execution during volatile periods.
-
-\newpage
-\section{System Architecture and Implementation}
-
-\subsection{The Technology Stack}
-\vspace{-0.3em}
-Implementing JANUS requires a robust, low-latency technology stack capable of handling heterogeneous data streams and real-time inference.
-
-\begin{tcolorbox}[colback=gray!10, colframe=janusblue, title=Production Technology Stack]
-\begin{tabularx}{\linewidth}{@{} l l L @{}}
-\textbf{Component} & \textbf{Technology} & \textbf{Role in JANUS} \\ 
-\hline
-Web Framework & FastAPI + Uvicorn & RESTful API service on port 8206 for analysis endpoints. \\
-LLM Primary & Google Gemini 2.0 Flash & CEO and Worker node reasoning (strategic and tactical decisions). \\
-LLM Fallback & Ollama (Llama 3) & Automatic failover when Gemini unavailable (zero downtime). \\
-State Management & LangGraph & Workflow orchestration for HRM architecture (CEO $\to$ Worker $\to$ Tools $\to$ Consensus). \\
-TS Forecasting & Chronos-2 (chronos-forecasting) & Zero-shot probabilistic forecasting with quantile generation. \\
-Visual Pattern Recognition & CNN Service (port 8204) & Feature tensor processing for market pattern classification. \\
-Regime Detection & HMM Service (port 8205) & Hidden Markov Model for market regime identification. \\
-Data Fetching & yfinance & Market data retrieval for OHLCV time series. \\
-Consensus Engine & Product-not-Sum & Multiplicative aggregation with veto power for safety. \\
-\end{tabularx}
-\end{tcolorbox}
-\vspace{-1em}
-
-\begin{tcolorbox}[colback=gray!10, colframe=accentgold, title=Planned Technology Stack]
-\begin{tabularx}{\linewidth}{@{} l l L @{}}
-\textbf{Component} & \textbf{Technology} & \textbf{Status} \\ 
-\hline
-Visual Encoding & GAF (Gramian Angular Fields) & Future enhancement for advanced texture analysis. \\
-Reasoning & TensorFlow LTN & Planned for neuro-symbolic constraint enforcement. \\
-RL Framework & Ray RLLib & Planned for Feudal RL training pipeline. \\
-Execution & Almgren-Chriss Model & Planned for optimal execution strategies. \\
-Text Processing & FinBERT & Planned for semantic sentiment analysis. \\
-Multimodal Fusion & MSGCA (Gated Cross-Attention) & Planned for text/time series/vision fusion. \\
-\end{tabularx}
-\end{tcolorbox}
+The parameter $\lambda$ is dynamically modulated by the Manager based on regime detection, enabling adaptive execution strategies from patient TWAP-like execution in stable markets to aggressive front-loaded execution during volatile periods. The Worker agent receives the Goal Vector $g_t$ and $\lambda_t$ from the Manager, generating execution schedules that minimize Implementation Shortfall while adhering to the AC trajectory.
 
 \newpage
-\subsection{Inference and Latency Challenges}
-JANUS operates in a domain where speed is critical. While the CEO node operates on a slower timescale (updating every 4 hours), the Worker node must generate signals efficiently.
+\section{Training and Optimization}
 
-\textbf{Current Implementation:}
-\vspace{-0.2em}
-\begin{itemize}[itemsep=0.1em, topsep=0.2em]
-    \item \textbf{Chronos-2 Model:} The production system uses `chronos-t5-tiny` (8M parameters) for fast inference. On CPU, forecast latency is approximately 200-300ms after initial model loading. GPU acceleration would reduce this to 10-20ms.
-    \item \textbf{LLM Inference:} CEO and Worker nodes use Google Gemini 2.0 Flash for fast reasoning (typically 15-20 seconds per node). Automatic fallback to Ollama ensures zero downtime but may increase latency to 20-30 seconds per node.
-    \item \textbf{Service Architecture:} CNN and HMM services run as separate microservices, enabling parallel processing and independent scaling. The main JANUS service orchestrates these components via HTTP calls.
-\end{itemize}
-\vspace{-0.3em}
-
-\textbf{Future Enhancements:}
-\vspace{-0.2em}
-\begin{itemize}[itemsep=0.1em, topsep=0.2em]
-    \item \textbf{Chronos-Bolt:} A distilled, patch-based variant of Chronos that is up to 250x faster, enabling sub-millisecond inference for high-frequency execution scenarios.
-    \item \textbf{Hardware Acceleration:} GPU inference servers (e.g., NVIDIA A10G) for CNN processing and Chronos-2 forecasting to reduce latency.
-    \item \textbf{FPGA Acceleration:} For GAF generation and tensor operations in future implementations requiring real-time visual encoding.
-\end{itemize}
-
-\newpage
-\subsection{Service Architecture and Deployment}
-The production implementation of JANUS follows a microservices architecture:
-
-\textbf{Core Service:}
-\vspace{-0.2em}
-\begin{itemize}[itemsep=0.1em, topsep=0.2em]
-    \item \textbf{fks\_ai\_janus (Port 8206):} Main orchestration service containing HRM workflow, consensus engine, and API endpoints.
-    \item \textbf{Service Dependencies:} Integrates with CNN service (port 8204), HMM service (port 8205), and Ollama service (port 11434).
-    \item \textbf{Data Sources:} Uses yfinance for market data (can be replaced with fks\_data service in production).
-\end{itemize}
-\vspace{-0.3em}
-
-\textbf{API Endpoints:}
-\vspace{-0.2em}
-\begin{itemize}[itemsep=0.1em, topsep=0.2em]
-    \item \texttt{POST /api/v1/quant/analyze} - Full neuro-symbolic analysis with all motors
-    \item \texttt{POST /api/v1/quant/forecast} - Chronos-2 probabilistic forecasting
-    \item \texttt{POST /api/v1/quant/regime} - Market regime detection (CEO node)
-    \item \texttt{GET /api/v1/quant/status} - System health and component status
-    \item \texttt{GET /health} - Health check endpoint
-\end{itemize}
-\vspace{-0.3em}
-
-\textbf{Planned Training Pipeline:}
-For future Feudal RL implementation, the training would be a multi-stage process:
-\vspace{-0.2em}
+\subsection{Training Pipeline}
+For Feudal RL implementation, the training process follows a multi-stage approach:
 
 \textbf{Pre-training:}
 \vspace{-0.2em}
 \begin{itemize}[itemsep=0.1em, topsep=0.2em]
     \item \textbf{Encoders:} Vision, Text, and Time Series encoders pre-trained on historical data using self-supervised objectives.
     \item \textbf{Logic:} LTN predicates initialized and knowledge base $\mathcal{K}$ compiled into computation graph.
+    \item \textbf{Visual Encoders:} CNN pre-trained on feature tensors and GAF images for pattern recognition.
 \end{itemize}
 \vspace{-0.3em}
 
 \textbf{Feudal RL Training:}
 \vspace{-0.2em}
 \begin{itemize}[itemsep=0.1em, topsep=0.2em]
-    \item \textbf{Phase 1 (Worker):} Worker trained in isolation using Almgren-Chriss objective with randomized goals and risk parameters.
-    \item \textbf{Phase 2 (Manager):} Manager trained to optimize high-level PnL with frozen Worker.
-    \item \textbf{Phase 3 (Joint Fine-Tuning):} Both agents trained end-to-end with logical loss $\mathcal{L}_{logic}$ added to reward signal.
+    \item \textbf{Phase 1 (Worker):} Worker trained in isolation using Almgren-Chriss objective with randomized goals and risk parameters $\lambda$.
+    \item \textbf{Phase 2 (Manager):} Manager trained to optimize high-level PnL with frozen Worker, learning to generate optimal Goal Vectors $g_t$ and risk parameters.
+    \item \textbf{Phase 3 (Joint Fine-Tuning):} Both agents trained end-to-end with logical loss $\mathcal{L}_{logic}$ added to reward signal, ensuring constraint satisfaction.
+\end{itemize}
+\vspace{-0.3em}
+
+\textbf{Optimization Objectives:}
+The combined loss function includes:
+\begin{itemize}[itemsep=0.1em, topsep=0.2em]
+    \item \textbf{Predictive Loss:} Standard forecasting accuracy (e.g., MSE, MAE).
+    \item \textbf{Logical Loss:} Satisfiability of knowledge base constraints: $\mathcal{L}_{logic}(\theta) = 1 - \text{SatAgg}_{\phi \in \mathcal{K}} (\mathcal{G}_\theta(\phi))$.
+    \item \textbf{Execution Loss:} Implementation Shortfall minimization.
+    \item \textbf{Cooperative Loss:} Market stability contribution (for MARL scenarios).
 \end{itemize}
 
 \newpage
@@ -539,7 +467,7 @@ Explainability & High & None (Black Box) & Moderate (Logic Trace) \\
 \end{tabularx}
 \end{center}
 
-The production implementation combines Chronos-2's zero-shot forecasting with Product-not-Sum consensus and rule-based risk management. This provides a robust foundation for autonomous trading. Future integration of LTN constraint enforcement will further enhance the system's ability to achieve ``State-of-the-Art'' returns while maintaining ``Regulatory Grade'' safety.
+JANUS combines Chronos-2's zero-shot forecasting, multimodal fusion (MSGCA), Product-not-Sum consensus, LTN constraint enforcement, and Almgren-Chriss optimal execution. This provides a robust foundation for autonomous trading that achieves high performance while maintaining ``Regulatory Grade'' safety through formal logical constraints and comprehensive explainability.
 
 \newpage
 \section{Regulatory Compliance, Ethics, and Systemic Risk}
@@ -547,29 +475,40 @@ The production implementation combines Chronos-2's zero-shot forecasting with Pr
 \subsection{The ``Glass Box'' Transparency}
 A defining feature of Quant 4.0 is Explainability. In a standard Deep RL model, querying ``Why did you reduce the position?'' yields no intelligible answer. 
 
-\textbf{Current Implementation:} The production version of JANUS provides explainability through:
+JANUS provides comprehensive ``Glass Box'' transparency through multiple explainability mechanisms:
+
 \begin{itemize}
     \item \textbf{Reasoning Traces:} The HRM workflow logs CEO and Worker node decisions, including regime assessments and signal generation rationale.
     \item \textbf{Motor Scores:} The consensus mechanism exposes individual motor scores (Chronos, CNN, Risk, Fundamental), allowing inspection of each component's contribution.
-    \item \textbf{Response Metadata:} Analysis responses include detailed reasoning, forecast data, regime information, and risk assessments.
+    \item \textbf{LTN Formal Traces:} Logic Tensor Networks provide formal logical traces showing predicate evaluations and rule triggers:
+    \begin{quote}
+    \sloppy
+    \textbf{Query:} ``Why was the order size reduced?'' \\
+    \textbf{LTN Trace:} ``Predicate \textit{HighVolatility}(VisualInput) is TRUE (0.95 confidence). Predicate \textit{LiquidityRisk} is TRUE. Rule triggered: HighVol $\to$ ReduceSize.''
+    \end{quote}
+    \item \textbf{Visual Evidence:} Grad-CAM (Gradient-weighted Class Activation Mapping) generates heatmaps highlighting which input regions triggered CNN predictions, providing visual evidence for the visual encoder's decisions.
 \end{itemize}
-
-\textbf{Future Enhancement with LTN:}
-When Logic Tensor Networks are integrated, the system will provide formal logical traces:
-
-\textbf{Query:} ``Why was the order size reduced?''
-\begin{quote}
-\sloppy
-\textbf{LTN Trace:} ``Predicate \textit{HighVolatility}(VisualInput) is TRUE (0.95 confidence). Predicate \textit{LiquidityRisk} is TRUE. Rule \#4 triggered: HighVol $\to$ ReduceSize.''
-\end{quote}
-\textbf{Visual Evidence:} \sloppy With GAF integration, the system can generate Grad-CAM heatmaps. These highlight textures that triggered the predicates. \fussy
 
 This ``Glass Box'' transparency is essential for gaining trust from risk managers and regulators (e.g., SEC, FCA), who increasingly demand auditability for algorithmic trading systems.
 
 \subsection{Addressing Systemic Risk}
 While JANUS is designed to be individually safe, the widespread adoption of such ``aware'' agents introduces new systemic risks. If thousands of JANUS agents simultaneously detect a ``Crash Texture'' and logically decide to ``Halt Trading'' (via the VPIN rule), market liquidity could evaporate instantly, exacerbating a Flash Crash.
 
-Future research must investigate Multi-Agent Reinforcement Learning (MARL) scenarios. We must model the collective behaviour of JANUS populations and potentially introduce ``Cooperative Logic'' constraints that incentivize agents to maintain market stability (e.g., acting as a market maker of last resort) in exchange for regulatory credits or reduced transaction fees.
+JANUS addresses this through Multi-Agent Reinforcement Learning (MARL) modeling and Cooperative Logic constraints. The MARL framework models collective behavior of JANUS agent populations, analyzing:
+\begin{itemize}
+    \item \textbf{Flash Crash Risk:} Simultaneous VPIN-triggered halts leading to liquidity evaporation
+    \item \textbf{Liquidity Evaporation:} Market volume vs. selling pressure analysis
+    \item \textbf{Herd Behavior:} Coordination level detection when agents act similarly
+\end{itemize}
+
+\textbf{Cooperative Logic Constraints:} LTN constraints incentivize agents to maintain market stability:
+\begin{itemize}
+    \item \textbf{Market Maker of Last Resort:} Act as market maker when liquidity is low
+    \item \textbf{Position Size Coordination:} Reduce position sizes when systemic risk is high
+    \item \textbf{Staggered Execution:} Delay execution to prevent simultaneous actions
+\end{itemize}
+
+These constraints are encoded as LTN formulas and evaluated alongside trading constraints, with cooperative rewards (e.g., regulatory credits) incentivizing market-stabilizing behavior.
 
 % Shortened title for TOC
 \section[Future Directions]{Future Directions: Toward General Financial Intelligence}
