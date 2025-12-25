@@ -17,41 +17,33 @@ This repository contains five interconnected technical documents that can be rea
 
 ### Individual Documents
 
-1. **📘 JANUS Main Architecture** (`janus_main.pdf`)
+1. **📘 JANUS Main Architecture** (`main.pdf`)
    - Philosophical foundation and system design
    - Architectural overview and component integration
    - Safety, compliance, and validation strategies
 
-2. **🔵 JANUS Forward Service** (`janus_forward.pdf`)
+2. **🔵 JANUS Forward Service** (`forward.pdf`)
    - Real-time decision-making system
    - DiffGAF visual pattern recognition
    - Logic Tensor Networks for constraint enforcement
    - Basal Ganglia-inspired decision engine
 
-3. **🟣 JANUS Backward Service** (`janus_backward.pdf`)
+3. **🟣 JANUS Backward Service** (`backward.pdf`)
    - Three-timescale memory hierarchy
    - Sharp-Wave Ripple (SWR) simulation
    - Schema consolidation and long-term learning
    - UMAP-based cognitive visualization
 
-4. **🟢 JANUS Neuromorphic Architecture** (`janus_neuromorphic_architecture.pdf`)
+4. **🟢 JANUS Neuromorphic Architecture** (`neuro.pdf`)
    - Brain-region to trading-component mapping
    - Neuroscience-inspired design patterns
    - Information flow diagrams
 
-5. **🟠 JANUS Rust Implementation** (`janus_rust_implementation.pdf`)
+5. **🟠 JANUS Rust Implementation** (`rust.pdf`)
    - Production-ready ML system with Rust
    - FastAPI gateway architecture
    - Docker/Kubernetes deployment guide
    - Migration roadmap from Python to Rust
-
-### Complete Edition
-
-**📕 JANUS Complete** (`complete.pdf`)
-- All five volumes combined into a single comprehensive document
-- Unified table of contents and cross-references
-- Master implementation checklist
-- Consolidated bibliography
 
 ## 🏗️ Repository Structure
 
@@ -59,23 +51,20 @@ This repository contains five interconnected technical documents that can be rea
 technical_papers/
 ├── .github/
 │   └── workflows/
-│       └── build-pdf.yml          # Automated PDF generation
+│       └── ci.yml                 # Automated PDF generation
 ├── project_janus/
-│   ├── main.tex                   # Volume I: Architecture
-│   ├── forward.tex                # Volume II: Forward Service
-│   ├── backward.tex               # Volume III: Backward Service
-│   ├── neuro.tex                  # Volume IV: Neuromorphic Architecture
-│   ├── rust.tex                   # Volume V: Rust Implementation
-│   └── complete.tex         # Combined master document
+│   ├── main.tex                   # Architecture Overview
+│   ├── main.pdf                   # (auto-generated)
+│   ├── forward.tex                # Forward Service
+│   ├── forward.pdf                # (auto-generated)
+│   ├── backward.tex               # Backward Service
+│   ├── backward.pdf               # (auto-generated)
+│   ├── neuro.tex                  # Neuromorphic Architecture
+│   ├── neuro.pdf                  # (auto-generated)
+│   ├── rust.tex                   # Rust Implementation
+│   └── rust.pdf                   # (auto-generated)
 ├── scripts/
 │   └── build.sh                   # One-click build script
-├── pdf/                           # Generated PDFs (auto-committed)
-│   ├── janus_main.pdf
-│   ├── janus_forward.pdf
-│   ├── janus_backward.pdf
-│   ├── janus_neuromorphic_architecture.pdf
-│   ├── janus_rust_implementation.pdf
-│   └── complete.pdf
 └── README.md                      # This file
 ```
 
@@ -139,22 +128,19 @@ Generated PDFs will be in the `pdf/` directory.
 cd technical_papers/project_janus
 
 # Build main architecture
-pdflatex -interaction=nonstopmode -jobname=janus_main main.tex
+pdflatex -interaction=nonstopmode main.tex
 
 # Build forward service
-pdflatex -interaction=nonstopmode -jobname=janus_forward forward.tex
+pdflatex -interaction=nonstopmode forward.tex
 
 # Build backward service
-pdflatex -interaction=nonstopmode -jobname=janus_backward backward.tex
+pdflatex -interaction=nonstopmode backward.tex
 
 # Build neuromorphic architecture
-pdflatex -interaction=nonstopmode -jobname=janus_neuromorphic_architecture neuro.tex
+pdflatex -interaction=nonstopmode neuro.tex
 
 # Build Rust implementation
-pdflatex -interaction=nonstopmode -jobname=janus_rust_implementation rust.tex
-
-# Build complete edition
-pdflatex -interaction=nonstopmode complete.tex
+pdflatex -interaction=nonstopmode rust.tex
 ```
 
 **Note:** Run `pdflatex` twice for each document to properly generate table of contents and cross-references.
@@ -193,7 +179,7 @@ The complete implementation can be broken down into phases:
 | **Phase 6** | Weeks 17-20 | Production Deployment (Kubernetes, monitoring) |
 | **Phase 7** | Ongoing | Optimization (profiling, pure Rust ML) |
 
-See the **Master Implementation Checklist** in `pdf/janus_complete.pdf` for detailed tasks.
+See the **Master Implementation Checklist** in the individual PDF documents for detailed tasks.
 
 ## 🧠 Key Technologies
 
