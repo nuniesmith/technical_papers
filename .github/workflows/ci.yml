@@ -91,8 +91,8 @@ jobs:
             cd "$dir" || continue
 
             # Compile twice for references and TOC
-            if pdflatex -interaction=nonstopmode "$base.tex" > /dev/null 2>&1 && \
-               pdflatex -interaction=nonstopmode "$base.tex" > /dev/null 2>&1; then
+            if pdflatex -interaction=nonstopmode "$base.tex" > "$base.log" 2>&1 && \
+               pdflatex -interaction=nonstopmode "$base.tex" > "$base.log" 2>&1; then
 
               if [ -f "$base.pdf" ]; then
                 size=$(du -h "$base.pdf" | cut -f1)
@@ -103,15 +103,23 @@ jobs:
                 echo "✗ PDF not generated for $base.tex"
                 echo "| $tex_file | ❌ Failed (no PDF) | - |" >> "$ROOT_DIR/build-summary.md"
                 FAIL=$((FAIL + 1))
+                # Save log for debugging
+                if [ -f "$base.log" ]; then
+                  cp "$base.log" "$ROOT_DIR/${base}_error.log"
+                fi
               fi
             else
               echo "✗ Compilation failed for $base.tex"
               echo "| $tex_file | ❌ Failed (compile error) | - |" >> "$ROOT_DIR/build-summary.md"
               FAIL=$((FAIL + 1))
+              # Save log for debugging
+              if [ -f "$base.log" ]; then
+                cp "$base.log" "$ROOT_DIR/${base}_error.log"
+              fi
             fi
 
-            # Clean up auxiliary files
-            rm -f *.aux *.log *.out *.toc *.synctex.gz *.fdb_latexmk *.fls 2>/dev/null
+            # Clean up auxiliary files (but keep error logs)
+            rm -f *.aux *.out *.toc *.synctex.gz *.fdb_latexmk *.fls 2>/dev/null
 
           done < "$ROOT_DIR/main_docs.txt"
 
@@ -129,15 +137,17 @@ jobs:
 
           cat build-summary.md
 
-          # Exit with error if any builds failed
-          if [ $FAIL -gt 0 ]; then
-            exit 1
-          fi
+          # Note: We don't exit with error here - we want to commit successful PDFs
+          # even if some documents failed to compile
 
       - name: List all generated PDFs
         run: |
           echo "All generated PDFs:"
           find . -name "*.pdf" -type f ! -path "*/\.*" -exec ls -lh {} \;
+
+          echo ""
+          echo "Error logs (if any):"
+          find . -name "*_error.log" -type f ! -path "*/\.*" -exec echo "  {}" \;
 
       - name: Upload PDF artifacts
         uses: actions/upload-artifact@v4
@@ -146,11 +156,13 @@ jobs:
           path: "**/*.pdf"
           retention-days: 90
 
-      - name: Upload build summary
+      - name: Upload build summary and logs
         uses: actions/upload-artifact@v4
         with:
-          name: build-summary
-          path: build-summary.md
+          name: build-summary-and-logs
+          path: |
+            build-summary.md
+            *_error.log
           retention-days: 30
 
       - name: Configure Git
