@@ -1270,9 +1270,9 @@ def validate_onnx_export(pytorch_model, onnx_path):
     print(f"Max difference: {diff}")
 
     if diff < 1e-5:
-        print("✓ ONNX export validated successfully")
+        print("[OK] ONNX export validated successfully")
     else:
-        print("✗ ONNX export validation failed")
+        print("[FAIL] ONNX export validation failed")
 
 validate_onnx_export(model, "models/vivit.onnx")
 \end{lstlisting}

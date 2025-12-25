@@ -1,7 +1,6 @@
 # Project JANUS - Neuromorphic Trading Intelligence
 
-[![JANUS Unified CI](https://github.com/nuniesmith/technical_papers/actions/workflows/ci.yml/badge.svg)](https://github.com/nuniesmith/technical_papers/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/nuniesmith/technical_papers/branch/main/graph/badge.svg)](https://codecov.io/gh/nuniesmith/technical_papers)
+[![Build LaTeX Documents](https://github.com/nuniesmith/technical_papers/actions/workflows/ci.yml/badge.svg)](https://github.com/nuniesmith/technical_papers/actions/workflows/ci.yml)
 
 > *A Brain-Inspired Architecture for Autonomous Financial Systems*
 
@@ -160,25 +159,25 @@ pdflatex -interaction=nonstopmode complete.tex
 
 **Note:** Run `pdflatex` twice for each document to properly generate table of contents and cross-references.
 
-## 🤖 Automated CI/CD (GitHub Actions)
+## 🤖 Automated Builds (GitHub Actions)
 
 Every push to the `main` branch automatically:
 
-**Documentation Pipeline:**
-1. Runs quality checks on LaTeX files
-2. Compiles all 6 PDFs
-3. Commits them back to the repository
-4. Generates documentation metrics
+1. ✅ Finds all LaTeX documents (files with `\documentclass`)
+2. ✅ Compiles each document to PDF (runs pdflatex twice for TOC/references)
+3. ✅ Commits PDFs back to the repository **in the same directory as the source files**
+4. ✅ Creates downloadable artifacts
+5. ✅ Generates build summary
 
-**Rust Code Pipeline** (when Rust code exists):
-1. Runs tests on Linux, macOS, and Windows
-2. Generates code coverage reports (Codecov)
-3. Runs security audits and benchmarks
-4. Builds release artifacts
+**Key Features:**
+- 📁 **Auto-discovery**: Finds all `.tex` files anywhere in the repository
+- 📍 **Same directory**: PDFs are created next to their source `.tex` files
+- 🔄 **No loops**: Uses `[skip ci]` to prevent infinite commit loops
+- 📊 **Build reports**: Shows success/failure for each document
 
 View the workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
-**Setup Guide:** See [`CI_SETUP.md`](CI_SETUP.md) for Codecov configuration and detailed CI documentation.
+**Adding new documents:** Just create a `.tex` file anywhere in the repo with `\documentclass` - CI will automatically find and build it!
 
 ## 📋 Implementation Roadmap
 
@@ -194,7 +193,7 @@ The complete implementation can be broken down into phases:
 | **Phase 6** | Weeks 17-20 | Production Deployment (Kubernetes, monitoring) |
 | **Phase 7** | Ongoing | Optimization (profiling, pure Rust ML) |
 
-See the **Master Implementation Checklist** in `complete.pdf` for detailed tasks.
+See the **Master Implementation Checklist** in `pdf/janus_complete.pdf` for detailed tasks.
 
 ## 🧠 Key Technologies
 
