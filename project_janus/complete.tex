@@ -1,0 +1,471 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- PACKAGES ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{pmboxdraw}
+\usepackage{newunicodechar}
+\usepackage[english]{babel}
+\usepackage{helvet}               % Helvetica for a clean, tech look
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{setspace}             % For line spacing
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{listings}             % For code snippets
+\usepackage{tcolorbox}            % For highlighted boxes
+\usepackage{tabularx}             % For auto-wrapping tables
+\usepackage{array}                % For extra table column formatting
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
+\usepackage{pdfpages}             % For including other PDFs if needed
+
+% --- Define Left-Aligned X Column for Tables ---
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+% --- URL BREAKING ---
+\usepackage{xurl}
+\usepackage{hyperref}
+
+% --- CONFIGURATION ---
+\onehalfspacing                   % 1.5 Line Spacing for readability and length
+
+% --- HEADER HEIGHT ---
+\setlength{\headheight}{15pt}
+
+\definecolor{janusblue}{RGB}{0, 51, 102}
+\definecolor{accentgold}{RGB}{204, 153, 51}
+\definecolor{warnred}{RGB}{153, 0, 0}
+\definecolor{forwardblue}{RGB}{51, 102, 153}
+\definecolor{backwardblue}{RGB}{30, 60, 114}
+\definecolor{neurocolor}{RGB}{102, 51, 153}
+\definecolor{rustcolor}{RGB}{206, 92, 0}
+\definecolor{codegray}{RGB}{245, 245, 245}
+
+% --- UNICODE CHARACTER DECLARATIONS ---
+\newunicodechar{▼}{\ensuremath{\blacktriangledown}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{…}{\ldots}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{∨}{\ensuremath{\vee}}
+\newunicodechar{¬}{\ensuremath{\neg}}
+\newunicodechar{⊕}{\ensuremath{\oplus}}
+\newunicodechar{⊗}{\ensuremath{\otimes}}
+\newunicodechar{∑}{\ensuremath{\sum}}
+\newunicodechar{∏}{\ensuremath{\prod}}
+\newunicodechar{∫}{\ensuremath{\int}}
+\newunicodechar{∂}{\ensuremath{\partial}}
+\newunicodechar{∇}{\ensuremath{\nabla}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\epsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\phi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{℘}{\ensuremath{\wp}}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{⟨}{\ensuremath{\langle}}
+\newunicodechar{⟩}{\ensuremath{\rangle}}
+
+% --- HYPERLINK CONFIGURATION ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=janusblue,
+    filecolor=janusblue,
+    urlcolor=janusblue,
+    citecolor=janusblue,
+    pdftitle={Project JANUS - Complete Technical Documentation},
+    pdfauthor={Jordan Smith},
+    pdfsubject={Neuromorphic Trading Intelligence},
+    pdfkeywords={algorithmic trading, neuromorphic computing, machine learning, Rust}
+}
+
+% --- CODE LISTING STYLE ---
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{janusblue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{accentgold},
+    backgroundcolor=\color{codegray},
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    tabsize=4,
+    showstringspaces=false
+}
+
+% --- HEADER & FOOTER ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{janusblue}{\textbf{Project JANUS}}}
+\fancyhead[R]{\textcolor{janusblue}{Complete Technical Documentation}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% --- SECTION FORMATTING ---
+\titleformat{\section}
+    {\Large\bfseries\color{janusblue}}
+    {\thesection}{1em}{}
+\titleformat{\subsection}
+    {\large\bfseries\color{janusblue}}
+    {\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+    {\normalsize\bfseries\color{janusblue}}
+    {\thesubsubsection}{1em}{}
+
+% =============================================================================
+% DOCUMENT START
+% =============================================================================
+\begin{document}
+
+% =============================================================================
+% TITLE PAGE
+% =============================================================================
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \centering
+    \vspace*{2cm}
+
+    {\Huge \textbf{Project JANUS}} \\[0.5cm]
+    {\LARGE \textbf{Complete Technical Documentation}} \\[1cm]
+
+    {\Large \textit{A Brain-Inspired Architecture for Autonomous Financial Systems}} \\[2.5cm]
+
+    \begin{tcolorbox}[colback=gray!10, colframe=janusblue, width=0.9\textwidth, arc=3mm, boxrule=0.5mm]
+        \centering
+        \textbf{\large The Complete JANUS Suite}\\[0.5cm]
+
+        \textbf{\textcolor{janusblue}{Volume I: Architecture Overview}}\\
+        The philosophical foundation and system design\\[0.3cm]
+
+        \textbf{\textcolor{forwardblue}{Volume II: Forward Service}}\\
+        Real-time trading, pattern recognition, and execution\\[0.3cm]
+
+        \textbf{\textcolor{backwardblue}{Volume III: Backward Service}}\\
+        Memory consolidation, schema formation, and learning\\[0.3cm]
+
+        \textbf{\textcolor{neurocolor}{Volume IV: Neuromorphic Architecture}}\\
+        Brain-inspired components and cognitive mapping\\[0.3cm]
+
+        \textbf{\textcolor{rustcolor}{Volume V: Rust Implementation}}\\
+        Production-ready ML system with Rust and Python
+    \end{tcolorbox}
+
+    \vspace{1.5cm}
+
+    \textbf{\Large Classification: Master Technical Document} \\[0.5cm]
+    \textbf{\Large Version: 2.0 (Complete Edition)} \\[2cm]
+
+    \textbf{Author:} Jordan Smith \\
+    \textit{github.com/nuniesmith} \\[0.5cm]
+    \textbf{Date:} \today
+
+    \vfill
+
+    \textit{``The god of beginnings and transitions, looking simultaneously to the future and the past.''}
+\end{titlepage}
+
+% =============================================================================
+% TABLE OF CONTENTS
+% =============================================================================
+\newpage
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+% =============================================================================
+% PREFACE
+% =============================================================================
+\section*{Preface: The Complete JANUS Documentation}
+\addcontentsline{toc}{section}{Preface: The Complete JANUS Documentation}
+
+This document represents the complete technical specification for \textbf{Project JANUS}, a neuromorphic trading intelligence system that bridges neuroscience, machine learning, and quantitative finance.
+
+\subsection*{How to Read This Document}
+
+This master document combines five interconnected volumes that can be read independently or as a unified whole:
+
+\begin{enumerate}
+    \item \textbf{Volume I - Architecture Overview (main.tex)}: Start here for the big picture. This volume explains the philosophical motivation, the dual-service architecture, and how all components fit together.
+
+    \item \textbf{Volume II - Forward Service (forward.tex)}: Deep dive into the real-time trading engine. Read this for implementation details of visual pattern recognition (DiffGAF + ViViT), logical reasoning (Logic Tensor Networks), and the decision-making system.
+
+    \item \textbf{Volume III - Backward Service (backward.tex)}: Explore the learning and memory system. This volume covers the three-timescale memory hierarchy, Sharp-Wave Ripple simulation, schema consolidation, and UMAP visualization.
+
+    \item \textbf{Volume IV - Neuromorphic Architecture (neuro.tex)}: Understand the brain-inspired design philosophy. Maps each trading component to its neuroscience equivalent, from cortex to cerebellum.
+
+    \item \textbf{Volume V - Rust Implementation (rust.tex)}: Production deployment guide. Details the Rust-first ML stack, FastAPI gateway, Docker/Kubernetes deployment, and migration roadmap.
+\end{enumerate}
+
+\subsection*{Document Structure}
+
+Each volume maintains its independence while contributing to the unified vision. Cross-references are provided where concepts span multiple volumes. Implementation checklists at the end of each technical volume provide actionable development guidance.
+
+\subsection*{Intended Audience}
+
+\begin{itemize}
+    \item \textbf{Quantitative Researchers}: Volumes I, II, and III
+    \item \textbf{ML Engineers}: Volumes II, III, and V
+    \item \textbf{System Architects}: Volumes I, IV, and V
+    \item \textbf{Neuroscience-Curious}: Volumes I and IV
+    \item \textbf{DevOps/Infrastructure}: Volume V
+\end{itemize}
+
+\vspace{1cm}
+\noindent\textit{Welcome to the future of algorithmic trading.}
+
+\newpage
+
+% =============================================================================
+% PART I: ARCHITECTURE OVERVIEW
+% =============================================================================
+\part{Architecture Overview}
+\label{part:main}
+
+\input{main}
+
+\clearpage
+
+% =============================================================================
+% PART II: FORWARD SERVICE
+% =============================================================================
+\part{Forward Service: Real-Time Trading}
+\label{part:forward}
+
+\input{forward}
+
+\clearpage
+
+% =============================================================================
+% PART III: BACKWARD SERVICE
+% =============================================================================
+\part{Backward Service: Memory \& Learning}
+\label{part:backward}
+
+\input{backward}
+
+\clearpage
+
+% =============================================================================
+% PART IV: NEUROMORPHIC ARCHITECTURE
+% =============================================================================
+\part{Neuromorphic Architecture}
+\label{part:neuro}
+
+\input{neuro}
+
+\clearpage
+
+% =============================================================================
+% PART V: RUST IMPLEMENTATION
+% =============================================================================
+\part{Rust Implementation Guide}
+\label{part:rust}
+
+\input{rust}
+
+\clearpage
+
+% =============================================================================
+% UNIFIED REFERENCES
+% =============================================================================
+\section*{Unified References}
+\addcontentsline{toc}{section}{Unified References}
+
+\textit{Note: Each volume contains its own reference section. This unified section consolidates key references across all five volumes.}
+
+\begin{itemize}[leftmargin=*, itemsep=0.3em]
+    \item \textbf{Buzsáki, G.} (2015). \textit{The Brain from Inside Out}. Oxford University Press.
+    \item \textbf{Hassabis, D., et al.} (2017). Neuroscience-inspired artificial intelligence. \textit{Neuron}, 95(2), 245-258.
+    \item \textbf{Mnih, V., et al.} (2015). Human-level control through deep reinforcement learning. \textit{Nature}, 518(7540), 529-533.
+    \item \textbf{Serrà, J., et al.} (2018). Image-based time series classification with gramian angular fields. \textit{arXiv:1506.00327}.
+    \item \textbf{Arnab, A., et al.} (2021). ViViT: A video vision transformer. \textit{ICCV 2021}.
+    \item \textbf{Badreddine, S., et al.} (2022). Logic tensor networks. \textit{Artificial Intelligence}, 303, 103649.
+    \item \textbf{O'Neill, J., et al.} (2010). Play it again: reactivation of waking experience and memory. \textit{Trends in Neurosciences}, 33(5), 220-229.
+    \item \textbf{McInnes, L., et al.} (2018). UMAP: Uniform Manifold Approximation and Projection. \textit{arXiv:1802.03426}.
+    \item \textbf{Klabnik, S. \& Nichols, C.} (2023). \textit{The Rust Programming Language}. No Starch Press.
+    \item \textbf{Paszke, A., et al.} (2019). PyTorch: An imperative style, high-performance deep learning library. \textit{NeurIPS 2019}.
+    \item \textbf{Almgren, R. \& Chriss, N.} (2001). Optimal execution of portfolio transactions. \textit{Journal of Risk}, 3, 5-40.
+    \item \textbf{Easley, D., et al.} (2012). Flow toxicity and liquidity in a high-frequency world. \textit{The Review of Financial Studies}, 25(5), 1457-1493.
+\end{itemize}
+
+% =============================================================================
+% MASTER IMPLEMENTATION CHECKLIST
+% =============================================================================
+\newpage
+\section*{Master Implementation Checklist}
+\addcontentsline{toc}{section}{Master Implementation Checklist}
+
+This consolidated checklist spans all five volumes and provides a complete roadmap for building Project JANUS from scratch.
+
+\subsection*{Phase 1: Foundation (Weeks 1-4)}
+
+\subsubsection*{Infrastructure Setup}
+\begin{itemize}[label=$\square$]
+    \item Initialize Git repository with proper .gitignore
+    \item Set up Rust workspace with cargo workspaces
+    \item Configure Docker development environment
+    \item Establish Python virtual environment for training
+    \item Deploy PostgreSQL for system state
+    \item Deploy Redis for caching
+    \item Deploy Qdrant vector database
+    \item Set up monitoring stack (Prometheus + Grafana)
+\end{itemize}
+
+\subsubsection*{Shared Libraries (Rust)}
+\begin{itemize}[label=$\square$]
+    \item Create \texttt{janus-common} crate for shared types
+    \item Implement market data structures (OHLCV, orderbook)
+    \item Create configuration management (TOML/YAML)
+    \item Build logging infrastructure with \texttt{tracing}
+    \item Implement error handling with \texttt{thiserror}
+\end{itemize}
+
+\subsection*{Phase 2: Forward Service (Weeks 5-8)}
+
+\subsubsection*{Core Components}
+\begin{itemize}[label=$\square$]
+    \item Implement DiffGAF transformation module
+    \item Build GAF video generator with sliding windows
+    \item Export ViViT model from PyTorch to ONNX
+    \item Integrate ONNX Runtime for inference
+    \item Implement Logic Tensor Networks constraint evaluator
+    \item Build multimodal fusion layer (Gated Cross-Attention)
+    \item Implement Basal Ganglia dual pathways (Go/NoGo)
+    \item Build Cerebellar forward model
+\end{itemize}
+
+\subsubsection*{Service Architecture}
+\begin{itemize}[label=$\square$]
+    \item Create async Tokio service with Axum/Actix
+    \item Implement WebSocket streaming for real-time data
+    \item Build REST API for configuration and control
+    \item Add circuit breakers and rate limiting
+    \item Implement comprehensive metrics collection
+\end{itemize}
+
+\subsection*{Phase 3: Backward Service (Weeks 9-12)}
+
+\subsubsection*{Memory System}
+\begin{itemize}[label=$\square$]
+    \item Implement hippocampal episodic buffer (ring buffer)
+    \item Build prioritized experience replay with TD-error
+    \item Create SWR simulation module
+    \item Implement schema representation in Qdrant
+    \item Build AlignedUMAP for schema detection
+    \item Create Parametric UMAP for anomaly detection
+\end{itemize}
+
+\subsubsection*{Batch Processing}
+\begin{itemize}[label=$\square$]
+    \item Implement sleep cycle scheduling
+    \item Build parallel batch processor with Rayon
+    \item Create schema consolidation pipeline
+    \item Implement periodic pruning jobs
+    \item Add comprehensive logging and monitoring
+\end{itemize}
+
+\subsection*{Phase 4: Training Gateway (Weeks 13-14)}
+
+\subsubsection*{Python Services}
+\begin{itemize}[label=$\square$]
+    \item Create FastAPI gateway service
+    \item Implement model training endpoints
+    \item Set up Celery for async job processing
+    \item Build model versioning system
+    \item Create ONNX export pipeline
+    \item Implement model validation tests
+\end{itemize}
+
+\subsection*{Phase 5: Integration \& Testing (Weeks 15-16)}
+
+\subsubsection*{End-to-End Testing}
+\begin{itemize}[label=$\square$]
+    \item Create synthetic market data generators
+    \item Build integration test suite
+    \item Implement backtesting framework
+    \item Add performance benchmarking
+    \item Create stress testing scenarios
+    \item Validate wash sale compliance
+    \item Test circuit breakers and kill switches
+\end{itemize}
+
+\subsection*{Phase 6: Deployment (Weeks 17-20)}
+
+\subsubsection*{Production Infrastructure}
+\begin{itemize}[label=$\square$]
+    \item Create Docker images for all services
+    \item Write Docker Compose for local deployment
+    \item Create Kubernetes manifests
+    \item Set up CI/CD pipeline (GitHub Actions)
+    \item Configure production monitoring
+    \item Implement alerting rules
+    \item Create runbooks for operations
+    \item Conduct security audit
+    \item Perform regulatory compliance review
+\end{itemize}
+
+\subsection*{Phase 7: Optimization (Ongoing)}
+
+\begin{itemize}[label=$\square$]
+    \item Profile hot paths and optimize bottlenecks
+    \item Migrate to pure Rust ML inference (Candle/Burn)
+    \item Implement model quantization (INT8)
+    \item Add GPU acceleration where beneficial
+    \item Optimize Qdrant query patterns
+    \item Fine-tune memory allocation strategies
+    \item Implement adaptive learning rates
+    \item Add continual learning capabilities
+\end{itemize}
+
+% =============================================================================
+% END MATTER
+% =============================================================================
+\newpage
+\section*{About the Author}
+\addcontentsline{toc}{section}{About the Author}
+
+\textbf{Jordan Smith} is a quantitative researcher and software engineer specializing in neuromorphic computing and algorithmic trading systems. With a background in both neuroscience and machine learning, Jordan bridges the gap between biological intelligence and artificial systems.
+
+\vspace{0.5cm}
+\noindent\textbf{Contact:}
+\begin{itemize}[leftmargin=*]
+    \item GitHub: \url{https://github.com/nuniesmith}
+    \item Project Repository: \url{https://github.com/nuniesmith/project-janus}
+\end{itemize}
+
+\vspace{1cm}
+\noindent\textit{This document represents years of research at the intersection of neuroscience, machine learning, and quantitative finance. May it serve as a foundation for the next generation of intelligent trading systems.}
+
+\end{document}

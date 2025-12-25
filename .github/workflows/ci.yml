@@ -1,0 +1,663 @@
+name: JANUS Unified CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "project_janus/*.tex"
+      - "scripts/build.sh"
+      - "src/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  # ===========================================================================
+  # DOCUMENTATION PIPELINE
+  # ===========================================================================
+
+  documentation-quality:
+    name: 📚 Documentation Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check LaTeX syntax and metrics
+        run: |
+          echo "# Documentation Quality Report" > quality-report.md
+          echo "" >> quality-report.md
+          echo "## LaTeX Files Analyzed" >> quality-report.md
+
+          total_files=0
+          total_lines=0
+
+          for file in project_janus/*.tex; do
+            if [ -f "$file" ]; then
+              lines=$(wc -l < "$file")
+              total_files=$((total_files + 1))
+              total_lines=$((total_lines + lines))
+              echo "- $(basename $file): $lines lines" >> quality-report.md
+            fi
+          done
+
+          echo "" >> quality-report.md
+          echo "**Total:** $total_files files, $total_lines lines" >> quality-report.md
+
+      - name: Check for common LaTeX issues
+        run: |
+          echo "" >> quality-report.md
+          echo "## Quality Checks" >> quality-report.md
+          echo "" >> quality-report.md
+
+          # Check for undefined references
+          echo "### Undefined References" >> quality-report.md
+          if grep -r "\\\\ref{" project_janus/*.tex > /dev/null; then
+            echo "✓ Reference tags found and will be validated during compilation" >> quality-report.md
+          else
+            echo "ℹ️ No reference tags found" >> quality-report.md
+          fi
+
+          # Check for TODO/FIXME comments
+          echo "" >> quality-report.md
+          echo "### Outstanding TODOs" >> quality-report.md
+          if grep -rn "TODO\|FIXME" project_janus/*.tex > /dev/null; then
+            grep -rn "TODO\|FIXME" project_janus/*.tex | while read line; do
+              echo "- $line" >> quality-report.md
+            done
+          else
+            echo "✓ No TODOs or FIXMEs found" >> quality-report.md
+          fi
+
+          # Check for citations
+          echo "" >> quality-report.md
+          echo "### Citations" >> quality-report.md
+          citation_count=$(grep -r "\\\\cite{" project_janus/*.tex 2>/dev/null | wc -l || echo "0")
+          echo "- Total citations: $citation_count" >> quality-report.md
+
+          # Document structure check
+          echo "" >> quality-report.md
+          echo "### Document Structure" >> quality-report.md
+          for file in project_janus/*.tex; do
+            if [ -f "$file" ]; then
+              sections=$(grep -c "\\\\section" "$file" || echo "0")
+              subsections=$(grep -c "\\\\subsection" "$file" || echo "0")
+              echo "- $(basename $file): $sections sections, $subsections subsections" >> quality-report.md
+            fi
+          done
+
+          cat quality-report.md
+
+      - name: Upload quality report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Documentation-Quality-Report
+          path: quality-report.md
+          retention-days: 30
+
+  build-latex:
+    name: 📄 Build LaTeX PDFs
+    runs-on: ubuntu-latest
+    needs: documentation-quality
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install LaTeX dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
+            texlive-latex-base \
+            texlive-latex-extra \
+            texlive-fonts-extra \
+            texlive-science \
+            texlive-latex-recommended
+
+      - name: Verify LaTeX packages
+        run: |
+          echo "Checking for required packages..."
+          kpsewhich pmboxdraw.sty || echo "Missing: pmboxdraw"
+          kpsewhich newunicodechar.sty || echo "Missing: newunicodechar"
+          kpsewhich algorithm.sty || echo "Missing: algorithm"
+          kpsewhich algpseudocode.sty || echo "Missing: algpseudocode"
+          kpsewhich tcolorbox.sty || echo "Missing: tcolorbox"
+          kpsewhich mathtools.sty || echo "Missing: mathtools"
+
+      - name: Create PDF output directory
+        run: mkdir -p pdf
+
+      - name: Compile JANUS Main Architecture
+        working-directory: project_janus
+        run: |
+          pdflatex -interaction=nonstopmode -jobname=janus_main main.tex
+          pdflatex -interaction=nonstopmode -jobname=janus_main main.tex
+          if [ -f janus_main.pdf ]; then
+            mv janus_main.pdf ../pdf/janus_main.pdf
+            echo "✓ janus_main.pdf compiled successfully"
+          else
+            echo "✗ Failed to compile janus_main.pdf"
+            exit 1
+          fi
+
+      - name: Compile JANUS Forward Service
+        working-directory: project_janus
+        run: |
+          pdflatex -interaction=nonstopmode -jobname=janus_forward forward.tex
+          pdflatex -interaction=nonstopmode -jobname=janus_forward forward.tex
+          if [ -f janus_forward.pdf ]; then
+            mv janus_forward.pdf ../pdf/janus_forward.pdf
+            echo "✓ janus_forward.pdf compiled successfully"
+          else
+            echo "✗ Failed to compile janus_forward.pdf"
+            exit 1
+          fi
+
+      - name: Compile JANUS Backward Service
+        working-directory: project_janus
+        run: |
+          pdflatex -interaction=nonstopmode -jobname=janus_backward backward.tex
+          pdflatex -interaction=nonstopmode -jobname=janus_backward backward.tex
+          if [ -f janus_backward.pdf ]; then
+            mv janus_backward.pdf ../pdf/janus_backward.pdf
+            echo "✓ janus_backward.pdf compiled successfully"
+          else
+            echo "✗ Failed to compile janus_backward.pdf"
+            exit 1
+          fi
+
+      - name: Compile JANUS Neuromorphic Architecture
+        working-directory: project_janus
+        run: |
+          pdflatex -interaction=nonstopmode -jobname=janus_neuromorphic_architecture neuro.tex
+          pdflatex -interaction=nonstopmode -jobname=janus_neuromorphic_architecture neuro.tex
+          if [ -f janus_neuromorphic_architecture.pdf ]; then
+            mv janus_neuromorphic_architecture.pdf ../pdf/janus_neuromorphic_architecture.pdf
+            echo "✓ janus_neuromorphic_architecture.pdf compiled successfully"
+          else
+            echo "✗ Failed to compile janus_neuromorphic_architecture.pdf"
+            exit 1
+          fi
+
+      - name: Compile JANUS Rust Implementation
+        working-directory: project_janus
+        run: |
+          pdflatex -interaction=nonstopmode -jobname=janus_rust_implementation rust.tex
+          pdflatex -interaction=nonstopmode -jobname=janus_rust_implementation rust.tex
+          if [ -f janus_rust_implementation.pdf ]; then
+            mv janus_rust_implementation.pdf ../pdf/janus_rust_implementation.pdf
+            echo "✓ janus_rust_implementation.pdf compiled successfully"
+          else
+            echo "✗ Failed to compile janus_rust_implementation.pdf"
+            exit 1
+          fi
+
+      - name: Compile JANUS Complete Edition
+        working-directory: project_janus
+        run: |
+          pdflatex -interaction=nonstopmode janus_complete.tex
+          pdflatex -interaction=nonstopmode janus_complete.tex
+          pdflatex -interaction=nonstopmode janus_complete.tex
+          if [ -f janus_complete.pdf ]; then
+            mv janus_complete.pdf ../pdf/janus_complete.pdf
+            echo "✓ janus_complete.pdf compiled successfully"
+          else
+            echo "✗ Failed to compile janus_complete.pdf"
+            exit 1
+          fi
+
+      - name: List generated PDFs
+        run: |
+          echo "Generated PDFs:"
+          ls -lh pdf/*.pdf
+          echo ""
+          echo "PDF sizes:"
+          du -h pdf/*.pdf
+
+      - name: Calculate documentation metrics
+        run: |
+          echo "## Documentation Metrics" >> metrics.md
+          echo "" >> metrics.md
+
+          # Calculate total documentation size
+          total_size=0
+          for pdf in pdf/*.pdf; do
+            if [ -f "$pdf" ]; then
+              size=$(stat -c%s "$pdf" 2>/dev/null || stat -f%z "$pdf" 2>/dev/null)
+              total_size=$((total_size + size))
+            fi
+          done
+
+          total_size_mb=$(echo "scale=2; $total_size / 1048576" | bc)
+          echo "- **Total PDF Size:** ${total_size_mb} MB" >> metrics.md
+
+          # Count pages (approximate)
+          echo "- **Estimated Total Pages:** ~$((total_size / 50000))" >> metrics.md
+
+          # Count LaTeX source lines
+          total_tex_lines=$(find project_janus -name "*.tex" -exec wc -l {} + | tail -1 | awk '{print $1}')
+          echo "- **Total LaTeX Lines:** $total_tex_lines" >> metrics.md
+
+          echo "" >> metrics.md
+          echo "## Individual Document Metrics" >> metrics.md
+          echo "" >> metrics.md
+          echo "| Document | Size | Lines |" >> metrics.md
+          echo "|----------|------|-------|" >> metrics.md
+
+          for pdf in pdf/*.pdf; do
+            if [ -f "$pdf" ]; then
+              filename=$(basename "$pdf")
+              size=$(du -h "$pdf" | cut -f1)
+
+              case "$filename" in
+                janus_main.pdf) tex_file="project_janus/main.tex" ;;
+                janus_forward.pdf) tex_file="project_janus/forward.tex" ;;
+                janus_backward.pdf) tex_file="project_janus/backward.tex" ;;
+                janus_neuromorphic_architecture.pdf) tex_file="project_janus/neuro.tex" ;;
+                janus_rust_implementation.pdf) tex_file="project_janus/rust.tex" ;;
+                janus_complete.pdf) tex_file="project_janus/janus_complete.tex" ;;
+                *) tex_file="" ;;
+              esac
+
+              if [ -n "$tex_file" ] && [ -f "$tex_file" ]; then
+                lines=$(wc -l < "$tex_file")
+                echo "| $filename | $size | $lines |" >> metrics.md
+              else
+                echo "| $filename | $size | N/A |" >> metrics.md
+              fi
+            fi
+          done
+
+          cat metrics.md
+
+      - name: Upload PDF artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: JANUS-Documentation-PDFs
+          path: pdf/*.pdf
+          retention-days: 90
+
+      - name: Upload metrics report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Documentation-Metrics
+          path: metrics.md
+          retention-days: 90
+
+      - name: Configure Git
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions Bot"
+
+      - name: Commit and push PDFs
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git add pdf/*.pdf
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit - PDFs are already up to date"
+          else
+            git commit -m "Auto-generate PDFs from LaTeX [skip ci]"
+            git push origin HEAD:main || {
+              echo "Push failed. Attempting with force-lease..."
+              git push --force-with-lease origin HEAD:main
+            }
+            echo "✓ PDFs successfully pushed to repository"
+          fi
+
+  # ===========================================================================
+  # RUST CODE PIPELINE
+  # ===========================================================================
+
+  rust-check:
+    name: 🦀 Rust Code Check
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.head_commit.modified, 'src/') ||
+      contains(github.event.head_commit.modified, 'Cargo.toml') ||
+      contains(github.event.head_commit.added, 'src/') ||
+      github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if Rust code exists
+        id: rust_exists
+        run: |
+          if [ -d "src" ] && [ -f "Cargo.toml" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "✓ Rust code detected"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No Rust code found - skipping Rust pipeline"
+          fi
+
+    outputs:
+      rust_exists: ${{ steps.rust_exists.outputs.exists }}
+
+  rust-test:
+    name: 🧪 Rust Test Suite
+    runs-on: ${{ matrix.os }}
+    needs: rust-check
+    if: needs.rust-check.outputs.rust_exists == 'true'
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        rust: [stable, nightly]
+        exclude:
+          - os: macos-latest
+            rust: nightly
+          - os: windows-latest
+            rust: nightly
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt, clippy
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-registry-
+
+      - name: Cache cargo index
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-git-
+
+      - name: Cache cargo build
+        uses: actions/cache@v4
+        with:
+          path: target
+          key: ${{ runner.os }}-${{ matrix.rust }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.rust }}-cargo-build-
+
+      - name: Check formatting
+        if: matrix.rust == 'stable' && matrix.os == 'ubuntu-latest'
+        run: cargo fmt -- --check
+
+      - name: Run clippy
+        if: matrix.rust == 'stable'
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Build
+        run: cargo build --verbose --all-features
+
+      - name: Run tests
+        run: cargo test --verbose --all-features
+
+  rust-coverage:
+    name: 📊 Rust Code Coverage
+    runs-on: ubuntu-latest
+    needs: [rust-check, rust-test]
+    if: needs.rust-check.outputs.rust_exists == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-coverage-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-coverage-
+
+      - name: Generate code coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: lcov.info
+          flags: rust
+          name: rust-coverage
+          fail_ci_if_error: true
+          verbose: true
+
+      - name: Generate coverage report
+        run: cargo llvm-cov --all-features --workspace --html
+
+      - name: Upload HTML coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-coverage-report
+          path: target/llvm-cov/html
+          retention-days: 30
+
+      - name: Upload lcov coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-coverage-lcov
+          path: lcov.info
+          retention-days: 30
+
+  rust-benchmark:
+    name: ⚡ Rust Performance Benchmarks
+    runs-on: ubuntu-latest
+    needs: rust-check
+    if: |
+      needs.rust-check.outputs.rust_exists == 'true' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-bench-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-bench-
+
+      - name: Run benchmarks
+        run: cargo bench --all-features -- --output-format bencher | tee output.txt
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: "cargo"
+          output-file-path: output.txt
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          alert-threshold: "200%"
+          comment-on-alert: true
+          fail-on-alert: false
+
+  rust-security:
+    name: 🔒 Rust Security Audit
+    runs-on: ubuntu-latest
+    needs: rust-check
+    if: needs.rust-check.outputs.rust_exists == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run cargo audit
+        uses: rustsec/audit-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  dependency-review:
+    name: 🔍 Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+
+  rust-artifacts:
+    name: 📦 Build Rust Release Artifacts
+    runs-on: ${{ matrix.os }}
+    needs: [rust-check, rust-test, rust-coverage]
+    if: |
+      needs.rust-check.outputs.rust_exists == 'true' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: janus-linux-x86_64
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: janus-macos-x86_64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact_name: janus-windows-x86_64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build release binary
+        run: cargo build --release --target ${{ matrix.target }} --all-features
+
+      - name: Package binaries (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          mkdir -p artifacts
+          if [ -f "target/${{ matrix.target }}/release/janus-forward" ]; then
+            cp target/${{ matrix.target }}/release/janus-forward artifacts/
+          fi
+          if [ -f "target/${{ matrix.target }}/release/janus-backward" ]; then
+            cp target/${{ matrix.target }}/release/janus-backward artifacts/
+          fi
+          tar -czf ${{ matrix.artifact_name }}.tar.gz -C artifacts .
+
+      - name: Package binaries (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir artifacts
+          if (Test-Path "target/${{ matrix.target }}/release/janus-forward.exe") {
+            Copy-Item "target/${{ matrix.target }}/release/janus-forward.exe" artifacts/
+          }
+          if (Test-Path "target/${{ matrix.target }}/release/janus-backward.exe") {
+            Copy-Item "target/${{ matrix.target }}/release/janus-backward.exe" artifacts/
+          }
+          Compress-Archive -Path artifacts/* -DestinationPath ${{ matrix.artifact_name }}.zip
+
+      - name: Upload artifact (Unix)
+        if: matrix.os != 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_name }}.tar.gz
+          retention-days: 30
+
+      - name: Upload artifact (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_name }}.zip
+          retention-days: 30
+
+  # ===========================================================================
+  # UNIFIED SUMMARY
+  # ===========================================================================
+
+  ci-summary:
+    name: 📋 CI Summary
+    runs-on: ubuntu-latest
+    needs: [documentation-quality, build-latex, rust-check]
+    if: always()
+
+    steps:
+      - name: Create comprehensive summary
+        run: |
+          echo "# 🎯 JANUS Unified CI Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📚 Documentation Pipeline" >> $GITHUB_STEP_SUMMARY
+          echo "- **Quality Checks:** ${{ needs.documentation-quality.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **LaTeX Build:** ${{ needs.build-latex.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.rust-check.outputs.rust_exists }}" == "true" ]; then
+            echo "## 🦀 Rust Code Pipeline" >> $GITHUB_STEP_SUMMARY
+            echo "- **Test Suite:** ${{ needs.rust-test.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Code Coverage:** ${{ needs.rust-coverage.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Security Audit:** ${{ needs.rust-security.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Benchmarks:** ${{ needs.rust-benchmark.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "📊 [View Coverage on Codecov](https://codecov.io/gh/${{ github.repository }})" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## 🦀 Rust Code Pipeline" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ No Rust code detected - pipeline skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## ℹ️ Build Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflow:** ${{ github.workflow }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "📦 Check the **Artifacts** section for downloadable reports and binaries" >> $GITHUB_STEP_SUMMARY

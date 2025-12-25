@@ -1,0 +1,795 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- PACKAGES ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{pmboxdraw}
+\usepackage{newunicodechar}
+\usepackage[english]{babel}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{setspace}
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
+
+% --- Define Left-Aligned X Column for Tables ---
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+% --- URL BREAKING ---
+\usepackage{xurl}
+\usepackage{hyperref}
+
+% --- CONFIGURATION ---
+\onehalfspacing
+\setlength{\headheight}{15pt}
+
+\definecolor{janusblue}{RGB}{0, 51, 102}
+\definecolor{accentgold}{RGB}{204, 153, 51}
+\definecolor{codegray}{RGB}{245, 245, 245}
+\definecolor{forwardblue}{RGB}{41, 98, 255}
+
+% --- UNICODE CHARACTER DECLARATIONS ---
+\newunicodechar{▼}{\ensuremath{\blacktriangledown}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{…}{\ldots}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{∨}{\ensuremath{\vee}}
+\newunicodechar{¬}{\ensuremath{\neg}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{÷}{\ensuremath{\div}}
+\newunicodechar{∞}{\ensuremath{\infty}}
+\newunicodechar{∑}{\ensuremath{\sum}}
+\newunicodechar{∏}{\ensuremath{\prod}}
+\newunicodechar{∫}{\ensuremath{\int}}
+\newunicodechar{√}{\ensuremath{\sqrt}}
+\newunicodechar{∂}{\ensuremath{\partial}}
+\newunicodechar{∇}{\ensuremath{\nabla}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\epsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\phi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{Π}{\ensuremath{\Pi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=janusblue,
+    citecolor=janusblue,
+    urlcolor=accentgold,
+    pdftitle={JANUS Forward: Wake State Logic Trading Algorithm},
+    pdfauthor={Jordan Smith}
+}
+
+% --- HEADER & FOOTER ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{JANUS Forward v1.0}}
+\fancyhead[R]{\textit{Wake State}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% --- SECTION STYLING ---
+\titleformat{\section}
+  {\color{forwardblue}\normalfont\Large\bfseries}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\color{forwardblue}\normalfont\large\bfseries}
+  {\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\color{forwardblue}\normalfont\normalsize\bfseries}
+  {\thesubsubsection}{1em}{}
+
+% --- CODE SNIPPET STYLE ---
+\lstdefinelanguage{Rust}{
+    morekeywords={fn, let, mut, pub, struct, enum, impl, trait, use, mod, crate, async, await, match, if, else, while, for, loop, return, break, continue, const, static, type, where, self, Self, super, unsafe, extern, dyn, Box, Vec, Option, Result, Some, None, Ok, Err},
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{codegray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    extendedchars=true,
+    literate={▼}{{\$\blacktriangledown\$}}1
+             {─}{{-}}1
+             {│}{{|}}1
+             {├}{{+}}1
+             {└}{{`}}1
+             {→}{{->}}1
+             {…}{{...}}1
+}
+
+% --- MATH OPERATORS ---
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\sigmoid}{sigmoid}
+
+% --- DOCUMENT START ---
+\begin{document}
+
+% =============================================================================
+% TITLE PAGE
+% =============================================================================
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \centering
+    \vspace*{3cm}
+
+    {\Huge \textbf{\textcolor{forwardblue}{JANUS FORWARD}}} \\[0.5cm]
+    {\LARGE \textbf{Wake State: Logic Trading Algorithm}} \\[1.5cm]
+
+    {\Large \textit{Real-Time Decision Making, Pattern Recognition, and Trade Execution}} \\[3cm]
+
+    \textbf{\Large Classification: Technical Implementation Guide} \\[0.5cm]
+    \textbf{\Large Version: 1.0 (Implementation-Ready)} \\[3cm]
+
+    \textbf{Author:} Jordan Smith \\
+    \textit{github.com/nuniesmith} \\[0.5cm]
+    \textbf{Date:} \today
+
+    \vfill
+    \begin{tcolorbox}[colback=codegray, colframe=forwardblue, width=0.8\textwidth]
+    \centering
+    \textbf{JANUS Forward Overview:}
+    \begin{itemize}[leftmargin=*]
+        \item \textbf{Purpose:} Real-time trading decisions during market hours
+        \item \textbf{Hot Path:} Low-latency, high-throughput execution
+        \item \textbf{Components:} Visual pattern recognition, symbolic reasoning, multimodal fusion, execution control
+        \item \textbf{Goal:} Neuro-symbolic trading that combines deep learning with logical constraints
+    \end{itemize}
+    \end{tcolorbox}
+    \vfill
+\end{titlepage}
+
+% =============================================================================
+% ABSTRACT
+% =============================================================================
+\newpage
+\pagenumbering{arabic}
+\thispagestyle{plain}
+\section*{Abstract}
+
+JANUS Forward represents the "wake state" of the JANUS trading system, responsible for all real-time decision-making during market hours. This document provides a comprehensive mathematical and implementation specification for the Forward service, which combines:
+
+\begin{itemize}
+    \item \textbf{Visual Pattern Recognition} using Gramian Angular Fields (GAF) and Video Vision Transformers (ViViT)
+    \item \textbf{Symbolic Reasoning} via Logic Tensor Networks (LTN) for constraint satisfaction
+    \item \textbf{Multimodal Fusion} integrating time series, visual, and textual market data
+    \item \textbf{Dual-Pathway Decision Making} inspired by basal ganglia architecture
+\end{itemize}
+
+The Forward service operates on a hot path with strict latency requirements, implementing end-to-end gradient flow through differentiable market simulation while maintaining regulatory compliance through symbolic constraints.
+
+\newpage
+% =============================================================================
+% TABLE OF CONTENTS
+% =============================================================================
+\tableofcontents
+\newpage
+
+% =============================================================================
+% SECTION 1: VISUAL PATTERN RECOGNITION
+% =============================================================================
+\section{Visual Pattern Recognition: DiffGAF and ViViT}
+\label{sec:visual}
+
+The visual subsystem transforms time series data into spatiotemporal images, enabling the system to "see" market patterns that traditional numerical methods miss.
+
+\subsection{Mathematical Foundation: Gramian Angular Fields}
+
+\subsubsection{Input Preprocessing}
+Given a univariate time series of length $N$:
+\begin{equation}
+    X = \{x_1, x_2, \ldots, x_N\} \in \mathbb{R}^N
+\end{equation}
+
+\subsubsection{Step 1: Learnable Normalization}
+The time series is normalized using learnable parameters $\alpha \in \mathbb{R}^+$ and $\beta \in \mathbb{R}$:
+\begin{equation}
+    \tilde{x}_i = \tanh\left(\frac{x_i - \min(X)}{\max(X) - \min(X) + \epsilon} \cdot \alpha + \beta\right)
+\end{equation}
+where $\epsilon = 10^{-8}$ prevents division by zero. The normalized values $\tilde{x}_i \in [-1, 1]$ are constrained to the domain of the cosine function.
+
+\textbf{Implementation Note:} $\alpha$ and $\beta$ are learnable parameters initialized as:
+\begin{align}
+    \alpha_0 &= 1.0 \\
+    \beta_0 &= 0.0
+\end{align}
+These are optimized via backpropagation through the entire pipeline.
+
+\subsubsection{Step 2: Polar Coordinate Transformation}
+Each normalized value is mapped to polar coordinates:
+\begin{equation}
+\begin{cases}
+    \phi_i = \arccos(\tilde{x}_i), & \tilde{x}_i \in [-1, 1] \\
+    r_i = \frac{i}{N}, & i \in \{1, 2, \ldots, N\}
+\end{cases}
+\end{equation}
+where $\phi_i \in [0, \pi]$ is the angular component and $r_i \in [0, 1]$ is the radial component (normalized time index).
+
+\subsubsection{Step 3: Gramian Field Generation}
+Two Gramian Angular Fields are computed:
+
+\textbf{Gramian Angular Summation Field (GASF):}
+\begin{equation}
+    \text{GASF}_{i,j} = \cos(\phi_i + \phi_j) = \tilde{x}_i \tilde{x}_j - \sqrt{1 - \tilde{x}_i^2}\sqrt{1 - \tilde{x}_j^2}
+\end{equation}
+
+\textbf{Gramian Angular Difference Field (GADF):}
+\begin{equation}
+    \text{GADF}_{i,j} = \sin(\phi_i - \phi_j) = \sqrt{1 - \tilde{x}_i^2}\tilde{x}_j - \tilde{x}_i\sqrt{1 - \tilde{x}_j^2}
+\end{equation}
+
+The result is two $N \times N$ matrices (images) where:
+\begin{itemize}
+    \item The main diagonal ($i = j$) contains the original normalized values
+    \item Off-diagonal elements encode temporal correlations
+    \item GASF captures summation relationships
+    \item GADF captures difference relationships
+\end{itemize}
+
+\subsubsection{Implementation Algorithm}
+\begin{algorithm}[H]
+\caption{DiffGAF Transformation}
+\begin{algorithmic}[1]
+\Require Time series $X \in \mathbb{R}^N$, learnable params $\alpha, \beta$
+\Ensure GASF and GADF matrices $\in \mathbb{R}^{N \times N}$
+\State $X_{\min} \gets \min(X)$, $X_{\max} \gets \max(X)$
+\State $\tilde{X} \gets \tanh\left(\frac{X - X_{\min}}{X_{\max} - X_{\min} + \epsilon} \cdot \alpha + \beta\right)$
+\State $\Phi \gets \arccos(\tilde{X})$ \Comment{Element-wise arccos}
+\State Initialize $\text{GASF} \gets \mathbf{0}_{N \times N}$, $\text{GADF} \gets \mathbf{0}_{N \times N}$
+\For{$i = 1$ to $N$}
+    \For{$j = 1$ to $N$}
+        \State $\text{GASF}_{i,j} \gets \cos(\Phi_i + \Phi_j)$
+        \State $\text{GADF}_{i,j} \gets \sin(\Phi_i - \Phi_j)$
+    \EndFor
+\EndFor
+\State \Return $\text{GASF}, \text{GADF}$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{3D Spatiotemporal Manifolds: GAF Video}
+
+\subsubsection{Sliding Window GAF Video Generation}
+Given a time series $X = \{x_1, x_2, \ldots, x_T\}$ of length $T$, we generate a sequence of overlapping GAF frames:
+
+\begin{equation}
+    \mathcal{V} = \{GAF(X_{t:t+w}), GAF(X_{t+s:t+w+s}), \ldots, GAF(X_{t+(F-1)s:t+w+(F-1)s})\}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $w$ = window size (e.g., 60 timesteps)
+    \item $s$ = stride (e.g., 10 timesteps)
+    \item $F$ = number of frames (e.g., 16 frames)
+\end{itemize}
+
+Each frame is a $2 \times N \times N$ tensor (GASF + GADF channels). The complete video tensor is:
+\begin{equation}
+    \mathcal{V} \in \mathbb{R}^{F \times 2 \times N \times N}
+\end{equation}
+
+\subsubsection{Mathematical Formulation}
+For frame $f \in \{0, 1, \ldots, F-1\}$:
+\begin{equation}
+    \mathcal{V}_f = \begin{bmatrix} \text{GASF}(X_{t+fs:t+w+fs}) \\ \text{GADF}(X_{t+fs:t+w+fs}) \end{bmatrix}
+\end{equation}
+
+\subsection{Video Vision Transformer (ViViT)}
+
+\subsubsection{Architecture Overview}
+ViViT processes the 3D tensor $\mathcal{V}$ using factorized spatial-temporal attention.
+
+\subsubsection{Patch Embedding}
+Each frame is divided into patches. For a frame of size $H \times W$ with patch size $P$:
+\begin{equation}
+    N_p = \frac{H}{P} \times \frac{W}{P}
+\end{equation}
+patches per frame.
+
+The patch embedding for patch $(i, j)$ in frame $f$ is:
+\begin{equation}
+    \mathbf{z}_{f,i,j}^{(0)} = \mathbf{E} \cdot \text{flatten}(\mathcal{V}_{f, i:i+P, j:j+P}) + \mathbf{p}_{f,i,j}
+\end{equation}
+where:
+\begin{itemize}
+    \item $\mathbf{E} \in \mathbb{R}^{d \times (2P^2)}$ is the embedding matrix
+    \item $\mathbf{p}_{f,i,j}$ is the positional encoding (spatial + temporal)
+\end{itemize}
+
+\subsubsection{Spatial Attention}
+Within each frame $f$, spatial self-attention is computed:
+\begin{equation}
+    \text{Attention}(\mathbf{Q}_s, \mathbf{K}_s, \mathbf{V}_s) = \softmax\left(\frac{\mathbf{Q}_s \mathbf{K}_s^\top}{\sqrt{d_h}}\right) \mathbf{V}_s
+\end{equation}
+where $\mathbf{Q}_s, \mathbf{K}_s, \mathbf{V}_s$ are queries, keys, and values from spatial patches.
+
+\subsubsection{Temporal Attention}
+Across frames, temporal attention captures evolution:
+\begin{equation}
+    \text{Attention}(\mathbf{Q}_t, \mathbf{K}_t, \mathbf{V}_t) = \softmax\left(\frac{\mathbf{Q}_t \mathbf{K}_t^\top}{\sqrt{d_h}}\right) \mathbf{V}_t
+\end{equation}
+
+\subsubsection{Output Embedding}
+The final visual embedding vector is:
+\begin{equation}
+    \mathbf{e}_{\text{visual}} = \text{MLP}(\text{GlobalPool}(\mathbf{Z}^{(L)})) \in \mathbb{R}^{d_{\text{embed}}}
+\end{equation}
+where $L$ is the number of transformer layers and $d_{\text{embed}}$ is the embedding dimension (e.g., 768).
+
+% =============================================================================
+% SECTION 2: LOGIC TENSOR NETWORKS
+% =============================================================================
+\section{Logic Tensor Networks: Symbolic Reasoning Engine}
+\label{sec:ltn}
+
+The LTN subsystem ensures that all trading decisions satisfy regulatory and risk management constraints through differentiable first-order logic.
+
+\subsection{Mathematical Foundation}
+
+\subsubsection{Grounding Function}
+Let $\mathcal{G}: \mathcal{S} \rightarrow \mathbb{R}^n$ be a grounding function that maps logical symbols to tensors:
+\begin{equation}
+    \mathcal{G}: \text{Constants} \cup \text{Predicates} \cup \text{Functions} \rightarrow \mathbb{R}^n
+\end{equation}
+
+\subsubsection{Predicate Grounding}
+A predicate $P$ with arity $k$ is grounded as a neural network:
+\begin{equation}
+    \mathcal{G}(P): \mathbb{R}^{k \times d} \rightarrow [0, 1]
+\end{equation}
+where $d$ is the embedding dimension.
+
+For example, $\textit{IsVolatile}(market)$ is implemented as:
+\begin{equation}
+    \mathcal{G}(\textit{IsVolatile})(\mathbf{e}_{\text{market}}) = \sigmoid(\mathbf{W}_v \mathbf{e}_{\text{market}} + b_v)
+\end{equation}
+where $\mathbf{W}_v \in \mathbb{R}^{1 \times d}$ and $b_v \in \mathbb{R}$ are learnable parameters.
+
+\subsection{Lukasiewicz T-Norm Operations}
+
+\subsubsection{Conjunction (AND)}
+\begin{equation}
+    \mathcal{G}(A \land B) = \max(0, \mathcal{G}(A) + \mathcal{G}(B) - 1)
+\end{equation}
+
+\subsubsection{Disjunction (OR)}
+\begin{equation}
+    \mathcal{G}(A \lor B) = \min(1, \mathcal{G}(A) + \mathcal{G}(B))
+\end{equation}
+
+\subsubsection{Negation (NOT)}
+\begin{equation}
+    \mathcal{G}(\neg A) = 1 - \mathcal{G}(A)
+\end{equation}
+
+\subsubsection{Implication (IF-THEN)}
+\begin{equation}
+    \mathcal{G}(A \rightarrow B) = \min(1, 1 - \mathcal{G}(A) + \mathcal{G}(B))
+\end{equation}
+
+\subsubsection{Universal Quantification (FOR ALL)}
+For a formula $\phi(x)$ with free variable $x$:
+\begin{equation}
+    \mathcal{G}(\forall x: \phi(x)) = \min_{x \in \mathcal{D}} \mathcal{G}(\phi(x))
+\end{equation}
+where $\mathcal{D}$ is the domain of $x$.
+
+\subsubsection{Existential Quantification (EXISTS)}
+\begin{equation}
+    \mathcal{G}(\exists x: \phi(x)) = \max_{x \in \mathcal{D}} \mathcal{G}(\phi(x))
+\end{equation}
+
+\subsection{Knowledge Base Formulation}
+
+\subsubsection{Wash Sale Constraint}
+The wash sale rule is encoded as:
+\begin{equation}
+    \forall t, \forall k \in [1, 30]: \neg(\textit{SaleAtLoss}(t) \land \textit{Buy}(t+k))
+\end{equation}
+
+In grounded form:
+\begin{equation}
+    \mathcal{G}(\text{WashSale}) = \min_{t, k \in [1,30]} \left[1 - \max(0, \mathcal{G}(\textit{SaleAtLoss})(t) + \mathcal{G}(\textit{Buy})(t+k) - 1)\right]
+\end{equation}
+
+\subsubsection{Almgren-Chriss Risk Constraint}
+\begin{equation}
+    \forall v: \textit{Volatile}(Market) \rightarrow \textit{Impact}(v) < \textit{Threshold}(\sigma)
+\end{equation}
+
+Grounded:
+\begin{equation}
+    \mathcal{G}(\text{ACRisk}) = \min_v \left[\min(1, 1 - \mathcal{G}(\textit{Volatile}) + \mathcal{G}(\textit{Impact}(v) < \textit{Threshold}(\sigma)))\right]
+\end{equation}
+
+where:
+\begin{equation}
+    \textit{Threshold}(\sigma) = \eta \cdot \sigma \cdot \sqrt{\frac{v}{V}}
+\end{equation}
+with $\eta$ = impact coefficient, $\sigma$ = volatility, $v$ = trade size, $V$ = average volume.
+
+\subsubsection{VPIN Toxicity Constraint}
+\begin{equation}
+    \forall t: \textit{VPIN}_t > \tau_{\text{VPIN}} \rightarrow \textit{HaltTrading}(t)
+\end{equation}
+
+Grounded:
+\begin{equation}
+    \mathcal{G}(\text{VPIN}) = \min_t \left[\min(1, 1 - \mathcal{G}(\textit{VPIN}_t > \tau_{\text{VPIN}}) + \mathcal{G}(\textit{HaltTrading})(t))\right]
+\end{equation}
+
+\subsection{Logical Loss Function}
+
+\subsubsection{Satisfiability Aggregation}
+For a knowledge base $\mathcal{K} = \{\phi_1, \phi_2, \ldots, \phi_m\}$:
+\begin{equation}
+    \text{SatAgg}(\mathcal{K}) = \left(\frac{1}{m} \sum_{i=1}^{m} \mathcal{G}(\phi_i)^p\right)^{1/p}
+\end{equation}
+where $p$ is the generalized mean parameter (typically $p = 2$ for quadratic mean).
+
+\subsubsection{Logical Loss}
+\begin{equation}
+    \mathcal{L}_{\text{logic}}(\theta) = 1 - \text{SatAgg}(\mathcal{K})
+\end{equation}
+
+\subsubsection{Combined Loss}
+The total loss combines predictive and logical components:
+\begin{equation}
+    \mathcal{L}_{\text{total}} = \mathcal{L}_{\text{predictive}} + \lambda_{\text{logic}} \cdot \mathcal{L}_{\text{logic}}
+\end{equation}
+where $\lambda_{\text{logic}}$ is a hyperparameter (typically 0.1 to 1.0).
+
+% =============================================================================
+% SECTION 3: MULTIMODAL FUSION
+% =============================================================================
+\section{Multimodal Fusion: Gated Cross-Attention}
+\label{sec:fusion}
+
+The fusion subsystem integrates visual, temporal, and textual market information into a unified representation.
+
+\subsection{Input Modalities}
+
+The system receives three input streams:
+\begin{align}
+    \mathbf{H}_{\text{TS}} &\in \mathbb{R}^{L_{\text{TS}} \times d} \quad \text{(Time Series Tokens from Chronos-Bolt)} \\
+    \mathbf{H}_{\text{Vis}} &\in \mathbb{R}^{L_{\text{Vis}} \times d} \quad \text{(Visual Embeddings from ViViT)} \\
+    \mathbf{H}_{\text{Text}} &\in \mathbb{R}^{L_{\text{Text}} \times d} \quad \text{(Text Embeddings from FinBERT)}
+\end{align}
+
+\subsection{Gated Cross-Attention Mechanism}
+
+\subsubsection{Attention Computation}
+For primary modality $m$ and auxiliary modality $n$:
+\begin{equation}
+    \alpha_{m \rightarrow n} = \softmax\left(\frac{\mathbf{Q}_m \mathbf{K}_n^\top}{\sqrt{d_h}}\right)
+\end{equation}
+where:
+\begin{align}
+    \mathbf{Q}_m &= \mathbf{H}_m \mathbf{W}_Q \\
+    \mathbf{K}_n &= \mathbf{H}_n \mathbf{W}_K \\
+    \mathbf{V}_n &= \mathbf{H}_n \mathbf{W}_V
+\end{align}
+
+\subsubsection{Gating Mechanism}
+The gating scalar is computed as:
+\begin{equation}
+    \lambda_{\text{gate}} = \sigmoid(\mathbf{W}_g [\mathbf{H}_m; \mathbf{H}_n] + b_g)
+\end{equation}
+where $[\cdot; \cdot]$ denotes concatenation.
+
+\subsubsection{Fused Representation}
+\begin{equation}
+    \mathbf{H}_{\text{fused}} = \mathbf{H}_m + \lambda_{\text{gate}} \cdot \alpha_{m \rightarrow n} \mathbf{V}_n
+\end{equation}
+
+\subsection{Multi-Modal Fusion Pipeline}
+
+The complete fusion process:
+\begin{align}
+    \mathbf{H}_1 &= \mathbf{H}_{\text{TS}} + \lambda_{\text{vis}} \cdot \text{CrossAttn}(\mathbf{H}_{\text{TS}}, \mathbf{H}_{\text{Vis}}) \\
+    \mathbf{H}_2 &= \mathbf{H}_1 + \lambda_{\text{text}} \cdot \text{CrossAttn}(\mathbf{H}_1, \mathbf{H}_{\text{Text}}) \\
+    \mathbf{e}_{\text{final}} &= \text{GlobalPool}(\mathbf{H}_2)
+\end{align}
+
+% =============================================================================
+% SECTION 4: DECISION ENGINE
+% =============================================================================
+\section{Decision Engine: Basal Ganglia Pathways}
+\label{sec:decision}
+
+The decision engine implements a dual-pathway architecture inspired by the basal ganglia, with separate "go" and "no-go" pathways.
+
+\subsection{Praxeological Motor: Dual Pathways}
+
+\subsubsection{Direct Pathway (Go Signal)}
+The direct pathway generates action proposals:
+\begin{equation}
+    a_{\text{proposed}} = \argmax_{a \in \mathcal{A}} \left[\mathbf{W}_{\text{alpha}} \mathbf{e}_{\text{final}} + b_{\text{alpha}}\right]_a
+\end{equation}
+where $\mathcal{A}$ is the action space (BUY, SELL, HOLD, or continuous trade sizes).
+
+\subsubsection{Indirect Pathway (No-Go Signal)}
+The indirect pathway computes risk veto:
+\begin{equation}
+    v_{\text{risk}} = \sigmoid(\mathbf{W}_{\text{risk}} [\mathbf{e}_{\text{final}}; \text{VPIN}; \sigma_{\text{market}}] + b_{\text{risk}})
+\end{equation}
+
+\subsubsection{Final Action}
+The final action is gated by the risk veto:
+\begin{equation}
+    a_{\text{final}} = \begin{cases}
+        a_{\text{proposed}} & \text{if } v_{\text{risk}} < \tau_{\text{risk}} \text{ AND } \mathcal{L}_{\text{logic}} < \tau_{\text{logic}} \\
+        \text{HOLD} & \text{otherwise}
+    \end{cases}
+\end{equation}
+where $\tau_{\text{risk}}$ is the risk threshold (e.g., 0.7) and $\tau_{\text{logic}}$ is the logical constraint threshold (e.g., 0.1).
+
+\subsection{Cerebellar Forward Model}
+
+\subsubsection{Market Impact Prediction}
+The forward model predicts execution price:
+\begin{equation}
+    \hat{p}_{\text{exec}} = f_{\text{forward}}(\mathbf{s}_{\text{LOB}}, v, a_{\text{final}})
+\end{equation}
+where $\mathbf{s}_{\text{LOB}}$ is the limit order book state.
+
+\subsubsection{Sensory Prediction Error}
+\begin{equation}
+    \text{SPE} = |p_{\text{actual}} - \hat{p}_{\text{exec}}|
+\end{equation}
+
+\subsubsection{Trajectory Adjustment}
+The execution trajectory is adjusted:
+\begin{equation}
+    v_{\text{adjusted}} = v_{\text{original}} - \eta_{\text{cerebellar}} \cdot \text{SPE} \cdot \nabla_{v} \text{SPE}
+\end{equation}
+
+% =============================================================================
+% SECTION 5: IMPLEMENTATION CHECKLIST
+% =============================================================================
+\newpage
+\section{Implementation Checklist}
+{sec:checklist}
+
+This section provides a sequential checklist for implementing JANUS Forward.
+
+\subsection{Core Components}
+
+\begin{enumerate}
+    \item \textbf{Visual Pattern Recognition Module}
+    \begin{itemize}
+        \item[$\square$] Implement DiffGAF normalization with learnable $\alpha, \beta$
+        \item[$\square$] Implement polar coordinate transformation
+        \item[$\square$] Implement GASF and GADF computation
+        \item[$\square$] Implement sliding window GAF video generation
+        \item[$\square$] Implement ViViT patch embedding
+        \item[$\square$] Implement spatial attention mechanism
+        \item[$\square$] Implement temporal attention mechanism
+        \item[$\square$] Test on sample time series data
+        \item[$\square$] Benchmark latency (target: <50ms for inference)
+    \end{itemize}
+
+    \item \textbf{Logic Tensor Networks Module}
+    \begin{itemize}
+        \item[$\square$] Implement grounding function framework
+        \item[$\square$] Implement predicate neural networks
+        \item[$\square$] Implement Lukasiewicz T-norm operations
+        \item[$\square$] Implement universal/existential quantification
+        \item[$\square$] Encode wash sale constraint
+        \item[$\square$] Encode Almgren-Chriss constraint
+        \item[$\square$] Encode VPIN constraint
+        \item[$\square$] Implement satisfiability aggregation
+        \item[$\square$] Implement logical loss function
+        \item[$\square$] Test constraint satisfaction with edge cases
+        \item[$\square$] Benchmark latency (target: <10ms for evaluation)
+    \end{itemize}
+
+    \item \textbf{Multimodal Fusion Module}
+    \begin{itemize}
+        \item[$\square$] Implement time series tokenization (Chronos-Bolt integration)
+        \item[$\square$] Implement visual embedding extraction
+        \item[$\square$] Implement text embedding (FinBERT integration)
+        \item[$\square$] Implement gated cross-attention mechanism
+        \item[$\square$] Implement multi-modal fusion pipeline
+        \item[$\square$] Test fusion on sample multimodal data
+        \item[$\square$] Validate attention weight distributions
+    \end{itemize}
+
+    \item \textbf{Decision Engine Module}
+    \begin{itemize}
+        \item[$\square$] Implement direct pathway (alpha motor)
+        \item[$\square$] Implement indirect pathway (risk motor)
+        \item[$\square$] Implement risk-gated action selection
+        \item[$\square$] Implement logic-gated action selection
+        \item[$\square$] Implement cerebellar forward model
+        \item[$\square$] Implement sensory prediction error computation
+        \item[$\square$] Implement trajectory adjustment
+        \item[$\square$] Test end-to-end decision making
+        \item[$\square$] Validate constraint adherence in production scenarios
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Integration \& Testing}
+
+\begin{enumerate}
+    \item \textbf{End-to-End Pipeline}
+    \begin{itemize}
+        \item[$\square$] Connect all modules into unified forward pass
+        \item[$\square$] Implement gradient flow verification
+        \item[$\square$] Test backpropagation through entire pipeline
+        \item[$\square$] Validate differentiable constraint satisfaction
+    \end{itemize}
+
+    \item \textbf{Performance Optimization}
+    \begin{itemize}
+        \item[$\square$] Profile latency bottlenecks
+        \item[$\square$] Optimize tensor operations for GPU
+        \item[$\square$] Implement model quantization (INT8/FP16)
+        \item[$\square$] Add batching support for parallel inference
+        \item[$\square$] Target: <100ms end-to-end latency
+    \end{itemize}
+
+    \item \textbf{Safety \& Validation}
+    \begin{itemize}
+        \item[$\square$] Add input validation and sanitization
+        \item[$\square$] Implement kill switch integration
+        \item[$\square$] Add logging for all trading decisions
+        \item[$\square$] Implement emergency halt on constraint violation
+        \item[$\square$] Test failure modes (network outage, invalid data, etc.)
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Deployment Readiness}
+
+\begin{enumerate}
+    \item \textbf{Production Hardening}
+    \begin{itemize}
+        \item[$\square$] Remove all panic!() calls
+        \item[$\square$] Replace unwrap() with proper error handling
+        \item[$\square$] Add comprehensive error types
+        \item[$\square$] Implement graceful degradation
+        \item[$\square$] Add health check endpoints
+    \end{itemize}
+
+    \item \textbf{Monitoring \& Observability}
+    \begin{itemize}
+        \item[$\square$] Add metrics export (Prometheus format)
+        \item[$\square$] Implement distributed tracing
+        \item[$\square$] Log all constraint violations
+        \item[$\square$] Monitor inference latency
+        \item[$\square$] Track prediction accuracy
+    \end{itemize}
+\end{enumerate}
+
+% =============================================================================
+% SECTION 6: RUST IMPLEMENTATION NOTES
+% =============================================================================
+\section{Rust Implementation Considerations}
+{sec:rust}
+
+\subsection{Hot Path Optimization}
+
+The Forward service must maintain low latency (<100ms end-to-end). Key Rust optimizations:
+
+\begin{itemize}
+    \item \textbf{Zero-copy operations:} Use \texttt{ndarray} views instead of clones
+    \item \textbf{SIMD acceleration:} Leverage \texttt{packed\_simd} for GAF computation
+    \item \textbf{Async runtime:} Use \texttt{tokio} for non-blocking I/O
+    \item \textbf{Memory pooling:} Pre-allocate tensor buffers to avoid allocation overhead
+\end{itemize}
+
+\subsection{ML Framework Integration}
+
+\subsubsection{Option 1: PyTorch via tch-rs}
+\begin{itemize}
+    \item Pros: Full PyTorch ecosystem, easy model export
+    \item Cons: Requires LibTorch, larger binary size
+\end{itemize}
+
+\subsubsection{Option 2: ONNX Runtime via ort}
+\begin{itemize}
+    \item Pros: Lightweight, cross-platform, optimized inference
+    \item Cons: Limited to inference, requires model conversion
+    \item \textbf{Recommended for production}
+\end{itemize}
+
+\subsubsection{Option 3: Candle (Hugging Face)}
+\begin{itemize}
+    \item Pros: Pure Rust, no C++ dependencies
+    \item Cons: Younger ecosystem, fewer pre-trained models
+    \item \textbf{Recommended for future migration}
+\end{itemize}
+
+\subsection{Error Handling Strategy}
+
+\begin{lstlisting}[language=Rust]
+// Custom error types for Forward service
+#[derive(Debug, thiserror::Error)]
+pub enum ForwardError {
+    #[error("GAF transformation failed: {0}")]
+    GafError(String),
+
+    #[error("LTN constraint violation: {constraint}")]
+    ConstraintViolation { constraint: String },
+
+    #[error("Model inference failed: {0}")]
+    InferenceError(String),
+
+    #[error("Risk threshold exceeded: {risk_score}")]
+    RiskVeto { risk_score: f64 },
+}
+
+// Result type alias
+pub type ForwardResult<T> = Result<T, ForwardError>;
+\end{lstlisting}
+
+% =============================================================================
+% BIBLIOGRAPHY
+% =============================================================================
+\newpage
+\begin{thebibliography}{99}
+\raggedright
+
+\bibitem{janus_main} Jordan Smith, "Project JANUS: Implementation Guide v1.0," 2025.
+
+\bibitem{gaf_paper} Wang, Oates, "Encoding Time Series as Images for Visual Inspection and Classification Using Tiled Convolutional Neural Networks," AAAI 2015.
+
+\bibitem{vivit} Arnab et al., "ViViT: A Video Vision Transformer," ICCV 2021.
+
+\bibitem{ltn_foundation} Badreddine et al., "Logic Tensor Networks," Artificial Intelligence, 2022.
+
+\bibitem{chronos} Ansari et al., "Chronos: Learning the Language of Time Series," arXiv:2403.07815, 2024.
+
+\bibitem{finbert} Araci, "FinBERT: Financial Sentiment Analysis with Pre-trained Language Models," arXiv:1908.10063, 2019.
+
+\bibitem{almgren_chriss} Almgren, Chriss, "Optimal Execution of Portfolio Transactions," Journal of Risk, 2000.
+
+\bibitem{vpin} Easley et al., "Flow Toxicity and Liquidity in a High-frequency World," Review of Financial Studies, 2012.
+
+\end{thebibliography}
+
+\end{document}

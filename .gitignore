@@ -1,0 +1,59 @@
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.nav
+*.snm
+*.vrb
+*.bbl
+*.blg
+*.lof
+*.lot
+*.idx
+*.ind
+*.ilg
+*.glo
+*.gls
+*.ist
+
+# LaTeX temporary files
+*.dvi
+*.ps
+*.backup
+*~
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# Python virtual environments (for training gateway)
+venv/
+env/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Rust build artifacts (for future implementation)
+target/
+Cargo.lock
+*.rs.bk
+
+# Keep PDFs - we want these committed
+!pdf/
+!pdf/*.pdf
+!*.pdf
