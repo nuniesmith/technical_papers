@@ -1286,7 +1286,7 @@ validate_onnx_export(model, "models/vivit.onnx")
 
 \subsection{Docker Compose Setup}
 
-\begin{lstlisting}[language=yaml]
+\begin{lstlisting}[style=yaml]
 # docker-compose.yml
 version: '3.8'
 
@@ -1356,7 +1356,7 @@ volumes:
 
 \subsection{Kubernetes Deployment}
 
-\begin{lstlisting}[language=yaml]
+\begin{lstlisting}[style=yaml]
 # k8s/forward-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -1423,33 +1423,33 @@ spec:
 \begin{enumerate}
     \item \textbf{Week 1: Project Setup}
     \begin{itemize}
-        \item[$\square$] Initialize Rust workspace with cargo
-        \item[$\square$] Set up CI/CD (GitHub Actions)
-        \item[$\square$] Create protobuf definitions
-        \item[$\square$] Generate gRPC stubs for Rust and Python
+        \item[\texttt{[ ]}] Initialize Rust workspace with cargo
+        \item[\texttt{[ ]}] Set up CI/CD (GitHub Actions)
+        \item[\texttt{[ ]}] Create protobuf definitions
+        \item[\texttt{[ ]}] Generate gRPC stubs for Rust and Python
     \end{itemize}
 
     \item \textbf{Week 2: Core Crates}
     \begin{itemize}
-        \item[$\square$] Implement \texttt{janus-core} with domain types
-        \item[$\square$] Implement \texttt{janus-vision} GAF transformation
-        \item[$\square$] Add comprehensive unit tests
+        \item[\texttt{[ ]}] Implement \texttt{janus-core} with domain types
+        \item[\texttt{[ ]}] Implement \texttt{janus-vision} GAF transformation
+        \item[\texttt{[ ]}] Add comprehensive unit tests
     \end{itemize}
 
     \item \textbf{Week 3: Model Integration}
     \begin{itemize}
-        \item[$\square$] Train ViViT model in PyTorch
-        \item[$\square$] Export to ONNX and validate
-        \item[$\square$] Integrate ONNX Runtime in Rust
-        \item[$\square$] Benchmark inference latency
+        \item[\texttt{[ ]}] Train ViViT model in PyTorch
+        \item[\texttt{[ ]}] Export to ONNX and validate
+        \item[\texttt{[ ]}] Integrate ONNX Runtime in Rust
+        \item[\texttt{[ ]}] Benchmark inference latency
     \end{itemize}
 
     \item \textbf{Week 4: Basic Services}
     \begin{itemize}
-        \item[$\square$] Implement Forward service skeleton
-        \item[$\square$] Implement Backward service skeleton
-        \item[$\square$] Set up FastAPI gateway
-        \item[$\square$] Test end-to-end flow
+        \item[\texttt{[ ]}] Implement Forward service skeleton
+        \item[\texttt{[ ]}] Implement Backward service skeleton
+        \item[\texttt{[ ]}] Set up FastAPI gateway
+        \item[\texttt{[ ]}] Test end-to-end flow
     \end{itemize}
 \end{enumerate}
 
@@ -1458,33 +1458,33 @@ spec:
 \begin{enumerate}
     \item \textbf{Week 5: LTN Implementation}
     \begin{itemize}
-        \item[$\square$] Implement Łukasiewicz t-norms
-        \item[$\square$] Encode wash sale constraint
-        \item[$\square$] Encode Almgren-Chriss constraint
-        \item[$\square$] Encode VPIN constraint
+        \item[\texttt{[ ]}] Implement Łukasiewicz t-norms
+        \item[\texttt{[ ]}] Encode wash sale constraint
+        \item[\texttt{[ ]}] Encode Almgren-Chriss constraint
+        \item[\texttt{[ ]}] Encode VPIN constraint
     \end{itemize}
 
     \item \textbf{Week 6: Decision Engine}
     \begin{itemize}
-        \item[$\square$] Implement dual pathway logic
-        \item[$\square$] Add risk gating
-        \item[$\square$] Add logic gating
-        \item[$\square$] Implement cerebellar forward model
+        \item[\texttt{[ ]}] Implement dual pathway logic
+        \item[\texttt{[ ]}] Add risk gating
+        \item[\texttt{[ ]}] Add logic gating
+        \item[\texttt{[ ]}] Implement cerebellar forward model
     \end{itemize}
 
     \item \textbf{Week 7: Memory System}
     \begin{itemize}
-        \item[$\square$] Implement episodic buffer
-        \item[$\square$] Implement prioritized replay
-        \item[$\square$] Add schema consolidation
+        \item[\texttt{[ ]}] Implement episodic buffer
+        \item[\texttt{[ ]}] Implement prioritized replay
+        \item[\texttt{[ ]}] Add schema consolidation
     \end{itemize}
 
     \item \textbf{Week 8: Vector Database}
     \begin{itemize}
-        \item[$\square$] Set up Qdrant
-        \item[$\square$] Implement schema storage
-        \item[$\square$] Implement similarity search
-        \item[$\square$] Add periodic pruning
+        \item[\texttt{[ ]}] Set up Qdrant
+        \item[\texttt{[ ]}] Implement schema storage
+        \item[\texttt{[ ]}] Implement similarity search
+        \item[\texttt{[ ]}] Add periodic pruning
     \end{itemize}
 \end{enumerate}
 
@@ -1493,34 +1493,34 @@ spec:
 \begin{enumerate}
     \item \textbf{Week 9: Performance Optimization}
     \begin{itemize}
-        \item[$\square$] Profile and optimize hot paths
-        \item[$\square$] Add SIMD optimizations
-        \item[$\square$] Implement model quantization
-        \item[$\square$] Benchmark end-to-end latency
+        \item[\texttt{[ ]}] Profile and optimize hot paths
+        \item[\texttt{[ ]}] Add SIMD optimizations
+        \item[\texttt{[ ]}] Implement model quantization
+        \item[\texttt{[ ]}] Benchmark end-to-end latency
     \end{itemize}
 
     \item \textbf{Week 10: Safety \& Testing}
     \begin{itemize}
-        \item[$\square$] Remove all panic!() calls
-        \item[$\square$] Add comprehensive error handling
-        \item[$\square$] Write integration tests
-        \item[$\square$] Add property-based tests
+        \item[\texttt{[ ]}] Remove all panic!() calls
+        \item[\texttt{[ ]}] Add comprehensive error handling
+        \item[\texttt{[ ]}] Write integration tests
+        \item[\texttt{[ ]}] Add property-based tests
     \end{itemize}
 
     \item \textbf{Week 11: Monitoring \& Observability}
     \begin{itemize}
-        \item[$\square$] Add Prometheus metrics
-        \item[$\square$] Implement distributed tracing
-        \item[$\square$] Set up alerting
-        \item[$\square$] Create dashboards
+        \item[\texttt{[ ]}] Add Prometheus metrics
+        \item[\texttt{[ ]}] Implement distributed tracing
+        \item[\texttt{[ ]}] Set up alerting
+        \item[\texttt{[ ]}] Create dashboards
     \end{itemize}
 
     \item \textbf{Week 12: Deployment}
     \begin{itemize}
-        \item[$\square$] Create Docker images
-        \item[$\square$] Write Kubernetes manifests
-        \item[$\square$] Set up staging environment
-        \item[$\square$] Run load tests
+        \item[\texttt{[ ]}] Create Docker images
+        \item[\texttt{[ ]}] Write Kubernetes manifests
+        \item[\texttt{[ ]}] Set up staging environment
+        \item[\texttt{[ ]}] Run load tests
     \end{itemize}
 \end{enumerate}
 
@@ -1533,96 +1533,96 @@ spec:
 \subsection{Infrastructure Setup}
 
 \begin{itemize}
-    \item[$\square$] Create Rust workspace (\texttt{Cargo.toml})
-    \item[$\square$] Set up monorepo structure (services + crates)
-    \item[$\square$] Configure CI/CD pipeline
-    \item[$\square$] Set up Docker build system
-    \item[$\square$] Configure linting (clippy, rustfmt)
+    \item[\texttt{[ ]}] Create Rust workspace (\texttt{Cargo.toml})
+    \item[\texttt{[ ]}] Set up monorepo structure (services + crates)
+    \item[\texttt{[ ]}] Configure CI/CD pipeline
+    \item[\texttt{[ ]}] Set up Docker build system
+    \item[\texttt{[ ]}] Configure linting (clippy, rustfmt)
 \end{itemize}
 
 \subsection{Shared Crates}
 
 \begin{itemize}
-    \item[$\square$] \textbf{janus-core}: Domain types, errors, utilities
-    \item[$\square$] \textbf{janus-vision}: GAF, ViViT, image processing
-    \item[$\square$] \textbf{janus-logic}: LTN, constraint evaluation
-    \item[$\square$] \textbf{janus-memory}: Replay buffer, schemas
-    \item[$\square$] \textbf{janus-execution}: Order execution, market simulation
-    \item[$\square$] \textbf{janus-proto}: Protobuf definitions and gRPC stubs
+    \item[\texttt{[ ]}] \textbf{janus-core}: Domain types, errors, utilities
+    \item[\texttt{[ ]}] \textbf{janus-vision}: GAF, ViViT, image processing
+    \item[\texttt{[ ]}] \textbf{janus-logic}: LTN, constraint evaluation
+    \item[\texttt{[ ]}] \textbf{janus-memory}: Replay buffer, schemas
+    \item[\texttt{[ ]}] \textbf{janus-execution}: Order execution, market simulation
+    \item[\texttt{[ ]}] \textbf{janus-proto}: Protobuf definitions and gRPC stubs
 \end{itemize}
 
 \subsection{Forward Service (Rust)}
 
 \begin{itemize}
-    \item[$\square$] gRPC server setup with Tonic
-    \item[$\square$] GAF transformation pipeline
-    \item[$\square$] ONNX model loading and inference
-    \item[$\square$] LTN constraint evaluation
-    \item[$\square$] Multimodal fusion
-    \item[$\square$] Decision engine with dual pathways
-    \item[$\square$] Metrics export (Prometheus)
-    \item[$\square$] Health check endpoint
-    \item[$\square$] Graceful shutdown
+    \item[\texttt{[ ]}] gRPC server setup with Tonic
+    \item[\texttt{[ ]}] GAF transformation pipeline
+    \item[\texttt{[ ]}] ONNX model loading and inference
+    \item[\texttt{[ ]}] LTN constraint evaluation
+    \item[\texttt{[ ]}] Multimodal fusion
+    \item[\texttt{[ ]}] Decision engine with dual pathways
+    \item[\texttt{[ ]}] Metrics export (Prometheus)
+    \item[\texttt{[ ]}] Health check endpoint
+    \item[\texttt{[ ]}] Graceful shutdown
 \end{itemize}
 
 \subsection{Backward Service (Rust)}
 
 \begin{itemize}
-    \item[$\square$] gRPC server setup
-    \item[$\square$] Episodic buffer implementation
-    \item[$\square$] Prioritized replay sampling
-    \item[$\square$] TD-error computation
-    \item[$\square$] Schema consolidation
-    \item[$\square$] UMAP integration
-    \item[$\square$] Qdrant client and sync
-    \item[$\square$] Sleep cycle orchestration
-    \item[$\square$] Parallel batch processing
+    \item[\texttt{[ ]}] gRPC server setup
+    \item[\texttt{[ ]}] Episodic buffer implementation
+    \item[\texttt{[ ]}] Prioritized replay sampling
+    \item[\texttt{[ ]}] TD-error computation
+    \item[\texttt{[ ]}] Schema consolidation
+    \item[\texttt{[ ]}] UMAP integration
+    \item[\texttt{[ ]}] Qdrant client and sync
+    \item[\texttt{[ ]}] Sleep cycle orchestration
+    \item[\texttt{[ ]}] Parallel batch processing
 \end{itemize}
 
 \subsection{Gateway Service (Python)}
 
 \begin{itemize}
-    \item[$\square$] FastAPI application setup
-    \item[$\square$] gRPC client stubs
-    \item[$\square$] REST endpoints (/decision, /sleep-cycle, etc.)
-    \item[$\square$] JWT authentication
-    \item[$\square$] Rate limiting middleware
-    \item[$\square$] Celery worker setup
-    \item[$\square$] Background job management
-    \item[$\square$] Health check aggregation
-    \item[$\square$] Metrics aggregation
+    \item[\texttt{[ ]}] FastAPI application setup
+    \item[\texttt{[ ]}] gRPC client stubs
+    \item[\texttt{[ ]}] REST endpoints (/decision, /sleep-cycle, etc.)
+    \item[\texttt{[ ]}] JWT authentication
+    \item[\texttt{[ ]}] Rate limiting middleware
+    \item[\texttt{[ ]}] Celery worker setup
+    \item[\texttt{[ ]}] Background job management
+    \item[\texttt{[ ]}] Health check aggregation
+    \item[\texttt{[ ]}] Metrics aggregation
 \end{itemize}
 
 \subsection{Training Pipeline (Python)}
 
 \begin{itemize}
-    \item[$\square$] PyTorch model definitions
-    \item[$\square$] Data loaders and preprocessing
-    \item[$\square$] Training loops
-    \item[$\square$] ONNX export scripts
-    \item[$\square$] Export validation
-    \item[$\square$] Model versioning
+    \item[\texttt{[ ]}] PyTorch model definitions
+    \item[\texttt{[ ]}] Data loaders and preprocessing
+    \item[\texttt{[ ]}] Training loops
+    \item[\texttt{[ ]}] ONNX export scripts
+    \item[\texttt{[ ]}] Export validation
+    \item[\texttt{[ ]}] Model versioning
 \end{itemize}
 
 \subsection{Testing}
 
 \begin{itemize}
-    \item[$\square$] Unit tests for all crates
-    \item[$\square$] Integration tests for services
-    \item[$\square$] End-to-end tests
-    \item[$\square$] Load tests
-    \item[$\square$] Chaos testing
+    \item[\texttt{[ ]}] Unit tests for all crates
+    \item[\texttt{[ ]}] Integration tests for services
+    \item[\texttt{[ ]}] End-to-end tests
+    \item[\texttt{[ ]}] Load tests
+    \item[\texttt{[ ]}] Chaos testing
 \end{itemize}
 
 \subsection{Deployment}
 
 \begin{itemize}
-    \item[$\square$] Docker images for all services
-    \item[$\square$] Docker Compose for local dev
-    \item[$\square$] Kubernetes manifests
-    \item[$\square$] Helm charts
-    \item[$\square$] Staging environment
-    \item[$\square$] Production environment
+    \item[\texttt{[ ]}] Docker images for all services
+    \item[\texttt{[ ]}] Docker Compose for local dev
+    \item[\texttt{[ ]}] Kubernetes manifests
+    \item[\texttt{[ ]}] Helm charts
+    \item[\texttt{[ ]}] Staging environment
+    \item[\texttt{[ ]}] Production environment
 \end{itemize}
 
 % =============================================================================
