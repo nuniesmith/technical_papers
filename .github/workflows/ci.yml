@@ -65,6 +65,7 @@ jobs:
 
           SUCCESS=0
           FAIL=0
+          ROOT_DIR=$(pwd)
 
           echo "## Build Results" > build-summary.md
           echo "" >> build-summary.md
@@ -86,6 +87,7 @@ jobs:
             echo "======================================"
 
             # Change to document directory
+            cd "$ROOT_DIR" || exit 1
             cd "$dir" || continue
 
             # Compile twice for references and TOC
@@ -95,26 +97,26 @@ jobs:
               if [ -f "$base.pdf" ]; then
                 size=$(du -h "$base.pdf" | cut -f1)
                 echo "✓ Successfully built $base.pdf ($size)"
-                echo "| $tex_file | ✅ Success | $size |" >> "$OLDPWD/build-summary.md"
-                ((SUCCESS++))
+                echo "| $tex_file | ✅ Success | $size |" >> "$ROOT_DIR/build-summary.md"
+                SUCCESS=$((SUCCESS + 1))
               else
                 echo "✗ PDF not generated for $base.tex"
-                echo "| $tex_file | ❌ Failed (no PDF) | - |" >> "$OLDPWD/build-summary.md"
-                ((FAIL++))
+                echo "| $tex_file | ❌ Failed (no PDF) | - |" >> "$ROOT_DIR/build-summary.md"
+                FAIL=$((FAIL + 1))
               fi
             else
               echo "✗ Compilation failed for $base.tex"
-              echo "| $tex_file | ❌ Failed (compile error) | - |" >> "$OLDPWD/build-summary.md"
-              ((FAIL++))
+              echo "| $tex_file | ❌ Failed (compile error) | - |" >> "$ROOT_DIR/build-summary.md"
+              FAIL=$((FAIL + 1))
             fi
 
             # Clean up auxiliary files
             rm -f *.aux *.log *.out *.toc *.synctex.gz *.fdb_latexmk *.fls 2>/dev/null
 
-            # Return to root
-            cd "$OLDPWD" || exit 1
+          done < "$ROOT_DIR/main_docs.txt"
 
-          done < main_docs.txt
+          # Return to root directory
+          cd "$ROOT_DIR" || exit 1
 
           echo ""
           echo "======================================"
