@@ -24,6 +24,9 @@ declare -A DOCS=(
     ["rust"]="janus_rust_implementation"
 )
 
+# Complete document that merges all 5 PDFs
+COMPLETE_DOC="complete"
+
 echo -e "${BLUE}====================================================${NC}"
 echo -e "${BLUE}   JANUS Documentation: Automated Build System      ${NC}"
 echo -e "${BLUE}====================================================${NC}"
@@ -117,10 +120,54 @@ done
 # Return to original directory
 cd "$ORIGINAL_DIR"
 
+# 4.5. Build Complete PDF (requires individual PDFs to exist)
+echo -e "\n${BLUE}📦 Building complete documentation (all 5 PDFs merged)...${NC}"
+cd "$PROJECT_DIR"
+
+if [ -f "${COMPLETE_DOC}.tex" ]; then
+    echo -ne "  Building ${COMPLETE_DOC}.tex → janus_complete.pdf... "
+
+    # Check if all required PDFs exist
+    MISSING_PDF=false
+    for src in "${!DOCS[@]}"; do
+        if [ ! -f "${src}.pdf" ]; then
+            echo -e "${YELLOW}SKIPPED${NC}"
+            echo -e "${YELLOW}    Missing ${src}.pdf - compile individual PDFs first${NC}"
+            MISSING_PDF=true
+            break
+        fi
+    done
+
+    if [ "$MISSING_PDF" = false ]; then
+        # Run pdflatex twice for complete document
+        if pdflatex -interaction=nonstopmode -jobname="janus_complete" "${COMPLETE_DOC}.tex" > /dev/null 2>&1 && \
+           pdflatex -interaction=nonstopmode -jobname="janus_complete" "${COMPLETE_DOC}.tex" > /dev/null 2>&1; then
+
+            if [ -f "janus_complete.pdf" ]; then
+                mv "janus_complete.pdf" "../${PDF_DIR}/janus_complete.pdf"
+                echo -e "${GREEN}DONE${NC}"
+                ((SUCCESS++))
+            else
+                echo -e "${RED}FAILED (PDF not generated)${NC}"
+                ((FAIL++))
+            fi
+        else
+            echo -e "${RED}FAILED (compilation error)${NC}"
+            echo -e "${YELLOW}    Check janus_complete.log for details${NC}"
+            ((FAIL++))
+        fi
+    fi
+else
+    echo -e "${YELLOW}  ⚠ complete.tex not found - skipping complete PDF${NC}"
+fi
+
+cd "$ORIGINAL_DIR"
+
 # 5. Cleanup
 echo -e "\n${BLUE}🧹 Cleaning up auxiliary files...${NC}"
 cd "$PROJECT_DIR"
 rm -f *.aux *.log *.out *.toc *.synctex.gz 2>/dev/null
+# Keep individual PDFs for complete.tex to reference
 cd "$ORIGINAL_DIR"
 
 # 6. Summary

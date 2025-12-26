@@ -140,6 +140,59 @@ jobs:
           # Note: We don't exit with error here - we want to commit successful PDFs
           # even if some documents failed to compile
 
+      - name: Build complete documentation PDF
+        run: |
+          ROOT_DIR=$(pwd)
+          cd project_janus || exit 0
+
+          # Check if complete.tex exists
+          if [ ! -f "complete.tex" ]; then
+            echo "⚠ complete.tex not found - skipping complete PDF"
+            exit 0
+          fi
+
+          # Check if all required PDFs exist
+          MISSING_PDF=false
+          for pdf in main.pdf forward.pdf backward.pdf neuro.pdf rust.pdf; do
+            if [ ! -f "$pdf" ]; then
+              echo "⚠ Missing $pdf - skipping complete PDF build"
+              MISSING_PDF=true
+              break
+            fi
+          done
+
+          if [ "$MISSING_PDF" = true ]; then
+            exit 0
+          fi
+
+          echo ""
+          echo "======================================"
+          echo "Building complete.pdf (merging all 5 PDFs)"
+          echo "======================================"
+
+          # Compile complete.tex twice for proper TOC
+          if pdflatex -interaction=nonstopmode complete.tex > complete.log 2>&1 && \
+             pdflatex -interaction=nonstopmode complete.tex > complete.log 2>&1; then
+
+            if [ -f "complete.pdf" ]; then
+              size=$(du -h complete.pdf | cut -f1)
+              echo "✓ Successfully built complete.pdf ($size)"
+              echo "" >> "$ROOT_DIR/build-summary.md"
+              echo "| project_janus/complete.tex | ✅ Success (Complete Suite) | $size |" >> "$ROOT_DIR/build-summary.md"
+            else
+              echo "✗ complete.pdf not generated"
+              cp complete.log "$ROOT_DIR/complete_error.log"
+            fi
+          else
+            echo "✗ Compilation failed for complete.tex"
+            cp complete.log "$ROOT_DIR/complete_error.log"
+          fi
+
+          # Clean up auxiliary files
+          rm -f complete.aux complete.out complete.toc complete.synctex.gz 2>/dev/null
+
+          cd "$ROOT_DIR" || exit 1
+
       - name: List all generated PDFs
         run: |
           echo "All generated PDFs:"
