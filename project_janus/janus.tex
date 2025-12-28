@@ -230,7 +230,19 @@
 \part{Main Architecture}
 \label{part:main}
 
-\input{../main_content.tex}
+\section*{Overview}
+
+Part 1 provides the architectural philosophy and system design overview for Project JANUS. This section would typically include:
+
+\begin{itemize}
+    \item \textbf{Introduction:} The crisis of complexity in quantitative trading
+    \item \textbf{Architectural Philosophy:} The dual-service design (Forward/Backward)
+    \item \textbf{Core Components:} Vision, Logic, Fusion, and Decision systems
+    \item \textbf{Memory Hierarchy:} Three-timescale learning architecture
+    \item \textbf{Implementation Strategy:} Rust-first development approach
+\end{itemize}
+
+\textbf{Note:} The detailed mathematical specifications for each component are presented in Parts 2-5 below. This consolidated document focuses on the theoretical foundations and algorithmic specifications rather than high-level architectural discussion.
 
 % ============================================
 % PART 2: FORWARD SERVICE
@@ -536,19 +548,30 @@ Train a neural network to project new experiences:
 
 \subsection{Schema Storage}
 
-Each schema stored as:
-\begin{lstlisting}[style=rust]
-{
-    "id": schema_id,
-    "vector": z_k,
-    "payload": {
-        "centroid": z_k,
-        "count": |C_k|,
-        "avg_reward": mean(rewards),
-        "volatility": std(returns)
-    }
-}
-\end{lstlisting}
+Each schema is stored in the vector database with the following structure:
+
+\textbf{Schema Representation:}
+\begin{equation}
+\mathcal{S}_k = (\text{id}_k, \mathbf{z}_k, \mathcal{M}_k)
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $\text{id}_k \in \mathbb{N}$: Unique schema identifier
+    \item $\mathbf{z}_k \in \mathbb{R}^d$: Centroid embedding vector
+    \item $\mathcal{M}_k$: Metadata payload containing:
+    \begin{itemize}
+        \item $n_k = |C_k|$: Number of experiences in cluster
+        \item $\bar{r}_k = \frac{1}{n_k}\sum_{i \in C_k} r_i$: Average reward
+        \item $\sigma_k = \sqrt{\frac{1}{n_k}\sum_{i \in C_k}(r_i - \bar{r}_k)^2}$: Volatility (std. dev. of returns)
+    \end{itemize}
+\end{itemize}
+
+\textbf{Storage Invariant:}
+All schema vectors are L2-normalized for cosine similarity search:
+\begin{equation}
+\mathbf{z}_k \leftarrow \frac{\mathbf{z}_k}{\|\mathbf{z}_k\|_2}
+\end{equation}
 
 \subsection{Similarity Search}
 
@@ -643,19 +666,24 @@ Amygdala & Threat detection & Risk circuit breakers \\
 
 \textbf{Component:} Dual-Pathway Decision Module
 
-\textbf{Direct Pathway:} Excitatory (go signal)
-\begin{lstlisting}[style=rust]
-fn direct_pathway(state: &Tensor) -> Tensor {
-    state.linear(W_direct).relu()
-}
-\end{lstlisting}
+The basal ganglia implements competing pathways for action selection:
 
-\textbf{Indirect Pathway:} Inhibitory (no-go signal)
-\begin{lstlisting}[style=rust]
-fn indirect_pathway(state: &Tensor) -> Tensor {
-    state.linear(W_indirect).relu()
-}
-\end{lstlisting}
+\textbf{Direct Pathway (Go Signal):}
+\begin{equation}
+\mathbf{d}_{\text{direct}} = \text{ReLU}(\mathbf{W}_{\text{direct}} \mathbf{h} + \mathbf{b}_{\text{direct}})
+\end{equation}
+where $\mathbf{h}$ is the fused state representation and $\mathbf{W}_{\text{direct}} \in \mathbb{R}^{d_{\text{out}} \times d_{\text{in}}}$.
+
+\textbf{Indirect Pathway (No-Go Signal):}
+\begin{equation}
+\mathbf{d}_{\text{indirect}} = \text{ReLU}(\mathbf{W}_{\text{indirect}} \mathbf{h} + \mathbf{b}_{\text{indirect}})
+\end{equation}
+
+\textbf{Action Selection:}
+\begin{equation}
+\mathbf{a}_t = \text{softmax}(\mathbf{d}_{\text{direct}} - \lambda \cdot \mathbf{d}_{\text{indirect}})
+\end{equation}
+where $\lambda > 0$ is the inhibition weight parameter.
 
 \subsection{Prefrontal Cortex: Logic, Planning \& Compliance}
 
@@ -676,12 +704,29 @@ Ensures regulatory compliance:
 
 \textbf{Component:} Anomaly Detection Module
 
-Triggers emergency stops:
-\begin{lstlisting}[style=rust]
-if mahalanobis_distance(state, historical_mean) > threshold {
-    trigger_circuit_breaker();
-}
-\end{lstlisting}
+Triggers emergency stops based on statistical distance from normal operation:
+
+\textbf{Mahalanobis Distance:}
+\begin{equation}
+D_M(\mathbf{s}_t) = \sqrt{(\mathbf{s}_t - \boldsymbol{\mu})^T \boldsymbol{\Sigma}^{-1} (\mathbf{s}_t - \boldsymbol{\mu})}
+\end{equation}
+where $\boldsymbol{\mu}$ is the historical mean state and $\boldsymbol{\Sigma}$ is the covariance matrix.
+
+\textbf{Circuit Breaker Condition:}
+\begin{equation}
+\text{Trigger} = \begin{cases}
+1 & \text{if } D_M(\mathbf{s}_t) > \tau_{\text{danger}} \\
+0 & \text{otherwise}
+\end{cases}
+\end{equation}
+where $\tau_{\text{danger}}$ is calibrated to a false-positive rate (e.g., $\tau = 5$ for $p < 0.001$).
+
+\textbf{Additional Threat Signals:}
+\begin{itemize}
+    \item Sudden volatility spike: $\sigma_t > 3 \cdot \sigma_{\text{baseline}}$
+    \item Drawdown threshold: cumulative loss $> L_{\max}$
+    \item Liquidity crisis: bid-ask spread $> 10 \times$ normal
+\end{itemize}
 
 \subsection{Cerebellum: Motor Control \& Execution}
 
@@ -800,242 +845,213 @@ Candle & Pure Rust, HF integration & Young ecosystem & Future migration \\
 
 \subsection{Core Data Structures}
 
-\begin{lstlisting}[style=rust]
-#[derive(Debug, Clone)]
-pub struct MarketState {
-    pub timestamp: i64,
-    pub features: Vec<f32>,
-    pub orderbook: OrderBook,
-    pub context: MarketContext,
-}
+The system maintains several key data structures for real-time processing:
 
-#[derive(Debug, Clone)]
-pub struct OrderBook {
-    pub bids: Vec<(f32, f32)>, // (price, quantity)
-    pub asks: Vec<(f32, f32)>,
-}
-\end{lstlisting}
+\textbf{Market State Representation:}
+\begin{equation}
+\mathcal{S}_t = (\tau_t, \mathbf{f}_t, \mathcal{O}_t, \mathbf{c}_t)
+\end{equation}
+where:
+\begin{itemize}
+    \item $\tau_t \in \mathbb{Z}^+$ is the timestamp
+    \item $\mathbf{f}_t \in \mathbb{R}^d$ is the feature vector
+    \item $\mathcal{O}_t = (\mathcal{B}_t, \mathcal{A}_t)$ is the order book with bids $\mathcal{B}_t$ and asks $\mathcal{A}_t$
+    \item $\mathbf{c}_t$ contains contextual metadata (volatility, spreads, volume)
+\end{itemize}
 
-\subsection{GAF Transformation Module}
+\textbf{Order Book Structure:}
+\begin{align}
+\mathcal{B}_t &= \{(p_i, q_i) : p_i \in \mathbb{R}^+, q_i \in \mathbb{R}^+ \}_{i=1}^{N_{\text{bid}}} \\
+\mathcal{A}_t &= \{(p_j, q_j) : p_j \in \mathbb{R}^+, q_j \in \mathbb{R}^+ \}_{j=1}^{N_{\text{ask}}}
+\end{align}
 
-\begin{lstlisting}[style=rust]
-pub fn compute_gaf(
-    time_series: &[f32],
-    window_size: usize,
-) -> Result<Tensor> {
-    // Normalize to [-1, 1]
-    let normalized = normalize(time_series)?;
+\subsection{GAF Transformation Algorithm}
 
-    // Compute angles
-    let angles: Vec<f32> = normalized
-        .iter()
-        .map(|&x| x.acos())
-        .collect();
+The GAF transformation converts time series to 2D images via the following algorithm:
 
-    // Build Gramian matrix
-    let mut gaf = vec![0.0; window_size * window_size];
-    for i in 0..window_size {
-        for j in 0..window_size {
-            gaf[i * window_size + j] =
-                (angles[i] + angles[j]).cos();
-        }
-    }
+\textbf{Algorithm: GAF Computation}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Time series $X = \{x_1, \ldots, x_W\}$, window size $W$
+\State \textbf{Output:} Gramian matrix $\mathbf{G} \in \mathbb{R}^{W \times W}$
+\State
+\State $\tilde{X} \leftarrow \text{Normalize}(X)$ to $[-1, 1]$
+\State $\phi_i \leftarrow \arccos(\tilde{x}_i)$ for $i = 1, \ldots, W$
+\For{$i = 1$ to $W$}
+    \For{$j = 1$ to $W$}
+        \State $\mathbf{G}_{ij} \leftarrow \cos(\phi_i + \phi_j)$
+    \EndFor
+\EndFor
+\State \Return $\mathbf{G}$ reshaped to $[1, W, W]$ tensor
+\end{algorithmic}
 
-    Ok(Tensor::from_slice(&gaf)
-        .reshape(&[1, window_size, window_size]))
-}
-\end{lstlisting}
+\textbf{Computational Complexity:} $\mathcal{O}(W^2)$ for matrix construction, where $W$ is the window size.
 
 \subsection{LTN Constraint Evaluation}
 
-\begin{lstlisting}[style=rust]
-pub struct LTNConstraint {
-    predicate: Box<dyn Fn(&MarketState) -> f32>,
-    weight: f32,
-}
+Each constraint is represented as a weighted predicate function:
 
-impl LTNConstraint {
-    pub fn evaluate(&self, state: &MarketState) -> f32 {
-        (self.predicate)(state) * self.weight
-    }
-}
+\textbf{Constraint Structure:}
+\begin{equation}
+\mathcal{C}_k = (P_k, w_k)
+\end{equation}
+where $P_k: \mathcal{S} \to [0,1]$ is a predicate and $w_k \in \mathbb{R}^+$ is the weight.
 
-// Lukasiewicz T-norm operations
-pub fn ltn_and(a: f32, b: f32) -> f32 {
-    (a + b - 1.0).max(0.0)
-}
+\textbf{Evaluation Function:}
+\begin{equation}
+\text{Eval}(\mathcal{C}_k, \mathcal{S}_t) = w_k \cdot P_k(\mathcal{S}_t)
+\end{equation}
 
-pub fn ltn_implies(a: f32, b: f32) -> f32 {
-    (1.0 - a + b).min(1.0)
-}
-\end{lstlisting}
+\textbf{T-norm Operations (already defined in Part 2):}
+\begin{align}
+a \land_{\mathcal{L}} b &= \max(0, a + b - 1) \quad \text{(Conjunction)} \\
+a \Rightarrow_{\mathcal{L}} b &= \min(1, 1 - a + b) \quad \text{(Implication)}
+\end{align}
 
-\subsection{Async Service with Tokio}
+\textbf{Total Constraint Satisfaction:}
+\begin{equation}
+\mathcal{L}_{\text{constraint}} = 1 - \frac{1}{K} \sum_{k=1}^{K} \text{Eval}(\mathcal{C}_k, \mathcal{S}_t)
+\end{equation}
 
-\begin{lstlisting}[style=rust]
-#[tokio::main]
-async fn main() -> Result<()> {
-    let model = OnnxModel::load("models/vivit.onnx")?;
-    let ltn_engine = LTNEngine::new();
+\subsection{Async Service Architecture}
 
-    let listener = TcpListener::bind("0.0.0.0:8080").await?;
+The service follows an event-driven architecture with the following characteristics:
 
-    loop {
-        let (socket, _) = listener.accept().await?;
-        let model_clone = model.clone();
+\textbf{Request Processing Pipeline:}
+\begin{enumerate}
+    \item \textbf{Initialization:} Load ONNX model $\mathcal{M}_{\text{ViViT}}$ and LTN engine $\mathcal{E}_{\text{LTN}}$
+    \item \textbf{Connection Handling:} Bind TCP listener on port 8080
+    \item \textbf{Concurrent Processing:} For each incoming request:
+    \begin{itemize}
+        \item Spawn asynchronous task with model clone
+        \item Process request independently (non-blocking)
+        \item Return prediction and constraint satisfaction scores
+    \end{itemize}
+\end{enumerate}
 
-        tokio::spawn(async move {
-            handle_request(socket, model_clone).await
-        });
-    }
-}
-\end{lstlisting}
+\textbf{Concurrency Model:}
+\begin{equation}
+\text{Throughput} = \frac{N_{\text{workers}} \times 1000}{T_{\text{avg}}}
+\end{equation}
+where $N_{\text{workers}}$ is the thread pool size and $T_{\text{avg}}$ is average processing time in ms.
+
+\textbf{Performance Characteristics:}
+- Non-blocking I/O via async/await
+- Zero-copy model sharing across tasks
+- Bounded memory through connection limiting
 
 \section{Backward Service: Batch Processing}
 
 \subsection{Prioritized Experience Replay}
 
-\begin{lstlisting}[style=rust]
-pub struct PrioritizedBuffer {
-    buffer: Vec<Experience>,
-    priorities: Vec<f32>,
-    capacity: usize,
-    alpha: f32,
-    beta: f32,
-}
+The replay buffer maintains experiences with importance-based sampling.
 
-impl PrioritizedBuffer {
-    pub fn sample(&self, batch_size: usize) -> Vec<Experience> {
-        let probabilities = self.compute_probabilities();
+\textbf{Buffer State:}
+\begin{equation}
+\mathcal{B} = \{(e_i, p_i)\}_{i=1}^{N}
+\end{equation}
+where $e_i$ is an experience and $p_i \in \mathbb{R}^+$ is its priority.
 
-        // Sample with replacement
-        let mut rng = thread_rng();
-        let dist = WeightedIndex::new(&probabilities).unwrap();
+\textbf{Hyperparameters:}
+\begin{itemize}
+    \item $\alpha \in [0,1]$: Priority exponent (0 = uniform, 1 = full prioritization)
+    \item $\beta \in [0,1]$: Importance sampling correction
+    \item $C$: Buffer capacity
+\end{itemize}
 
-        (0..batch_size)
-            .map(|_| self.buffer[dist.sample(&mut rng)].clone())
-            .collect()
-    }
+\textbf{Sampling Algorithm:}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Buffer $\mathcal{B}$, batch size $B$
+\State \textbf{Output:} Sampled batch $\{e_{i_1}, \ldots, e_{i_B}\}$
+\State
+\State Compute probabilities: $P(i) = \frac{p_i^\alpha}{\sum_j p_j^\alpha}$
+\For{$k = 1$ to $B$}
+    \State Sample index $i_k \sim \text{Categorical}(P)$
+    \State Add $e_{i_k}$ to batch
+\EndFor
+\State \Return batch
+\end{algorithmic}
 
-    fn compute_probabilities(&self) -> Vec<f32> {
-        let sum: f32 = self.priorities
-            .iter()
-            .map(|p| p.powf(self.alpha))
-            .sum();
+\textbf{Importance Weights:}
+\begin{equation}
+w_i = \left(\frac{1}{N \cdot P(i)}\right)^\beta
+\end{equation}
+These weights correct for the non-uniform sampling distribution.
 
-        self.priorities
-            .iter()
-            .map(|p| p.powf(self.alpha) / sum)
-            .collect()
-    }
-}
-\end{lstlisting}
+\subsection{Schema Consolidation Algorithm}
 
-\subsection{Schema Consolidation}
+Schemas are formed by clustering experience embeddings and storing centroids.
 
-\begin{lstlisting}[style=rust]
-pub async fn consolidate_schemas(
-    experiences: &[Experience],
-    qdrant_client: &QdrantClient,
-) -> Result<()> {
-    // Extract embeddings
-    let embeddings: Vec<Vec<f32>> = experiences
-        .iter()
-        .map(|e| extract_embedding(e))
-        .collect();
+\textbf{Algorithm: Schema Update}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Experiences $\mathcal{E} = \{e_1, \ldots, e_N\}$, number of clusters $K$
+\State \textbf{Output:} Updated schema database
+\State
+\State Extract embeddings: $\mathbf{h}_i = \text{Embed}(e_i)$ for $i = 1, \ldots, N$
+\State Cluster: $\mathcal{C} = \{C_1, \ldots, C_K\} \leftarrow \text{K-means}(\{\mathbf{h}_i\}, K)$
+\For{$k = 1$ to $K$}
+    \State Compute centroid: $\mathbf{z}_k = \frac{1}{|C_k|} \sum_{i \in C_k} \mathbf{h}_i$
+    \State Compute statistics:
+    \State \quad $n_k = |C_k|$
+    \State \quad $\bar{r}_k = \frac{1}{|C_k|} \sum_{i \in C_k} r_i$ (average reward)
+    \State \textbf{Upsert} schema $k$ with vector $\mathbf{z}_k$ and metadata $(n_k, \bar{r}_k)$
+\EndFor
+\end{algorithmic}
 
-    // Cluster with k-means
-    let clusters = kmeans(&embeddings, num_clusters)?;
+\textbf{Schema Metadata:}
+Each schema $k$ stores:
+\begin{itemize}
+    \item Centroid vector $\mathbf{z}_k \in \mathbb{R}^d$
+    \item Member count $n_k$
+    \item Average reward $\bar{r}_k$
+    \item Volatility $\sigma_k$ (standard deviation of returns)
+\end{itemize}
 
-    // Update schemas in Qdrant
-    for (cluster_id, members) in clusters.iter().enumerate() {
-        let centroid = compute_centroid(members);
-
-        qdrant_client.upsert_point(
-            "schemas",
-            cluster_id,
-            centroid,
-            json!({
-                "count": members.len(),
-                "avg_reward": compute_avg_reward(members),
-            }),
-        ).await?;
-    }
-
-    Ok(())
-}
-\end{lstlisting}
+\textbf{K-means Objective:}
+\begin{equation}
+\min_{\mathcal{C}} \sum_{k=1}^{K} \sum_{i \in C_k} \|\mathbf{h}_i - \mathbf{z}_k\|^2
+\end{equation}
 
 \section{Deployment Architecture}
 
-\subsection{Docker Compose Setup}
+\subsection{Service Orchestration}
 
-\begin{lstlisting}
-version: '3.8'
+The system deploys as three independent services:
 
-services:
-  forward:
-    build:
-      context: .
-      dockerfile: Dockerfile.forward
-    ports:
-      - "8080:8080"
-    environment:
-      - RUST_LOG=info
-      - MODEL_PATH=/models/vivit.onnx
-    volumes:
-      - ./models:/models
-
-  backward:
-    build:
-      context: .
-      dockerfile: Dockerfile.backward
-    environment:
-      - RUST_LOG=info
-      - QDRANT_URL=http://qdrant:6334
-    depends_on:
-      - qdrant
-
-  qdrant:
-    image: qdrant/qdrant:latest
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    volumes:
-      - qdrant_storage:/qdrant/storage
-
-volumes:
-  qdrant_storage:
-\end{lstlisting}
-
-\section{Implementation Roadmap}
-
-\subsection{Phase 1: Foundation (Weeks 1-4)}
-
+\textbf{Service Topology:}
 \begin{enumerate}
-    \item Set up Rust workspace with Cargo
-    \item Implement core data structures
-    \item Create ONNX inference pipeline
-    \item Build basic async service skeleton
+    \item \textbf{Forward Service:}
+    \begin{itemize}
+        \item Port: 8080 (HTTP API)
+        \item Dependencies: ONNX model files
+        \item Environment: Logging level, model paths
+        \item Resource limits: 2GB memory, 2 CPU cores
+    \end{itemize}
+
+    \item \textbf{Backward Service:}
+    \begin{itemize}
+        \item Internal service (no external ports)
+        \item Dependencies: Qdrant vector database
+        \item Environment: Qdrant connection URL
+        \item Scheduling: Triggered during market close
+    \end{itemize}
+
+    \item \textbf{Qdrant Vector Database:}
+    \begin{itemize}
+        \item Ports: 6333 (HTTP), 6334 (gRPC)
+        \item Persistent storage for schemas
+        \item Vector similarity search engine
+    \end{itemize}
 \end{enumerate}
 
-\subsection{Phase 2: Core Features (Weeks 5-8)}
+\textbf{Service Communication:}
+\begin{equation}
+\text{Forward} \xrightarrow{\text{experiences}} \text{Buffer} \xrightarrow{\text{nightly}} \text{Backward} \xrightarrow{\text{schemas}} \text{Qdrant}
+\end{equation}
 
-\begin{enumerate}
-    \item Implement DiffGAF transformation
-    \item Build LTN constraint engine
-    \item Create prioritized replay buffer
-    \item Integrate Qdrant for schema storage
-\end{enumerate}
-
-\subsection{Phase 3: Production Readiness (Weeks 9-12)}
-
-\begin{enumerate}
-    \item Performance optimization
-    \item Comprehensive testing
-    \item Monitoring and logging
-    \item Documentation and deployment guides
-\end{enumerate}
+\textbf{Volume Management:}
+- Model artifacts: Shared read-only volume
+- Schema database: Persistent volume with backups
+- Experience buffer: Ephemeral storage (daily rotation)
 
 % ============================================
 % CONCLUSION
