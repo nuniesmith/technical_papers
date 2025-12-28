@@ -9,7 +9,7 @@
 This repository hosts technical papers and documentation with automated PDF generation. Each project maintains its source LaTeX files (`.tex`) and compiled PDFs (`.pdf`) in the same directory.
 
 **Current Projects:**
-- **Project JANUS** - Neuromorphic Trading Intelligence System
+- **Project JANUS** - Neuromorphic Trading Intelligence System (consolidated in `project_janus/janus.tex`)
 
 ## 🏗️ Repository Structure
 
@@ -18,16 +18,16 @@ technical_papers/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                 # Automated PDF compilation
-├── project_janus/                 # Example project
-│   ├── main.tex                   # LaTeX source
-│   ├── main.pdf                   # Compiled PDF (auto-generated)
-│   ├── forward.tex
-│   ├── forward.pdf
-│   ├── complete.tex               # Unified document
-│   ├── complete.pdf
-│   └── extract_content.sh         # Content extraction utility
-├── scripts/
-│   └── build.sh                   # Project-specific build script
+├── project_janus/                 # Main project directory
+│   ├── janus.tex                  # ⭐ CONSOLIDATED DOCUMENT (recommended)
+│   ├── janus.pdf                  # Compiled PDF (auto-generated)
+│   └── README.md                  # Project-specific documentation
+├── main.tex                       # Legacy standalone documents
+├── forward.tex
+├── backward.tex
+├── neuro.tex
+├── rust.tex
+├── main_content.tex               # Content-only file (used by janus.tex)
 └── README.md                      # This file
 ```
 
@@ -255,15 +255,24 @@ echo "Build complete!"
 
 A comprehensive technical specification for a brain-inspired algorithmic trading system.
 
-**Documents:**
+**📄 Main Document (Recommended):**
+- **`project_janus/janus.pdf`** - Complete consolidated specification (all parts in one)
+
+**Legacy Documents (Individual Parts):**
 - `main.pdf` - Architectural overview and philosophy
-- `forward.pdf` - Real-time trading service
-- `backward.pdf` - Memory consolidation and learning
+- `forward.pdf` - Real-time trading service (Janus Bifrons)
+- `backward.pdf` - Memory consolidation and learning (Janus Consivius)
 - `neuro.pdf` - Neuromorphic architecture mapping
 - `rust.pdf` - Rust implementation guide
-- `complete.pdf` - Unified document
 
-**Location:** [`project_janus/`](project_janus/)
+**What's Inside janus.pdf:**
+- Part 1: Main Architecture - System design and philosophy
+- Part 2: Forward Service - Real-time decision-making and execution
+- Part 3: Backward Service - Memory consolidation and learning
+- Part 4: Neuromorphic Architecture - Brain-region mapping
+- Part 5: Rust Implementation - Production deployment guide
+
+**Location:** [`project_janus/`](project_janus/) | **Documentation:** [`project_janus/README.md`](project_janus/README.md)
 
 ---
 

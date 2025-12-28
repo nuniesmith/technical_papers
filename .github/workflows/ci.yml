@@ -1,271 +1,133 @@
 name: Build LaTeX Documents
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "**/*.tex"
-      - "scripts/build.sh"
-      - ".github/workflows/ci.yml"
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+        paths:
+            - "**/*.tex"
+            - ".github/workflows/ci.yml"
+    pull_request:
+        branches:
+            - main
+    workflow_dispatch:
 
 jobs:
-  build-latex:
-    name: 📄 Build LaTeX PDFs
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    build-latex:
+        name: 📄 Build LaTeX PDFs
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-      - name: Install LaTeX dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq \
-            texlive-latex-base \
-            texlive-latex-extra \
-            texlive-fonts-extra \
-            texlive-science \
-            texlive-latex-recommended \
-            bc
+            - name: Install LaTeX dependencies
+              run: |
+                  sudo apt-get update -qq
+                  sudo apt-get install -y -qq \
+                    texlive-latex-base \
+                    texlive-latex-extra \
+                    texlive-fonts-extra \
+                    texlive-science \
+                    texlive-latex-recommended
 
-      - name: Find all LaTeX documents
-        id: find_tex
-        run: |
-          echo "Finding all .tex files that are main documents..."
+            - name: Find and compile all main LaTeX documents
+              run: |
+                  echo "🔍 Finding LaTeX documents with \documentclass..."
 
-          # Find all .tex files that contain \documentclass (main documents)
-          main_docs=$(find . -name "*.tex" -type f ! -path "*/\.*" -exec grep -l "\\documentclass" {} \;)
+                  # Find all .tex files containing \documentclass (main documents)
+                  find . -name "*.tex" -type f ! -path "*/\.*" -exec grep -l "\\documentclass" {} \; > main_docs.txt
 
-          if [ -z "$main_docs" ]; then
-            echo "No main LaTeX documents found"
-            exit 0
-          fi
+                  if [ ! -s main_docs.txt ]; then
+                    echo "❌ No main LaTeX documents found"
+                    exit 0
+                  fi
 
-          echo "Found main documents:"
-          echo "$main_docs"
+                  echo "📄 Found $(wc -l < main_docs.txt) main document(s)"
+                  cat main_docs.txt
+                  echo ""
 
-          # Save to output
-          echo "$main_docs" > main_docs.txt
+                  SUCCESS=0
+                  FAIL=0
 
-      - name: Compile all LaTeX documents
-        run: |
-          if [ ! -f main_docs.txt ]; then
-            echo "No documents to compile"
-            exit 0
-          fi
+                  # Compile each document
+                  while IFS= read -r tex_file; do
+                    [ -z "$tex_file" ] && continue
 
-          SUCCESS=0
-          FAIL=0
-          ROOT_DIR=$(pwd)
+                    dir=$(dirname "$tex_file")
+                    base=$(basename "$tex_file" .tex)
 
-          echo "## Build Results" > build-summary.md
-          echo "" >> build-summary.md
-          echo "| Document | Status | Size |" >> build-summary.md
-          echo "|----------|--------|------|" >> build-summary.md
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "📝 Building: $tex_file"
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-          while IFS= read -r tex_file; do
-            if [ -z "$tex_file" ]; then
-              continue
-            fi
+                    cd "$dir" || continue
 
-            # Get directory and filename without extension
-            dir=$(dirname "$tex_file")
-            base=$(basename "$tex_file" .tex)
+                    # Compile twice for references/TOC
+                    if pdflatex -interaction=nonstopmode -halt-on-error "$base.tex" && \
+                       pdflatex -interaction=nonstopmode -halt-on-error "$base.tex"; then
 
-            echo ""
-            echo "======================================"
-            echo "Building: $tex_file"
-            echo "======================================"
+                      if [ -f "$base.pdf" ]; then
+                        size=$(du -h "$base.pdf" | cut -f1)
+                        echo "✅ Success: $base.pdf ($size)"
+                        SUCCESS=$((SUCCESS + 1))
+                      else
+                        echo "❌ Failed: PDF not generated"
+                        FAIL=$((FAIL + 1))
+                      fi
+                    else
+                      echo "❌ Failed: Compilation error"
+                      FAIL=$((FAIL + 1))
+                    fi
 
-            # Change to document directory
-            cd "$ROOT_DIR" || exit 1
-            cd "$dir" || continue
+                    # Clean auxiliary files
+                    rm -f *.aux *.log *.out *.toc *.synctex.gz *.fdb_latexmk *.fls 2>/dev/null
 
-            # Compile twice for references and TOC
-            if pdflatex -interaction=nonstopmode "$base.tex" > "$base.log" 2>&1 && \
-               pdflatex -interaction=nonstopmode "$base.tex" > "$base.log" 2>&1; then
+                    cd - > /dev/null
+                    echo ""
+                  done < main_docs.txt
 
-              if [ -f "$base.pdf" ]; then
-                size=$(du -h "$base.pdf" | cut -f1)
-                echo "✓ Successfully built $base.pdf ($size)"
-                echo "| $tex_file | ✅ Success | $size |" >> "$ROOT_DIR/build-summary.md"
-                SUCCESS=$((SUCCESS + 1))
-              else
-                echo "✗ PDF not generated for $base.tex"
-                echo "| $tex_file | ❌ Failed (no PDF) | - |" >> "$ROOT_DIR/build-summary.md"
-                FAIL=$((FAIL + 1))
-                # Save log for debugging
-                if [ -f "$base.log" ]; then
-                  cp "$base.log" "$ROOT_DIR/${base}_error.log"
-                fi
-              fi
-            else
-              echo "✗ Compilation failed for $base.tex"
-              echo "| $tex_file | ❌ Failed (compile error) | - |" >> "$ROOT_DIR/build-summary.md"
-              FAIL=$((FAIL + 1))
-              # Save log for debugging
-              if [ -f "$base.log" ]; then
-                cp "$base.log" "$ROOT_DIR/${base}_error.log"
-              fi
-            fi
+                  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                  echo "📊 Build Summary: ✅ $SUCCESS succeeded, ❌ $FAIL failed"
+                  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-            # Clean up auxiliary files (but keep error logs)
-            rm -f *.aux *.out *.toc *.synctex.gz *.fdb_latexmk *.fls 2>/dev/null
+            - name: List generated PDFs
+              run: |
+                  echo "📦 Generated PDFs:"
+                  find . -name "*.pdf" -type f ! -path "*/\.*" -exec ls -lh {} \;
 
-          done < "$ROOT_DIR/main_docs.txt"
+            - name: Upload PDF artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: latex-pdfs
+                  path: "**/*.pdf"
+                  retention-days: 90
 
-          # Return to root directory
-          cd "$ROOT_DIR" || exit 1
+            - name: Commit PDFs to repository
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              run: |
+                  git config --local user.email "github-actions[bot]@users.noreply.github.com"
+                  git config --local user.name "GitHub Actions"
 
-          echo ""
-          echo "======================================"
-          echo "Build Summary: $SUCCESS succeeded, $FAIL failed"
-          echo "======================================"
+                  # Add all PDFs
+                  find . -name "*.pdf" -type f ! -path "*/\.*" -exec git add -f {} \;
 
-          # Add summary footer
-          echo "" >> build-summary.md
-          echo "**Total:** $SUCCESS succeeded, $FAIL failed" >> build-summary.md
+                  # Commit if there are changes
+                  if git diff --staged --quiet; then
+                    echo "ℹ️  No PDF changes to commit"
+                  else
+                    git commit -m "🤖 Auto-compile LaTeX PDFs [skip ci]"
+                    git push || echo "⚠️  Push failed (possibly no changes)"
+                  fi
 
-          cat build-summary.md
-
-          # Note: We don't exit with error here - we want to commit successful PDFs
-          # even if some documents failed to compile
-
-      - name: Build complete documentation PDF
-        run: |
-          ROOT_DIR=$(pwd)
-          cd project_janus || exit 0
-
-          # Check if complete.tex exists
-          if [ ! -f "complete.tex" ]; then
-            echo "⚠ complete.tex not found - skipping complete PDF"
-            exit 0
-          fi
-
-          # Check if all required PDFs exist
-          MISSING_PDF=false
-          for pdf in main.pdf forward.pdf backward.pdf neuro.pdf rust.pdf; do
-            if [ ! -f "$pdf" ]; then
-              echo "⚠ Missing $pdf - skipping complete PDF build"
-              MISSING_PDF=true
-              break
-            fi
-          done
-
-          if [ "$MISSING_PDF" = true ]; then
-            exit 0
-          fi
-
-          echo ""
-          echo "======================================"
-          echo "Building complete.pdf (merging all 5 PDFs)"
-          echo "======================================"
-
-          # Compile complete.tex twice for proper TOC
-          if pdflatex -interaction=nonstopmode complete.tex > complete.log 2>&1 && \
-             pdflatex -interaction=nonstopmode complete.tex > complete.log 2>&1; then
-
-            if [ -f "complete.pdf" ]; then
-              size=$(du -h complete.pdf | cut -f1)
-              echo "✓ Successfully built complete.pdf ($size)"
-              echo "" >> "$ROOT_DIR/build-summary.md"
-              echo "| project_janus/complete.tex | ✅ Success (Complete Suite) | $size |" >> "$ROOT_DIR/build-summary.md"
-            else
-              echo "✗ complete.pdf not generated"
-              cp complete.log "$ROOT_DIR/complete_error.log"
-            fi
-          else
-            echo "✗ Compilation failed for complete.tex"
-            cp complete.log "$ROOT_DIR/complete_error.log"
-          fi
-
-          # Clean up auxiliary files
-          rm -f complete.aux complete.out complete.toc complete.synctex.gz 2>/dev/null
-
-          cd "$ROOT_DIR" || exit 1
-
-      - name: List all generated PDFs
-        run: |
-          echo "All generated PDFs:"
-          find . -name "*.pdf" -type f ! -path "*/\.*" -exec ls -lh {} \;
-
-          echo ""
-          echo "Error logs (if any):"
-          find . -name "*_error.log" -type f ! -path "*/\.*" -exec echo "  {}" \;
-
-      - name: Upload PDF artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: latex-pdfs-${{ github.sha }}
-          path: "**/*.pdf"
-          retention-days: 90
-
-      - name: Upload build summary and logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-summary-and-logs
-          path: |
-            build-summary.md
-            *_error.log
-          retention-days: 30
-
-      - name: Configure Git
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "GitHub Actions Bot"
-
-      - name: Commit PDFs back to repository
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          # Find and add all PDFs
-          find . -name "*.pdf" -type f ! -path "*/\.*" -exec git add {} \;
-
-          # Check if there are changes
-          if git diff --staged --quiet; then
-            echo "No PDF changes to commit"
-          else
-            echo "Committing PDF changes..."
-            git commit -m "Auto-compile LaTeX PDFs [skip ci]
-
-            Built from commit: ${{ github.sha }}
-            Workflow run: ${{ github.run_number }}"
-
-            git push origin HEAD:main || {
-              echo "Push failed. Retrying with force-lease..."
-              git push --force-with-lease origin HEAD:main
-            }
-
-            echo "✓ PDFs committed successfully"
-          fi
-
-      - name: Create build summary
-        if: always()
-        run: |
-          echo "# 📄 LaTeX Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          if [ -f build-summary.md ]; then
-            cat build-summary.md >> $GITHUB_STEP_SUMMARY
-          else
-            echo "No build summary available" >> $GITHUB_STEP_SUMMARY
-          fi
-
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
-          echo "Download compiled PDFs from the artifacts section above" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## ℹ️ Build Information" >> $GITHUB_STEP_SUMMARY
-          echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Triggered by:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Workflow run:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+            - name: Summary
+              if: always()
+              run: |
+                  echo "# 📄 LaTeX Build Complete" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+                  echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "Download compiled PDFs from the artifacts section above ⬆️" >> $GITHUB_STEP_SUMMARY

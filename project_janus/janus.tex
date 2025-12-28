@@ -1,0 +1,1081 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- PACKAGES ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{pmboxdraw}
+\usepackage{newunicodechar}
+\usepackage[english]{babel}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{setspace}
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
+
+% --- Define Left-Aligned X Column for Tables ---
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+% --- URL BREAKING ---
+\usepackage{xurl}
+\usepackage{hyperref}
+
+% --- CONFIGURATION ---
+\onehalfspacing
+\setlength{\headheight}{15pt}
+
+\definecolor{janusblue}{RGB}{0, 51, 102}
+\definecolor{accentgold}{RGB}{204, 153, 51}
+\definecolor{warnred}{RGB}{153, 0, 0}
+\definecolor{forwardblue}{RGB}{41, 98, 255}
+\definecolor{backwardpurple}{RGB}{138, 43, 226}
+\definecolor{neurogreen}{RGB}{34, 139, 34}
+\definecolor{rustorange}{RGB}{255, 140, 0}
+\definecolor{codegray}{RGB}{245, 245, 245}
+\definecolor{rustcolor}{RGB}{70, 130, 180}
+\definecolor{pythoncolor}{RGB}{55, 118, 171}
+
+% --- UNICODE CHARACTER DECLARATIONS ---
+\newunicodechar{▼}{\ensuremath{\blacktriangledown}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{…}{\ldots}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{∨}{\ensuremath{\vee}}
+\newunicodechar{¬}{\ensuremath{\neg}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{÷}{\ensuremath{\div}}
+\newunicodechar{∞}{\ensuremath{\infty}}
+\newunicodechar{∑}{\ensuremath{\sum}}
+\newunicodechar{∏}{\ensuremath{\prod}}
+\newunicodechar{∫}{\ensuremath{\int}}
+\newunicodechar{√}{\ensuremath{\sqrt}}
+\newunicodechar{∂}{\ensuremath{\partial}}
+\newunicodechar{∇}{\ensuremath{\nabla}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\epsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\phi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{Π}{\ensuremath{\Pi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+
+% --- MATH OPERATORS ---
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\sigmoid}{sigmoid}
+
+% --- HYPERREF CONFIGURATION ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=janusblue,
+    filecolor=accentgold,
+    urlcolor=janusblue,
+    citecolor=janusblue,
+    pdftitle={Project JANUS: Complete Technical Specification},
+    pdfauthor={Jordan Smith},
+    pdfsubject={Neuromorphic Trading Intelligence},
+    pdfkeywords={neuromorphic computing, algorithmic trading, machine learning, Rust, neuroscience},
+    bookmarks=true,
+    bookmarksopen=true,
+    bookmarksnumbered=true
+}
+
+% --- HEADER/FOOTER ---
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{janusblue}{\textbf{Project JANUS}}}
+\fancyhead[R]{\textcolor{accentgold}{Complete Specification}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% --- SECTION FORMATTING ---
+\titleformat{\section}
+  {\Large\bfseries\color{janusblue}}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\large\bfseries\color{janusblue}}
+  {\thesubsection}{1em}{}
+
+% --- CODE LISTINGS STYLE ---
+\lstdefinestyle{rust}{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{codegray},
+    keywordstyle=\color{rustcolor},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    showstringspaces=false,
+    tabsize=2,
+    morekeywords={fn, let, mut, pub, struct, impl, use, mod, trait, enum, match, if, else, return, self, Self, true, false, async, await}
+}
+
+\lstdefinestyle{python}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{codegray},
+    keywordstyle=\color{pythoncolor},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    showstringspaces=false,
+    tabsize=4,
+    morecomment=[l]{\#}
+}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{codegray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+
+\begin{document}
+
+% --- TITLE PAGE ---
+\begin{titlepage}
+    \centering
+    \vspace*{3cm}
+
+    {\Huge\bfseries\color{janusblue} Project JANUS\par}
+    \vspace{0.5cm}
+    {\Large\color{accentgold} Neuromorphic Trading Intelligence\par}
+    \vspace{2cm}
+
+    {\LARGE\bfseries Complete Technical Specification\par}
+    \vspace{1cm}
+
+    {\large\itshape A Brain-Inspired Architecture for Autonomous Financial Systems\par}
+    \vspace{3cm}
+
+    \begin{tcolorbox}[colback=janusblue!5, colframe=janusblue, title=\textbf{Unified Documentation}, width=0.85\textwidth]
+    This document consolidates all technical specifications of Project JANUS:
+    \begin{enumerate}[leftmargin=2cm]
+        \item \textbf{\textcolor{janusblue}{Main Architecture}} — System design and philosophical foundation
+        \vspace{0.2cm}
+        \item \textbf{\textcolor{forwardblue}{Forward Service}} — Real-time decision-making and execution
+        \vspace{0.2cm}
+        \item \textbf{\textcolor{backwardpurple}{Backward Service}} — Memory consolidation and learning
+        \vspace{0.2cm}
+        \item \textbf{\textcolor{neurogreen}{Neuromorphic Architecture}} — Brain-region mapping
+        \vspace{0.2cm}
+        \item \textbf{\textcolor{rustorange}{Rust Implementation}} — Production deployment guide
+    \end{enumerate}
+    \end{tcolorbox}
+
+    \vfill
+
+    {\large\bfseries Author\par}
+    {\large Jordan Smith\par}
+    \vspace{0.5cm}
+
+    {\large\bfseries Date\par}
+    {\large \today\par}
+    \vspace{1cm}
+
+    {\small\itshape ``The god of beginnings and transitions, looking simultaneously to the future and the past.''\par}
+
+\end{titlepage}
+
+% --- TABLE OF CONTENTS ---
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================
+% PART 1: MAIN ARCHITECTURE
+% ============================================
+\part{Main Architecture}
+\label{part:main}
+
+\input{../main_content.tex}
+
+% ============================================
+% PART 2: FORWARD SERVICE
+% ============================================
+\newpage
+\part{Forward Service (Janus Bifrons)}
+\label{part:forward}
+
+% Forward Service Content
+\section*{Abstract}
+
+JANUS Forward represents the "wake state" of the JANUS trading system, responsible for all real-time decision-making during market hours. This service combines:
+
+\begin{itemize}
+    \item \textbf{Visual Pattern Recognition} using Gramian Angular Fields (GAF) and Video Vision Transformers (ViViT)
+    \item \textbf{Symbolic Reasoning} via Logic Tensor Networks (LTN) for constraint satisfaction
+    \item \textbf{Multimodal Fusion} integrating time series, visual, and textual market data
+    \item \textbf{Dual-Pathway Decision Making} inspired by basal ganglia architecture
+\end{itemize}
+
+The Forward service operates on a hot path with strict latency requirements, implementing end-to-end gradient flow through differentiable market simulation while maintaining regulatory compliance through symbolic constraints.
+
+\section{Visual Pattern Recognition: DiffGAF and ViViT}
+\label{sec:visual_forward}
+
+The visual subsystem transforms time series data into spatiotemporal images, enabling the system to "see" market patterns that traditional numerical methods miss.
+
+\subsection{Mathematical Foundation: Gramian Angular Fields}
+
+Time series are encoded into polar coordinates and projected onto Gramian matrices, creating 2D representations that preserve temporal correlations.
+
+\subsubsection{Input Preprocessing}
+
+Given raw market data $X = \{x_1, x_2, \ldots, x_T\}$ where $x_t \in \mathbb{R}^D$ (multi-feature time series), we first apply feature selection to extract $F$ relevant features.
+
+\subsubsection{Step 1: Learnable Normalization}
+
+Instead of fixed min-max scaling, we use learnable affine transformations:
+\begin{equation}
+\tilde{x}_t = \gamma \odot \frac{x_t - \mu}{\sigma} + \beta
+\end{equation}
+where $\gamma, \beta \in \mathbb{R}^F$ are learned parameters, and $\mu, \sigma$ are running statistics.
+
+\subsubsection{Step 2: Polar Coordinate Transformation}
+
+Map normalized values to angular space:
+\begin{align}
+\phi_t &= \arccos(\tilde{x}_t) \in [0, \pi] \\
+r_t &= \frac{t}{T} \quad \text{(normalized timestamp)}
+\end{align}
+
+\subsubsection{Step 3: Gramian Field Generation}
+
+Construct the Gramian Angular Summation Field (GASF):
+\begin{equation}
+\mathbf{G}_{ij} = \cos(\phi_i + \phi_j) = \tilde{x}_i \tilde{x}_j - \sqrt{1-\tilde{x}_i^2}\sqrt{1-\tilde{x}_j^2}
+\end{equation}
+
+Or the Gramian Angular Difference Field (GADF):
+\begin{equation}
+\mathbf{G}_{ij} = \sin(\phi_i - \phi_j) = \sqrt{1-\tilde{x}_i^2}\tilde{x}_j - \tilde{x}_i\sqrt{1-\tilde{x}_j^2}
+\end{equation}
+
+\subsection{3D Spatiotemporal Manifolds: GAF Video}
+
+To capture temporal dynamics, we generate a sequence of GAF frames using sliding windows.
+
+\subsubsection{Sliding Window GAF Video Generation}
+
+Given a time series of length $T$, window size $W$, and stride $S$:
+\begin{enumerate}
+    \item Extract windows: $X_k = \{x_{(k-1)S+1}, \ldots, x_{(k-1)S+W}\}$ for $k = 1, \ldots, N$
+    \item Generate GAF for each window: $\mathbf{G}_k = \text{GAF}(X_k) \in \mathbb{R}^{W \times W}$
+    \item Stack into video: $\mathbf{V} = [\mathbf{G}_1, \mathbf{G}_2, \ldots, \mathbf{G}_N] \in \mathbb{R}^{N \times W \times W}$
+\end{enumerate}
+
+\subsection{Video Vision Transformer (ViViT)}
+
+The GAF video is processed by a factorized spatiotemporal transformer.
+
+\subsubsection{Patch Embedding}
+
+Divide each frame $\mathbf{G}_k$ into non-overlapping patches:
+\begin{equation}
+\mathbf{P}_k = \text{Reshape}(\mathbf{G}_k) \in \mathbb{R}^{P \times (p^2)}
+\end{equation}
+where $P = (W/p)^2$ is the number of patches per frame.
+
+\subsubsection{Spatial Attention}
+
+Apply self-attention within each frame:
+\begin{equation}
+\mathbf{Z}^{(l)}_k = \text{MSA}(\text{LN}(\mathbf{Z}^{(l-1)}_k)) + \mathbf{Z}^{(l-1)}_k
+\end{equation}
+
+\subsubsection{Temporal Attention}
+
+Apply attention across frames:
+\begin{equation}
+\mathbf{H}^{(l)} = \text{MSA}(\text{LN}([\mathbf{Z}^{(l)}_1, \ldots, \mathbf{Z}^{(l)}_N]))
+\end{equation}
+
+\section{Logic Tensor Networks: Symbolic Reasoning Engine}
+
+LTNs bridge neural networks and first-order logic, enabling differentiable constraint satisfaction.
+
+\subsection{Mathematical Foundation}
+
+\subsubsection{Grounding Function}
+
+Map logical constants to real vectors:
+\begin{equation}
+\mathcal{G}: \mathcal{C} \to \mathbb{R}^d
+\end{equation}
+
+\subsubsection{Predicate Grounding}
+
+A predicate $P(x)$ is grounded as a neural network $f_\theta: \mathbb{R}^d \to [0,1]$.
+
+\subsection{Lukasiewicz T-Norm Operations}
+
+\subsubsection{Conjunction (AND)}
+\begin{equation}
+u \land v = \max(0, u + v - 1)
+\end{equation}
+
+\subsubsection{Disjunction (OR)}
+\begin{equation}
+u \lor v = \min(1, u + v)
+\end{equation}
+
+\subsubsection{Negation (NOT)}
+\begin{equation}
+\neg u = 1 - u
+\end{equation}
+
+\subsubsection{Implication (IF-THEN)}
+\begin{equation}
+u \Rightarrow v = \min(1, 1 - u + v)
+\end{equation}
+
+\subsection{Knowledge Base Formulation}
+
+\subsubsection{Wash Sale Constraint}
+\begin{equation}
+\forall t: \text{Sell}(t) \land \text{Buy}(t') \land |t-t'| < 30 \Rightarrow \neg \text{TaxLoss}(t)
+\end{equation}
+
+\subsubsection{Almgren-Chriss Risk Constraint}
+\begin{equation}
+\forall \text{order}: \text{Execute}(\text{order}) \Rightarrow \text{Slippage}(\text{order}) < \lambda \cdot \text{Volatility}
+\end{equation}
+
+\subsection{Logical Loss Function}
+
+\subsubsection{Satisfiability Aggregation}
+\begin{equation}
+\text{SAT}(\mathcal{KB}) = \text{p-mean}_{i=1}^{|\mathcal{KB}|}(\phi_i)
+\end{equation}
+
+\subsubsection{Logical Loss}
+\begin{equation}
+\mathcal{L}_{\text{logic}} = 1 - \text{SAT}(\mathcal{KB})
+\end{equation}
+
+\section{Multimodal Fusion: Gated Cross-Attention}
+
+\subsection{Input Modalities}
+
+\begin{itemize}
+    \item Visual: $\mathbf{v} \in \mathbb{R}^{d_v}$ (from ViViT)
+    \item Temporal: $\mathbf{t} \in \mathbb{R}^{d_t}$ (from LSTM/Transformer)
+    \item Textual: $\mathbf{s} \in \mathbb{R}^{d_s}$ (from BERT embeddings)
+\end{itemize}
+
+\subsection{Gated Cross-Attention Mechanism}
+
+\subsubsection{Attention Computation}
+\begin{equation}
+\text{Attn}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \softmax\left(\frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d_k}}\right)\mathbf{V}
+\end{equation}
+
+\subsubsection{Gating Mechanism}
+\begin{equation}
+g = \sigmoid(\mathbf{W}_g[\mathbf{v}; \mathbf{t}; \mathbf{s}] + \mathbf{b}_g)
+\end{equation}
+
+\section{Decision Engine: Basal Ganglia Pathways}
+
+\subsection{Praxeological Motor: Dual Pathways}
+
+\subsubsection{Direct Pathway (Go Signal)}
+\begin{equation}
+\mathbf{d}_{\text{direct}} = \text{ReLU}(\mathbf{W}_d \mathbf{h}_{\text{fused}} + \mathbf{b}_d)
+\end{equation}
+
+\subsubsection{Indirect Pathway (No-Go Signal)}
+\begin{equation}
+\mathbf{d}_{\text{indirect}} = \text{ReLU}(\mathbf{W}_i \mathbf{h}_{\text{fused}} + \mathbf{b}_i)
+\end{equation}
+
+\subsection{Cerebellar Forward Model}
+
+\subsubsection{Market Impact Prediction}
+\begin{equation}
+\hat{p}_{t+1} = f_{\text{cerebellum}}(\mathbf{s}_t, \mathbf{a}_t)
+\end{equation}
+
+% ============================================
+% PART 3: BACKWARD SERVICE
+% ============================================
+\newpage
+\part{Backward Service (Janus Consivius)}
+\label{part:backward}
+
+\section*{Abstract}
+
+JANUS Backward represents the "sleep state" of the system, responsible for memory consolidation, schema formation, and learning from accumulated experience. This service implements:
+
+\begin{itemize}
+    \item \textbf{Three-Timescale Memory Hierarchy} (Hippocampus → SWR → Neocortex)
+    \item \textbf{Sharp-Wave Ripple Simulation} for prioritized experience replay
+    \item \textbf{Schema Formation} via UMAP-based clustering
+    \item \textbf{Recall-Gated Consolidation} ensuring only successful patterns are promoted
+\end{itemize}
+
+The Backward service runs on a cold path during off-market hours, performing computationally intensive operations to distill daily experiences into long-term knowledge.
+
+\section{Memory Hierarchy: Three-Timescale Architecture}
+
+\subsection{Short-Term Memory (Hippocampus)}
+
+\subsubsection{Episodic Buffer}
+
+Stores raw experiences during trading:
+\begin{equation}
+\mathcal{D}_{\text{hippo}} = \{(s_t, a_t, r_t, s_{t+1}, \mathbf{c}_t)\}_{t=1}^{T}
+\end{equation}
+where $\mathbf{c}_t$ contains contextual metadata (volatility, spreads, volume).
+
+\subsubsection{Pattern Separation}
+
+Uses random projections to ensure diverse encoding:
+\begin{equation}
+\mathbf{h}_t = \tanh(\mathbf{W}_{\text{rand}} \cdot [s_t; a_t; \mathbf{c}_t])
+\end{equation}
+
+\subsection{Medium-Term Consolidation (SWR Simulator)}
+
+\subsubsection{Replay Prioritization}
+
+Compute TD-error based priority:
+\begin{equation}
+p_i = |\delta_i|^\alpha + \epsilon
+\end{equation}
+where $\delta_i = r_i + \gamma \max_{a'} Q(s_{i+1}, a') - Q(s_i, a_i)$.
+
+\subsubsection{Sampling Probability}
+\begin{equation}
+P(i) = \frac{p_i^\beta}{\sum_j p_j^\beta}
+\end{equation}
+
+\subsubsection{Importance Sampling Correction}
+\begin{equation}
+w_i = \left(\frac{1}{N \cdot P(i)}\right)^\beta
+\end{equation}
+
+\subsection{Long-Term Memory (Neocortex)}
+
+\subsubsection{Schema Representation}
+
+Each schema is a prototype:
+\begin{equation}
+\mathbf{z}_k = \frac{1}{|\mathcal{C}_k|} \sum_{i \in \mathcal{C}_k} \mathbf{h}_i
+\end{equation}
+
+\subsubsection{Recall-Gated Consolidation}
+
+Only update schemas from successfully recalled experiences:
+\begin{equation}
+\mathbf{z}_k \leftarrow \mathbf{z}_k + \eta \cdot \mathbb{1}[\text{recall\_success}] \cdot (\mathbf{h}_{\text{new}} - \mathbf{z}_k)
+\end{equation}
+
+\section{UMAP Visualization: Cognitive Dashboard}
+
+\subsection{AlignedUMAP for Schema Formation}
+
+Maintains consistent embeddings across sleep cycles.
+
+\subsubsection{Objective Function}
+\begin{equation}
+\mathcal{L}_{\text{UMAP}} = \sum_{ij} w_{ij} \log\left(\frac{w_{ij}}{1 + \|\mathbf{y}_i - \mathbf{y}_j\|^2}\right)
+\end{equation}
+
+\subsection{Parametric UMAP for Real-Time Monitoring}
+
+Train a neural network to project new experiences:
+\begin{equation}
+\mathbf{y}_{\text{new}} = f_\theta(\mathbf{h}_{\text{new}})
+\end{equation}
+
+\section{Integration with Vector Database (Qdrant)}
+
+\subsection{Schema Storage}
+
+Each schema stored as:
+\begin{lstlisting}[style=rust]
+{
+    "id": schema_id,
+    "vector": z_k,
+    "payload": {
+        "centroid": z_k,
+        "count": |C_k|,
+        "avg_reward": mean(rewards),
+        "volatility": std(returns)
+    }
+}
+\end{lstlisting}
+
+\subsection{Similarity Search}
+
+Retrieve nearest schemas:
+\begin{equation}
+\mathcal{N}_k = \argmax_{k} \text{cosine}(\mathbf{h}_t, \mathbf{z}_k)
+\end{equation}
+
+% ============================================
+% PART 4: NEUROMORPHIC ARCHITECTURE
+% ============================================
+\newpage
+\part{Neuromorphic Architecture}
+\label{part:neuro}
+
+\section*{Abstract}
+
+This document maps the computational components of Project JANUS to specific brain regions, ensuring biological plausibility and leveraging neuroscience insights for system design. The neuromorphic approach provides:
+
+\begin{itemize}
+    \item \textbf{Modular Design} with clear functional boundaries
+    \item \textbf{Biological Validation} of architectural decisions
+    \item \textbf{Emergent Intelligence} through brain-inspired interactions
+\end{itemize}
+
+\section{Neuromorphic Design Philosophy}
+
+\subsection{Why Brain-Inspired Architecture?}
+
+The brain efficiently solves problems similar to trading:
+\begin{itemize}
+    \item Pattern recognition under uncertainty
+    \item Fast decision-making with delayed rewards
+    \item Continual learning without catastrophic forgetting
+    \item Multi-timescale memory consolidation
+\end{itemize}
+
+\subsection{Neuroscience-to-Trading Mapping}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{|l|L|L|}
+\hline
+\textbf{Brain Region} & \textbf{Biological Function} & \textbf{Trading Function} \\
+\hline
+Visual Cortex & Pattern recognition & GAF/ViViT chart analysis \\
+\hline
+Hippocampus & Episodic memory & Experience replay buffer \\
+\hline
+Prefrontal Cortex & Logic and planning & LTN constraint checking \\
+\hline
+Basal Ganglia & Action selection & Buy/sell/hold decisions \\
+\hline
+Cerebellum & Motor prediction & Market impact forecasting \\
+\hline
+Amygdala & Threat detection & Risk circuit breakers \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Brain Region Architectures}
+
+\subsection{Cortex: Strategic Planning \& Long-term Memory}
+
+\subsubsection{Trading Implementation}
+
+\textbf{Component:} Neocortical Schema Network
+
+\textbf{Implementation:}
+\begin{itemize}
+    \item Schema prototypes stored in Qdrant vector database
+    \item Each schema represents a market regime (trending, mean-reverting, volatile)
+    \item Slow consolidation during sleep cycles
+\end{itemize}
+
+\subsection{Hippocampus: Episodic Memory \& Experience Replay}
+
+\subsubsection{Trading Implementation}
+
+\textbf{Component:} Episodic Buffer + SWR Replay
+
+\textbf{Implementation:}
+\begin{itemize}
+    \item Fixed-size circular buffer storing recent trades
+    \item Sparse encoding via random projections
+    \item Prioritized replay during training
+\end{itemize}
+
+\subsection{Basal Ganglia: Action Selection \& Reinforcement Learning}
+
+\subsubsection{Trading Implementation}
+
+\textbf{Component:} Dual-Pathway Decision Module
+
+\textbf{Direct Pathway:} Excitatory (go signal)
+\begin{lstlisting}[style=rust]
+fn direct_pathway(state: &Tensor) -> Tensor {
+    state.linear(W_direct).relu()
+}
+\end{lstlisting}
+
+\textbf{Indirect Pathway:} Inhibitory (no-go signal)
+\begin{lstlisting}[style=rust]
+fn indirect_pathway(state: &Tensor) -> Tensor {
+    state.linear(W_indirect).relu()
+}
+\end{lstlisting}
+
+\subsection{Prefrontal Cortex: Logic, Planning \& Compliance}
+
+\subsubsection{Trading Implementation}
+
+\textbf{Component:} Logic Tensor Network
+
+Ensures regulatory compliance:
+\begin{itemize}
+    \item Wash sale rules
+    \item Position limits
+    \item Capital allocation constraints
+\end{itemize}
+
+\subsection{Amygdala: Fear, Threat Detection \& Circuit Breakers}
+
+\subsubsection{Trading Implementation}
+
+\textbf{Component:} Anomaly Detection Module
+
+Triggers emergency stops:
+\begin{lstlisting}[style=rust]
+if mahalanobis_distance(state, historical_mean) > threshold {
+    trigger_circuit_breaker();
+}
+\end{lstlisting}
+
+\subsection{Cerebellum: Motor Control \& Execution}
+
+\subsubsection{Trading Implementation}
+
+\textbf{Component:} Forward Model for Market Impact
+
+Predicts price movement from order execution:
+\begin{equation}
+\Delta p = f_{\text{cerebellum}}(\text{order\_size}, \text{liquidity}, \text{volatility})
+\end{equation}
+
+% ============================================
+% PART 5: RUST IMPLEMENTATION
+% ============================================
+\newpage
+\part{Rust Implementation}
+\label{part:rust}
+
+\section*{Abstract}
+
+This document provides production-ready Rust implementation specifications for Project JANUS, including:
+
+\begin{itemize}
+    \item \textbf{ML Framework Strategy} (PyTorch → ONNX → Rust inference)
+    \item \textbf{High-Performance Services} with async Tokio runtime
+    \item \textbf{Hybrid Training Pipeline} (Python training, Rust deployment)
+    \item \textbf{Deployment Architecture} (Docker Compose + Kubernetes)
+\end{itemize}
+
+\section{Architectural Overview}
+
+\subsection{The Rust-First Philosophy}
+
+\begin{enumerate}
+    \item \textbf{Performance:} Zero-cost abstractions, no GC pauses
+    \item \textbf{Safety:} Memory safety without runtime overhead
+    \item \textbf{Concurrency:} Fearless async/await with Tokio
+    \item \textbf{Ecosystem:} Production-ready ML inference via ONNX
+\end{enumerate}
+
+\subsection{Component Diagram}
+
+\begin{tcolorbox}[colback=codegray, colframe=rustcolor, title=System Architecture]
+\begin{verbatim}
+┌─────────────────────────────────────────────────┐
+│            Python Training Gateway              │
+│    (FastAPI + PyTorch + HuggingFace)           │
+└────────────┬────────────────────────────────────┘
+             │ ONNX Export
+             ▼
+┌─────────────────────────────────────────────────┐
+│           Rust Forward Service                  │
+│  (Tokio + ONNX Runtime + DiffGAF + LTN)        │
+└─────────────────────────────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────────────────┐
+│          Rust Backward Service                  │
+│   (Rayon + Qdrant + UMAP + PER Buffer)         │
+└─────────────────────────────────────────────────┘
+\end{verbatim}
+\end{tcolorbox}
+
+\section{Machine Learning Framework Strategy}
+
+\subsection{Framework Comparison Matrix}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{|l|L|L|L|}
+\hline
+\textbf{Framework} & \textbf{Pros} & \textbf{Cons} & \textbf{Use Case} \\
+\hline
+tch-rs & Native PyTorch, GPU support & C++ deps, larger binary & Training \& inference \\
+\hline
+ONNX Runtime & Universal, production-ready & No training & Inference only \\
+\hline
+Candle & Pure Rust, HF integration & Young ecosystem & Future migration \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Recommended Migration Path}
+
+\subsubsection{Phase 1: Hybrid (Months 1-3)}
+\begin{itemize}
+    \item Train models in PyTorch (Python)
+    \item Export to ONNX format
+    \item Rust inference via \texttt{ort} crate
+\end{itemize}
+
+\subsubsection{Phase 2: Rust-Native Inference (Months 4-6)}
+\begin{itemize}
+    \item Optimize ONNX models for Rust
+    \item Custom kernels for DiffGAF/LTN
+    \item Benchmark against Python baseline
+\end{itemize}
+
+\subsubsection{Phase 3: Full Rust ML (Months 7-12)}
+\begin{itemize}
+    \item Migrate training to Candle
+    \item End-to-end Rust pipeline
+    \item Custom GPU kernels via wgpu
+\end{itemize}
+
+\section{Forward Service: Rust Implementation}
+
+\subsection{Performance Requirements}
+
+\begin{itemize}
+    \item Latency: p99 < 10ms
+    \item Throughput: 10,000 req/s
+    \item Memory: < 2GB RSS
+\end{itemize}
+
+\subsection{Core Data Structures}
+
+\begin{lstlisting}[style=rust]
+#[derive(Debug, Clone)]
+pub struct MarketState {
+    pub timestamp: i64,
+    pub features: Vec<f32>,
+    pub orderbook: OrderBook,
+    pub context: MarketContext,
+}
+
+#[derive(Debug, Clone)]
+pub struct OrderBook {
+    pub bids: Vec<(f32, f32)>, // (price, quantity)
+    pub asks: Vec<(f32, f32)>,
+}
+\end{lstlisting}
+
+\subsection{GAF Transformation Module}
+
+\begin{lstlisting}[style=rust]
+pub fn compute_gaf(
+    time_series: &[f32],
+    window_size: usize,
+) -> Result<Tensor> {
+    // Normalize to [-1, 1]
+    let normalized = normalize(time_series)?;
+
+    // Compute angles
+    let angles: Vec<f32> = normalized
+        .iter()
+        .map(|&x| x.acos())
+        .collect();
+
+    // Build Gramian matrix
+    let mut gaf = vec![0.0; window_size * window_size];
+    for i in 0..window_size {
+        for j in 0..window_size {
+            gaf[i * window_size + j] =
+                (angles[i] + angles[j]).cos();
+        }
+    }
+
+    Ok(Tensor::from_slice(&gaf)
+        .reshape(&[1, window_size, window_size]))
+}
+\end{lstlisting}
+
+\subsection{LTN Constraint Evaluation}
+
+\begin{lstlisting}[style=rust]
+pub struct LTNConstraint {
+    predicate: Box<dyn Fn(&MarketState) -> f32>,
+    weight: f32,
+}
+
+impl LTNConstraint {
+    pub fn evaluate(&self, state: &MarketState) -> f32 {
+        (self.predicate)(state) * self.weight
+    }
+}
+
+// Lukasiewicz T-norm operations
+pub fn ltn_and(a: f32, b: f32) -> f32 {
+    (a + b - 1.0).max(0.0)
+}
+
+pub fn ltn_implies(a: f32, b: f32) -> f32 {
+    (1.0 - a + b).min(1.0)
+}
+\end{lstlisting}
+
+\subsection{Async Service with Tokio}
+
+\begin{lstlisting}[style=rust]
+#[tokio::main]
+async fn main() -> Result<()> {
+    let model = OnnxModel::load("models/vivit.onnx")?;
+    let ltn_engine = LTNEngine::new();
+
+    let listener = TcpListener::bind("0.0.0.0:8080").await?;
+
+    loop {
+        let (socket, _) = listener.accept().await?;
+        let model_clone = model.clone();
+
+        tokio::spawn(async move {
+            handle_request(socket, model_clone).await
+        });
+    }
+}
+\end{lstlisting}
+
+\section{Backward Service: Batch Processing}
+
+\subsection{Prioritized Experience Replay}
+
+\begin{lstlisting}[style=rust]
+pub struct PrioritizedBuffer {
+    buffer: Vec<Experience>,
+    priorities: Vec<f32>,
+    capacity: usize,
+    alpha: f32,
+    beta: f32,
+}
+
+impl PrioritizedBuffer {
+    pub fn sample(&self, batch_size: usize) -> Vec<Experience> {
+        let probabilities = self.compute_probabilities();
+
+        // Sample with replacement
+        let mut rng = thread_rng();
+        let dist = WeightedIndex::new(&probabilities).unwrap();
+
+        (0..batch_size)
+            .map(|_| self.buffer[dist.sample(&mut rng)].clone())
+            .collect()
+    }
+
+    fn compute_probabilities(&self) -> Vec<f32> {
+        let sum: f32 = self.priorities
+            .iter()
+            .map(|p| p.powf(self.alpha))
+            .sum();
+
+        self.priorities
+            .iter()
+            .map(|p| p.powf(self.alpha) / sum)
+            .collect()
+    }
+}
+\end{lstlisting}
+
+\subsection{Schema Consolidation}
+
+\begin{lstlisting}[style=rust]
+pub async fn consolidate_schemas(
+    experiences: &[Experience],
+    qdrant_client: &QdrantClient,
+) -> Result<()> {
+    // Extract embeddings
+    let embeddings: Vec<Vec<f32>> = experiences
+        .iter()
+        .map(|e| extract_embedding(e))
+        .collect();
+
+    // Cluster with k-means
+    let clusters = kmeans(&embeddings, num_clusters)?;
+
+    // Update schemas in Qdrant
+    for (cluster_id, members) in clusters.iter().enumerate() {
+        let centroid = compute_centroid(members);
+
+        qdrant_client.upsert_point(
+            "schemas",
+            cluster_id,
+            centroid,
+            json!({
+                "count": members.len(),
+                "avg_reward": compute_avg_reward(members),
+            }),
+        ).await?;
+    }
+
+    Ok(())
+}
+\end{lstlisting}
+
+\section{Deployment Architecture}
+
+\subsection{Docker Compose Setup}
+
+\begin{lstlisting}
+version: '3.8'
+
+services:
+  forward:
+    build:
+      context: .
+      dockerfile: Dockerfile.forward
+    ports:
+      - "8080:8080"
+    environment:
+      - RUST_LOG=info
+      - MODEL_PATH=/models/vivit.onnx
+    volumes:
+      - ./models:/models
+
+  backward:
+    build:
+      context: .
+      dockerfile: Dockerfile.backward
+    environment:
+      - RUST_LOG=info
+      - QDRANT_URL=http://qdrant:6334
+    depends_on:
+      - qdrant
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+volumes:
+  qdrant_storage:
+\end{lstlisting}
+
+\section{Implementation Roadmap}
+
+\subsection{Phase 1: Foundation (Weeks 1-4)}
+
+\begin{enumerate}
+    \item Set up Rust workspace with Cargo
+    \item Implement core data structures
+    \item Create ONNX inference pipeline
+    \item Build basic async service skeleton
+\end{enumerate}
+
+\subsection{Phase 2: Core Features (Weeks 5-8)}
+
+\begin{enumerate}
+    \item Implement DiffGAF transformation
+    \item Build LTN constraint engine
+    \item Create prioritized replay buffer
+    \item Integrate Qdrant for schema storage
+\end{enumerate}
+
+\subsection{Phase 3: Production Readiness (Weeks 9-12)}
+
+\begin{enumerate}
+    \item Performance optimization
+    \item Comprehensive testing
+    \item Monitoring and logging
+    \item Documentation and deployment guides
+\end{enumerate}
+
+% ============================================
+% CONCLUSION
+% ============================================
+\newpage
+\section*{Conclusion}
+
+Project JANUS represents a paradigm shift in quantitative trading: from opaque black boxes to transparent, brain-inspired systems that combine the best of deep learning and symbolic reasoning.
+
+\subsection*{Key Innovations}
+
+\begin{enumerate}
+    \item \textbf{Neuromorphic Architecture:} Biologically plausible design with modular brain regions
+    \item \textbf{Neuro-Symbolic Fusion:} LTNs bridge neural networks and logical constraints
+    \item \textbf{Multi-Timescale Memory:} Three-tier hierarchy mirrors hippocampal-neocortical consolidation
+    \item \textbf{Production-Ready Rust:} High-performance, safe, and maintainable implementation
+\end{enumerate}
+
+\subsection*{Future Work}
+
+\begin{itemize}
+    \item Quantum computing integration for portfolio optimization
+    \item Continual learning without catastrophic forgetting
+    \item Multi-agent systems for distributed trading
+    \item Regulatory AI for automated compliance
+\end{itemize}
+
+\vspace{1cm}
+
+\begin{tcolorbox}[colback=janusblue!5, colframe=janusblue, title=\textbf{Repository \& Contact}]
+\centering
+\textbf{GitHub:} \url{https://github.com/nuniesmith/technical_papers}
+
+\vspace{0.5cm}
+
+For implementation code, updates, and discussions, visit the repository.
+
+\vspace{0.5cm}
+
+\textit{``The god of beginnings and transitions, looking simultaneously to the future and the past.''}
+\end{tcolorbox}
+
+\end{document}
