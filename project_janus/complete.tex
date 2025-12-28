@@ -19,7 +19,10 @@
 \usepackage{tcolorbox}
 \usepackage{tabularx}
 \usepackage{array}
-\usepackage{pdfpages}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
 
 % --- Define Left-Aligned X Column for Tables ---
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
@@ -39,6 +42,9 @@
 \definecolor{backwardpurple}{RGB}{138, 43, 226}
 \definecolor{neurogreen}{RGB}{34, 139, 34}
 \definecolor{rustorange}{RGB}{255, 140, 0}
+\definecolor{codegray}{RGB}{245, 245, 245}
+\definecolor{rustcolor}{RGB}{70, 130, 180}
+\definecolor{pythoncolor}{RGB}{55, 118, 171}
 
 % --- UNICODE CHARACTER DECLARATIONS ---
 \newunicodechar{▼}{\ensuremath{\blacktriangledown}}
@@ -50,6 +56,38 @@
 \newunicodechar{≥}{\ensuremath{\geq}}
 \newunicodechar{≤}{\ensuremath{\leq}}
 \newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{∨}{\ensuremath{\vee}}
+\newunicodechar{¬}{\ensuremath{\neg}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{÷}{\ensuremath{\div}}
+\newunicodechar{∞}{\ensuremath{\infty}}
+\newunicodechar{∑}{\ensuremath{\sum}}
+\newunicodechar{∏}{\ensuremath{\prod}}
+\newunicodechar{∫}{\ensuremath{\int}}
+\newunicodechar{√}{\ensuremath{\sqrt}}
+\newunicodechar{∂}{\ensuremath{\partial}}
+\newunicodechar{∇}{\ensuremath{\nabla}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\epsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\phi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{Π}{\ensuremath{\Pi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
 
 % --- HYPERREF CONFIGURATION ---
 \hypersetup{
@@ -61,7 +99,7 @@
     pdftitle={Project JANUS: Complete Documentation Suite},
     pdfauthor={Jordan Smith},
     pdfsubject={Neuromorphic Trading Intelligence},
-    pdfkeymarks={neuromorphic computing, algorithmic trading, machine learning, Rust, neuroscience},
+    pdfkeywords={neuromorphic computing, algorithmic trading, machine learning, Rust, neuroscience},
     bookmarks=true,
     bookmarksopen=true,
     bookmarksnumbered=true
@@ -83,6 +121,49 @@
 \titleformat{\subsection}
   {\large\bfseries\color{janusblue}}
   {\thesubsection}{1em}{}
+
+% --- CODE LISTINGS STYLE ---
+\lstdefinestyle{rust}{
+    language=Rust,
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{codegray},
+    keywordstyle=\color{rustcolor},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    showstringspaces=false,
+    tabsize=2
+}
+
+\lstdefinestyle{python}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{codegray},
+    keywordstyle=\color{pythoncolor},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    showstringspaces=false,
+    tabsize=4
+}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{codegray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
 
 \begin{document}
 
@@ -130,14 +211,18 @@
 
 \end{titlepage}
 
-% --- OVERVIEW PAGE ---
+% --- TABLE OF CONTENTS ---
 \newpage
+\tableofcontents
+\newpage
+
+% --- OVERVIEW PAGE ---
 \thispagestyle{fancy}
 
 \section*{How to Use This Document}
 \addcontentsline{toc}{section}{How to Use This Document}
 
-This unified document combines all five technical specifications of Project JANUS into a single, comprehensive reference. Each part maintains its original formatting and can be referenced independently.
+This unified document combines all five technical specifications of Project JANUS into a single, comprehensive reference. Each part maintains its original content and can be referenced independently.
 
 \subsection*{Reading Paths}
 
@@ -198,7 +283,7 @@ This documentation is highly technical and assumes familiarity with:
 \begin{itemize}
     \item \textbf{Total Pages:} Approximately 200+ pages
     \item \textbf{Combined Size:} All five technical specifications in one file
-    \item \textbf{Format:} Each part preserves its original table of contents and section numbering
+    \item \textbf{Format:} Unified compilation with single table of contents
     \item \textbf{Repository:} \url{https://github.com/nuniesmith/technical_papers}
 \end{itemize}
 
@@ -206,47 +291,46 @@ This documentation is highly technical and assumes familiarity with:
 % PART 1: MAIN ARCHITECTURE
 % ============================================
 \newpage
-\pdfbookmark[0]{Part 1: Main Architecture}{part1}
-\includepdf[pages=-,
-            pagecommand={\thispagestyle{fancy}},
-            addtotoc={1, section, 1, Part 1: Main Architecture, part1main}]
-            {main.pdf}
+\part{Main Architecture}
+\label{part:main}
+
+\input{main_content.tex}
 
 % ============================================
 % PART 2: FORWARD SERVICE
 % ============================================
-\pdfbookmark[0]{Part 2: Forward Service (Janus Bifrons)}{part2}
-\includepdf[pages=-,
-            pagecommand={\thispagestyle{fancy}},
-            addtotoc={1, section, 1, Part 2: Forward Service, part2forward}]
-            {forward.pdf}
+\newpage
+\part{Forward Service (Janus Bifrons)}
+\label{part:forward}
+
+\input{forward_content.tex}
 
 % ============================================
 % PART 3: BACKWARD SERVICE
 % ============================================
-\pdfbookmark[0]{Part 3: Backward Service (Janus Consivius)}{part3}
-\includepdf[pages=-,
-            pagecommand={\thispagestyle{fancy}},
-            addtotoc={1, section, 1, Part 3: Backward Service, part3backward}]
-            {backward.pdf}
+\newpage
+\part{Backward Service (Janus Consivius)}
+\label{part:backward}
+
+\input{backward_content.tex}
 
 % ============================================
 % PART 4: NEUROMORPHIC ARCHITECTURE
 % ============================================
-\pdfbookmark[0]{Part 4: Neuromorphic Architecture}{part4}
-\includepdf[pages=-,
-            pagecommand={\thispagestyle{fancy}},
-            addtotoc={1, section, 1, Part 4: Neuromorphic Architecture, part4neuro}]
-            {neuro.pdf}
+\newpage
+\part{Neuromorphic Architecture}
+\label{part:neuro}
+
+\input{neuro_content.tex}
 
 % ============================================
 % PART 5: RUST IMPLEMENTATION
 % ============================================
-\pdfbookmark[0]{Part 5: Rust Implementation}{part5}
-\includepdf[pages=-,
-            pagecommand={\thispagestyle{fancy}},
-            addtotoc={1, section, 1, Part 5: Rust Implementation, part5rust}]
-            {rust.pdf}
+\newpage
+\part{Rust Implementation}
+\label{part:rust}
+
+\input{rust_content.tex}
 
 % ============================================
 % FINAL PAGE
@@ -278,6 +362,7 @@ For updates, implementation code, and the latest PDFs, visit:\\
     \item \texttt{backward.pdf} — Backward Service
     \item \texttt{neuro.pdf} — Neuromorphic Architecture
     \item \texttt{rust.pdf} — Rust Implementation
+    \item \texttt{complete.pdf} — This unified document
 \end{itemize}
 
 \vspace{0.5cm}

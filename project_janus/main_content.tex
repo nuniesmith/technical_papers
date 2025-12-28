@@ -1,0 +1,805 @@
+% Main Architecture Content
+% Extracted from main.tex for inclusion in complete.tex
+
+\section*{Abstract}
+
+Financial markets have evolved into complex adaptive systems operating at timescales far beyond human perception. Modern high-frequency trading requires decision-making in microseconds, processing millions of data points across multiple modalities—price movements, order flow toxicity, news sentiment, and macroeconomic signals—while adhering to strict regulatory and risk management constraints. The challenge is not merely computational speed, but the integration of \textit{perception}, \textit{reasoning}, and \textit{memory} into a unified autonomous system.
+
+This document presents \textbf{Project JANUS}, a neuromorphic trading intelligence system inspired by the bifurcated nature of its namesake—the Roman god who simultaneously looks forward and backward. JANUS represents a paradigm shift from monolithic deep learning models to a brain-inspired architecture that mirrors the functional specialization and information flow patterns observed in biological neural systems.
+
+The architecture is fundamentally dual:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{JANUS Forward (Janus Bifrons)}: The ``wake state'' trading engine that operates in real-time market conditions. It implements visual pattern recognition through Gramian Angular Fields (GAF) and Video Vision Transformers (ViViT), symbolic reasoning through Logic Tensor Networks (LTN), multimodal fusion via gated cross-attention, and neuromorphic decision-making inspired by basal ganglia dual pathways.
+
+    \item \textbf{JANUS Backward (Janus Consivius)}: The ``sleep state'' learning system that consolidates experiences during market closure. It replicates hippocampal replay through Sharp-Wave Ripple (SWR) simulation, forms abstract schemas via UMAP visualization and clustering, and implements recall-gated consolidation to prevent catastrophic forgetting.
+\end{itemize}
+
+This document provides the \textit{architectural overview and philosophical foundation} of the JANUS system. Companion documents detail the mathematical specifications, implementation guides, and deployment strategies for each subsystem.
+
+\section{Introduction: The Crisis of Complexity}
+
+\subsection{The Evolution of Quantitative Trading}
+
+The financial industry has undergone several paradigm shifts:
+
+\begin{enumerate}
+    \item \textbf{Quantitative Finance 1.0 (1970s-1990s)}: Statistical arbitrage, mean reversion, and factor models based on historical correlations.
+    \item \textbf{Quantitative Finance 2.0 (2000s)}: High-frequency trading (HFT) with sub-millisecond latency requirements.
+    \item \textbf{Quantitative Finance 3.0 (2010s)}: Machine learning models (random forests, gradient boosting) trained on engineered features.
+    \item \textbf{Quantitative Finance 4.0 (2020s)}: Deep learning models (LSTMs, Transformers) for end-to-end feature extraction.
+\end{enumerate}
+
+Each generation increased model complexity while decreasing interpretability, creating a dangerous trend toward ``black box'' systems that regulators, risk managers, and even their creators struggle to understand.
+
+\subsection{The Black Box Crisis}
+
+Modern ML-based trading systems face critical challenges:
+
+\begin{itemize}
+    \item \textbf{Catastrophic Forgetting}: Neural networks trained on new market regimes (e.g., COVID-19 volatility) often forget previously learned patterns, leading to abrupt strategy failures.
+    \item \textbf{Lack of Explainability}: Regulatory frameworks (MiFID II, SEC Rule 15c3-5) demand audit trails and explanations for algorithmic decisions, which current deep learning models cannot provide.
+    \item \textbf{Overfitting to Noise}: Without symbolic constraints, models exploit spurious correlations (e.g., ``Super Bowl indicator'') that fail catastrophically in live trading.
+    \item \textbf{Inability to Handle Novelty}: Traditional RL agents trained in simulation often fail when encountering ``black swan'' events not represented in training data.
+\end{itemize}
+
+The 2010 Flash Crash, the 2012 Knight Capital incident (\$440M loss in 45 minutes), and numerous other algorithmic failures underscore the urgent need for \textit{transparent, robust, and adaptive} trading systems.
+
+\subsection{The Neuromorphic Solution}
+
+JANUS addresses these challenges by emulating the brain's architecture:
+
+\begin{tabularx}{\textwidth}{|l|L|L|}
+\hline
+\textbf{Brain Region} & \textbf{Neuroscience Role} & \textbf{Trading Role} \\
+\hline
+Visual Cortex & Pattern recognition in images & GAF/ViViT market pattern detection \\
+\hline
+Prefrontal Cortex & Logic, planning, rule adherence & LTN constraint enforcement \\
+\hline
+Hippocampus & Episodic memory, replay & Experience buffer, SWR simulation \\
+\hline
+Neocortex & Long-term schemas & Consolidated strategies, vector DB \\
+\hline
+Basal Ganglia & Action selection, inhibition & Dual pathways (Go/No-Go) \\
+\hline
+Cerebellum & Motor control, prediction & Market impact forward model \\
+\hline
+Amygdala & Fear detection & Circuit breakers, anomaly detection \\
+\hline
+\end{tabularx}
+
+This architecture provides:
+
+\begin{itemize}
+    \item \textbf{Explainability}: Each decision can be traced through visual embeddings, logical constraints, and dual-pathway voting.
+    \item \textbf{Continual Learning}: Hippocampal replay and neocortical schemas prevent catastrophic forgetting.
+    \item \textbf{Symbolic Constraints}: LTN enforces regulatory and risk rules as logical propositions.
+    \item \textbf{Anomaly Robustness}: UMAP visualization detects out-of-distribution market states.
+\end{itemize}
+
+\section{Architectural Philosophy: The Two Faces of JANUS}
+
+\subsection{Why Dual Architecture?}
+
+The mammalian brain operates in fundamentally different modes during wakefulness and sleep:
+
+\begin{itemize}
+    \item \textbf{Wake State}: Fast, reactive, energy-efficient processing optimized for immediate survival (fight-or-flight, foraging).
+    \item \textbf{Sleep State}: Slow, reflective, energy-intensive consolidation of experiences into long-term memory.
+\end{itemize}
+
+This duality evolved because the brain cannot simultaneously optimize for real-time reaction and deep learning. JANUS replicates this separation:
+
+\subsection{Janus Bifrons: The Forward Face}
+
+Named after the aspect of Janus that ``looks forward,'' this service handles all real-time trading decisions during market hours.
+
+\textbf{Design Philosophy:}
+\begin{itemize}
+    \item \textbf{Latency-Critical}: All inference must complete in <100ms (ideally <50ms for HFT).
+    \item \textbf{Deterministic}: No stochastic exploration; actions are fully deterministic given state.
+    \item \textbf{Read-Only}: Does not update model weights during market hours.
+    \item \textbf{Stateless API}: Each request is independent (RESTful or gRPC).
+\end{itemize}
+
+\textbf{Core Mechanisms:}
+\begin{itemize}
+    \item \textbf{Visual Encoding}: Raw time series → GAF images → ViViT spatiotemporal embeddings
+    \item \textbf{Logic Evaluation}: LTN predicates check regulatory constraints (wash sale, VPIN toxicity, Almgren-Chriss risk)
+    \item \textbf{Multimodal Fusion}: Gated cross-attention combines visual, textual, and tabular features
+    \item \textbf{Decision Engine}: Basal ganglia dual pathways (Direct/Indirect) vote on Go/No-Go signals
+\end{itemize}
+
+\textbf{Technology Stack:}
+\begin{itemize}
+    \item \textbf{Language}: Rust (memory safety, zero-cost abstractions, fearless concurrency)
+    \item \textbf{ML Framework}: ONNX Runtime (optimized C++ inference with Rust bindings)
+    \item \textbf{Async Runtime}: Tokio (handles thousands of concurrent requests)
+\end{itemize}
+
+\subsection{Janus Consivius: The Backward Face}
+
+Named after the aspect of Janus that ``looks backward,'' this service performs offline learning during market closure (nights, weekends).
+
+\textbf{Design Philosophy:}
+\begin{itemize}
+    \item \textbf{Batch-Oriented}: Processes entire day's worth of experiences at once
+    \item \textbf{Computationally Intensive}: GPU-accelerated training, UMAP fitting, vector database updates
+    \item \textbf{Memory Consolidation}: Replays important experiences, forms abstract schemas, prunes redundant patterns
+    \item \textbf{Safety-Gated}: Updates only occur if logical constraints are satisfied (prevents learning from violations)
+\end{itemize}
+
+\textbf{Core Mechanisms:}
+\begin{itemize}
+    \item \textbf{Prioritized Replay}: TD-error + logical violation score + reward magnitude
+    \item \textbf{SWR Simulation}: 10-20x time compression, mimicking hippocampal sharp-wave ripples
+    \item \textbf{Schema Formation}: UMAP clustering detects emergent strategy patterns
+    \item \textbf{Recall-Gated Learning}: Updates filtered by familiarity (prevents overfitting to rare events)
+\end{itemize}
+
+\textbf{Technology Stack:}
+\begin{itemize}
+    \item \textbf{Core Logic}: Rust (parallel replay, schema clustering)
+    \item \textbf{Training}: PyTorch (ViViT, LTN predicates) exported to ONNX
+    \item \textbf{Vector DB}: Qdrant (stores schemas with metadata for similarity search)
+\end{itemize}
+
+\subsection{Information Flow Between Services}
+
+\textbf{During Market Hours (Forward Active):}
+\begin{enumerate}
+    \item Market data arrives → Forward service processes → Decision output
+    \item Transition $(\mathbf{s}, a, r, \mathbf{s}')$ logged to PostgreSQL
+    \item Forward service is \textit{read-only} (no weight updates)
+\end{enumerate}
+
+\textbf{During Market Closure (Backward Active):}
+\begin{enumerate}
+    \item Backward service loads transitions from PostgreSQL
+    \item Prioritized replay selects important experiences
+    \item SWR simulation trains policy/critic networks
+    \item Schemas are formed and stored in Qdrant
+    \item Updated models exported to ONNX
+    \item Forward service hot-swaps new models on next market open
+\end{enumerate}
+
+\textbf{Key Invariant:} Forward and Backward \textit{never run simultaneously}. This prevents race conditions and ensures deterministic behavior during trading hours.
+
+\section{Core Components: Hybrid Intelligence}
+
+\subsection{Vision: Seeing the Market's Geometry}
+
+\subsubsection{Why Visual Encoding?}
+
+Traditional time series models (ARIMA, GARCH, LSTMs) treat market data as 1D sequences, losing critical geometric relationships:
+
+\begin{itemize}
+    \item \textbf{Recurrent Patterns}: Head-and-shoulders, double tops, support/resistance levels are \textit{visual} patterns
+    \item \textbf{Multi-Scale Structure}: Intraday microstructure vs. daily trends require different receptive fields
+    \item \textbf{Transfer Learning}: Pre-trained vision models (ViT, CLIP) excel at pattern recognition
+\end{itemize}
+
+\subsubsection{Differentiable Gramian Angular Fields (DiffGAF)}
+
+The Gramian Angular Field (GAF) transforms a 1D time series $\{x_t\}$ into a 2D image by encoding pairwise temporal correlations as angular relationships:
+
+\textbf{Step 1: Normalization (Learnable)}
+\begin{equation}
+    \tilde{x}_t = \frac{x_t - \alpha}{\beta}, \quad \alpha, \beta \in \mathbb{R} \text{ (trainable)}
+\end{equation}
+
+\textbf{Step 2: Polar Encoding}
+\begin{equation}
+    \phi_t = \arccos(\tilde{x}_t), \quad r_t = \frac{t}{T}
+\end{equation}
+
+\textbf{Step 3: Gramian Angular Summation Field (GASF)}
+\begin{equation}
+    \text{GASF}_{i,j} = \cos(\phi_i + \phi_j)
+\end{equation}
+
+\textbf{Step 4: Gramian Angular Difference Field (GADF)}
+\begin{equation}
+    \text{GADF}_{i,j} = \sin(\phi_i - \phi_j)
+\end{equation}
+
+\textbf{Why This Works:}
+\begin{itemize}
+    \item GASF captures \textit{summation} of angles → encodes \textit{trend persistence}
+    \item GADF captures \textit{difference} of angles → encodes \textit{reversals and volatility}
+    \item Learnable $\alpha, \beta$ allow the model to discover optimal normalizations for different market regimes
+\end{itemize}
+
+\subsubsection{GAF Video and ViViT}
+
+To capture temporal evolution, we generate a \textit{video} of GAF images using a sliding window:
+
+\begin{equation}
+    \mathcal{V} = \{\text{GAF}(x_{t:t+w})\}_{t=1}^{T-w}
+\end{equation}
+
+This video is fed into a \textbf{Video Vision Transformer (ViViT)}, which applies:
+\begin{itemize}
+    \item \textbf{Spatial Attention}: Identifies patterns within each frame (e.g., double top at time $t$)
+    \item \textbf{Temporal Attention}: Tracks pattern evolution across frames (e.g., breakout formation)
+\end{itemize}
+
+\subsection{Logic: Enforcing the Rules of the Game}
+
+\subsubsection{The Necessity of Symbolic Constraints}
+
+Financial markets are governed by strict rules:
+\begin{itemize}
+    \item \textbf{Regulatory}: Wash sale rules, short sale restrictions, position limits
+    \item \textbf{Risk Management}: Maximum drawdown, Value-at-Risk (VaR), concentration limits
+    \item \textbf{Execution Constraints}: Almgren-Chriss optimal execution, VPIN toxicity thresholds
+\end{itemize}
+
+Pure neural networks \textit{cannot guarantee} constraint satisfaction. Even with heavy penalty terms, violations can occur during deployment.
+
+\subsubsection{Logic Tensor Networks (LTN)}
+
+LTN extends first-order logic to continuous fuzzy truth values using \textit{t-norms}:
+
+\begin{equation}
+    \text{LTN}(\phi) \in [0, 1], \quad \phi \text{ is a logical formula}
+\end{equation}
+
+\textbf{Example Predicates:}
+\begin{itemize}
+    \item $\text{WashSale}(a_{\text{sell}}, a_{\text{buy}}) \Rightarrow \text{DaysSince}(a_{\text{sell}}) > 30$
+    \item $\text{RiskLimit}(\text{portfolio}) \Rightarrow \text{VaR}_{95}(\text{portfolio}) < 0.05 \cdot \text{NAV}$
+    \item $\text{ToxicFlow}(\text{order}) \Rightarrow \text{VPIN} < 0.9$
+\end{itemize}
+
+\textbf{Lukasiewicz T-Norm (Used in JANUS):}
+\begin{align}
+    a \wedge_{\mathcal{L}} b &= \max(0, a + b - 1) \quad \text{(AND)} \\
+    a \vee_{\mathcal{L}} b &= \min(1, a + b) \quad \text{(OR)} \\
+    \neg_{\mathcal{L}} a &= 1 - a \quad \text{(NOT)}
+\end{align}
+
+\subsubsection{Knowledge Base Examples}
+
+\textbf{Wash Sale Rule:}
+\begin{equation}
+    \forall a_{\text{sell}}, a_{\text{buy}} : \text{SameAsset}(a_{\text{sell}}, a_{\text{buy}}) \Rightarrow \text{TimeDiff}(a_{\text{sell}}, a_{\text{buy}}) \geq 30
+\end{equation}
+
+\textbf{Almgren-Chriss Optimal Execution:}
+\begin{equation}
+    \forall \text{order} : \text{TrajectoryDeviation}(\text{order}) < \epsilon_{\text{AC}}
+\end{equation}
+
+\textbf{VPIN Toxicity:}
+\begin{equation}
+    \forall \text{order} : \text{VPIN}(\text{market}) < 0.9 \Rightarrow \text{Execute}(\text{order}) = \text{True}
+\end{equation}
+
+\subsection{Fusion: Integrating Multiple Realities}
+
+\subsubsection{The Multimodal Challenge}
+
+Trading decisions require integrating:
+\begin{itemize}
+    \item \textbf{Visual Patterns}: GAF/ViViT embeddings (shape: $[B, d_{\text{visual}}]$)
+    \item \textbf{Textual Data}: News sentiment, earnings transcripts (BERT embeddings: $[B, d_{\text{text}}]$)
+    \item \textbf{Tabular Features}: Volume, bid-ask spread, order book imbalance ($[B, d_{\text{tabular}}]$)
+\end{itemize}
+
+Naive concatenation fails because modalities have different:
+\begin{itemize}
+    \item \textbf{Scales}: Visual embeddings $\in [-1, 1]$, tabular features $\in [0, \infty)$
+    \item \textbf{Noise Levels}: Text is sparse and noisy, visual patterns are dense but ambiguous
+    \item \textbf{Relevance}: Not all modalities are equally informative for all decisions
+\end{itemize}
+
+\subsubsection{Gated Cross-Attention (GCA)}
+
+GCA dynamically weights modalities based on their relevance:
+
+\begin{align}
+    \mathbf{Q} &= \mathbf{W}_Q \mathbf{x}_{\text{visual}} \\
+    \mathbf{K} &= \mathbf{W}_K [\mathbf{x}_{\text{text}}; \mathbf{x}_{\text{tabular}}] \\
+    \mathbf{V} &= \mathbf{W}_V [\mathbf{x}_{\text{text}}; \mathbf{x}_{\text{tabular}}] \\
+    \alpha &= \text{Softmax}\left(\frac{\mathbf{Q} \mathbf{K}^\top}{\sqrt{d_k}}\right) \\
+    g &= \sigma(\mathbf{W}_g \mathbf{x}_{\text{visual}} + \mathbf{b}_g) \\
+    \mathbf{z} &= g \cdot (\alpha \mathbf{V}) + (1 - g) \cdot \mathbf{x}_{\text{visual}}
+\end{align}
+
+The gate $g$ learns to modulate fusion strength based on context.
+
+\subsection{Decision: The Neuromorphic Motor System}
+
+\subsubsection{Basal Ganglia Dual Pathways}
+
+The basal ganglia implement action selection through competing pathways:
+
+\textbf{Direct Pathway (Go Signal):}
+\begin{equation}
+    p_{\text{Go}}(a \mid \mathbf{s}) = \sigma(\mathbf{W}_{\text{Go}} \mathbf{z} + \mathbf{b}_{\text{Go}})
+\end{equation}
+
+\textbf{Indirect Pathway (No-Go Signal):}
+\begin{equation}
+    p_{\text{No-Go}}(a \mid \mathbf{s}) = \sigma(\mathbf{W}_{\text{No-Go}} \mathbf{z} + \mathbf{b}_{\text{No-Go}})
+\end{equation}
+
+\textbf{Final Decision:}
+\begin{equation}
+    a^* = \begin{cases}
+        a & \text{if } p_{\text{Go}}(a \mid \mathbf{s}) > p_{\text{No-Go}}(a \mid \mathbf{s}) \text{ AND } \text{LTN}(\mathcal{K}, a) > \tau_{\text{logic}} \\
+        \text{NULL} & \text{otherwise}
+    \end{cases}
+\end{equation}
+
+This ensures actions are both \textit{strategically sound} (Go pathway) and \textit{legally compliant} (LTN filter).
+
+\subsubsection{Cerebellar Forward Model}
+
+The cerebellum predicts sensory consequences of motor actions. In trading, this translates to \textit{market impact prediction}:
+
+\begin{equation}
+    \hat{p}_{t+1} = f_{\text{cerebellum}}(\mathbf{s}_t, a_t)
+\end{equation}
+
+\textbf{Training Signal: Sensory Prediction Error}
+\begin{equation}
+    \mathcal{L}_{\text{cerebellum}} = \mathbb{E}[(p_{t+1} - \hat{p}_{t+1})^2]
+\end{equation}
+
+This allows the system to:
+\begin{itemize}
+    \item \textbf{Anticipate Slippage}: Adjust order size if predicted impact exceeds tolerance
+    \item \textbf{Detect Manipulation}: Large deviations between predicted and actual prices signal adversarial behavior
+\end{itemize}
+
+\section{Memory and Learning: The Sleeping Mind}
+
+\subsection{The Three-Timescale Hierarchy}
+
+The brain consolidates memories across three timescales, each serving a distinct function:
+
+\begin{enumerate}
+    \item \textbf{Short-Term (Hippocampus)}: Rapid encoding of episodic experiences during the day
+    \item \textbf{Medium-Term (Sharp-Wave Ripples)}: Offline replay and prioritization during sleep
+    \item \textbf{Long-Term (Neocortex)}: Slow integration into abstract schemas over weeks/months
+\end{enumerate}
+
+JANUS replicates this hierarchy to prevent catastrophic forgetting while enabling continual learning.
+
+\subsubsection{Short-Term: Hippocampal Episodic Buffer}
+
+During market hours, all transitions $(\mathbf{s}, a, r, \mathbf{s}')$ are stored in a \textbf{circular buffer}:
+
+\begin{equation}
+    \mathcal{B}_{\text{STM}} = \{(\mathbf{s}_t, a_t, r_t, \mathbf{s}_{t+1})\}_{t=1}^{T_{\text{day}}}
+\end{equation}
+
+\textbf{Pattern Separation:} To reduce redundancy, experiences are encoded with sparse random projections:
+\begin{equation}
+    \mathbf{c}_t = \text{TopK}(\text{ReLU}(\mathbf{W}_{\text{sep}} \mathbf{s}_t + \mathbf{b}_{\text{sep}}), k)
+\end{equation}
+
+This mimics dentate gyrus function in the hippocampus, reducing interference between similar states.
+
+\subsubsection{Medium-Term: Sharp-Wave Ripple (SWR) Simulation}
+
+During sleep, the hippocampus spontaneously replays experiences at 10-20x normal speed. JANUS simulates this with \textbf{prioritized experience replay}:
+
+\textbf{Priority Score:}
+\begin{equation}
+    p_i = |\delta_i| + \lambda_{\text{logic}} \cdot v_i + \lambda_{\text{reward}} \cdot |r_i|
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $\delta_i = r_i + \gamma V(\mathbf{s}_{i+1}) - V(\mathbf{s}_i)$ is the TD-error
+    \item $v_i = 1 - \text{SatAgg}(\mathcal{K}, a_i)$ is the logical violation score
+    \item $r_i$ is the reward magnitude
+\end{itemize}
+
+\textbf{Sampling Probability:}
+\begin{equation}
+    P(i) = \frac{p_i^\alpha}{\sum_j p_j^\alpha}
+\end{equation}
+
+This ensures the model focuses on:
+\begin{itemize}
+    \item Surprising outcomes (high TD-error)
+    \item Constraint violations (high $v_i$)
+    \item High-impact trades (high $|r_i|$)
+\end{itemize}
+
+\subsubsection{Long-Term: Neocortical Schemas}
+
+Over multiple sleep cycles, the system forms \textbf{abstract schemas} by clustering experiences in embedding space:
+
+\textbf{Schema Detection via UMAP:}
+\begin{enumerate}
+    \item Project experiences $\{\mathbf{s}_i\}$ to 2D using UMAP: $\{\mathbf{z}_i\} = \text{UMAP}(\{\mathbf{s}_i\})$
+    \item Cluster via HDBSCAN: $\text{labels} = \text{HDBSCAN}(\{\mathbf{z}_i\})$
+    \item For each cluster $k$, compute schema mean $\boldsymbol{\mu}_k$ and covariance $\boldsymbol{\Sigma}_k$
+\end{enumerate}
+
+\textbf{Recall-Gated Consolidation:}
+\begin{equation}
+    \Delta \mathbf{W}_{\text{LTM}} = \eta \cdot g(\text{recall}) \cdot g(\text{logic}) \cdot \nabla_{\mathbf{W}} \mathcal{L}(\tau)
+\end{equation}
+
+Updates only occur if:
+\begin{itemize}
+    \item The experience is \textit{familiar} (high recall score $\Rightarrow$ matches existing schema)
+    \item The experience is \textit{valid} (high logic score $\Rightarrow$ satisfies LTN constraints)
+\end{itemize}
+
+\subsection{Cognitive Visualization: UMAP}
+
+\subsubsection{AlignedUMAP for Schema Detection}
+
+Standard UMAP projects each day's data independently, making it impossible to track schema evolution over time. \textbf{AlignedUMAP} solves this by enforcing consistency across multiple embeddings:
+
+\begin{equation}
+    \mathcal{L}_{\text{aligned}} = \sum_{t=1}^{T} \mathcal{L}_{\text{UMAP}}^{(t)} + \lambda \sum_{t=1}^{T-1} \sum_i ||\mathbf{z}_i^{(t)} - \mathbf{z}_i^{(t+1)}||^2
+\end{equation}
+
+This allows analysts to visualize:
+\begin{itemize}
+    \item Emergence of new market regimes (new clusters appear)
+    \item Degradation of old strategies (clusters shrink or merge)
+\end{itemize}
+
+\subsubsection{Parametric UMAP for Anomaly Detection}
+
+Parametric UMAP trains a neural network $f_{\theta}$ to approximate the projection:
+\begin{equation}
+    \mathbf{z} = f_{\theta}(\mathbf{s})
+\end{equation}
+
+At inference time, we detect anomalies by measuring distance to known clusters:
+\begin{equation}
+    d_{\text{anomaly}} = \min_k ||\mathbf{z} - \boldsymbol{\mu}_k||
+\end{equation}
+
+If $d_{\text{anomaly}} > \tau_{\text{anomaly}}$, the system triggers a circuit breaker (halts trading, alerts human operator).
+
+\section{Implementation Strategy: Rust-First Architecture}
+
+\subsection{Why Rust?}
+
+\begin{itemize}
+    \item \textbf{Memory Safety}: No null pointers, no buffer overflows, no data races (guaranteed at compile time)
+    \item \textbf{Zero-Cost Abstractions}: High-level constructs (iterators, traits) compile to machine code as fast as hand-written C
+    \item \textbf{Fearless Concurrency}: Type system prevents data races, making parallelism safe and easy
+    \item \textbf{Ecosystem}: Growing ML support (tch-rs, ort, candle, ndarray)
+\end{itemize}
+
+\subsection{Service Architecture}
+
+\begin{itemize}
+    \item \textbf{Forward Service}: Rust (async gRPC server) with ONNX Runtime
+    \item \textbf{Backward Service}: Rust (batch processing) with PyTorch training gateway
+    \item \textbf{Gateway API}: Python FastAPI (developer-friendly REST API)
+    \item \textbf{Vector DB}: Qdrant (Rust-native, fast similarity search)
+\end{itemize}
+
+\subsection{ML Framework Migration Path}
+
+\textbf{Phase 1 (Months 1-3): Hybrid Python/Rust}
+\begin{itemize}
+    \item Train ViViT and LTN models in PyTorch
+    \item Export to ONNX
+    \item Run inference in Rust via ONNX Runtime
+\end{itemize}
+
+\textbf{Phase 2 (Months 4-6): Rust-Native Inference}
+\begin{itemize}
+    \item Migrate to tch-rs (libtorch bindings) for faster inference
+    \item Keep training in PyTorch
+\end{itemize}
+
+\textbf{Phase 3 (Months 7-12): Full Rust ML}
+\begin{itemize}
+    \item Migrate to Candle (pure Rust ML framework)
+    \item Full end-to-end Rust pipeline
+\end{itemize}
+
+\subsection{Deployment Architecture}
+
+\begin{itemize}
+    \item \textbf{Development}: Docker Compose (local testing)
+    \item \textbf{Staging}: Kubernetes (AWS EKS or GCP GKE)
+    \item \textbf{Production}: Kubernetes with Istio service mesh
+    \item \textbf{Monitoring}: Prometheus + Grafana + Jaeger (distributed tracing)
+\end{itemize}
+
+\section{Safety and Compliance: The Glass Box}
+
+\subsection{Architectural Invariants}
+
+\textbf{Hard Constraints (Enforced by LTN):}
+\begin{itemize}
+    \item No wash sales within 30 days
+    \item No short sales during SEC uptick rule violations
+    \item No orders when VPIN > 0.9 (toxic flow detected)
+    \item Maximum position size per asset: 5\% of NAV
+    \item Maximum daily drawdown: 3\% of NAV
+\end{itemize}
+
+\textbf{Soft Constraints (Penalty in Reward Function):}
+\begin{itemize}
+    \item Minimize slippage (Almgren-Chriss optimal execution)
+    \item Minimize adverse selection (market impact model)
+    \item Maximize fill rate (execution quality)
+\end{itemize}
+
+\textbf{Fail-Safe Mechanisms:}
+\begin{itemize}
+    \item If LTN score $< \tau_{\text{logic}}$, action is \textbf{blocked} (not just penalized)
+    \item If UMAP anomaly score $> \tau_{\text{anomaly}}$, trading is \textbf{paused}
+    \item If Sharpe ratio drops below 0.5 for 3 consecutive days, strategy is \textbf{halted}
+\end{itemize}
+
+\subsection{Explainability and Auditability}
+
+Every decision is logged with:
+\begin{itemize}
+    \item \textbf{Visual Embedding}: GAF image + ViViT attention maps
+    \item \textbf{Logic Scores}: LTN predicate evaluations (which constraints were active?)
+    \item \textbf{Dual Pathway Votes}: $p_{\text{Go}}$ vs. $p_{\text{No-Go}}$ for each action
+    \item \textbf{Schema Assignment}: Which long-term strategy cluster was activated?
+\end{itemize}
+
+This enables post-hoc analysis:
+\begin{itemize}
+    \item ``Why did the system buy AAPL at 10:37 AM?''
+    \item Answer: Visual pattern matched ``bullish engulfing'' schema, LTN confirmed no wash sale violation, Go pathway voted 0.87 vs. No-Go 0.13
+\end{itemize}
+
+\subsection{Circuit Breakers and Kill Switches}
+
+\textbf{Amygdala Module (Fear Detection):}
+\begin{itemize}
+    \item Monitors real-time P\&L, volatility, and drawdown
+    \item Triggers immediate halt if:
+    \begin{itemize}
+        \item Drawdown > 5\% in any 30-minute window
+        \item Correlation with VIX $>$ 0.9 (market panic)
+        \item Bid-ask spread widens by >300\% (liquidity crisis)
+    \end{itemize}
+\end{itemize}
+
+\textbf{Human Override:}
+\begin{itemize}
+    \item Dashboard allows risk managers to halt trading with one click
+    \item Alerts sent via Slack/PagerDuty if anomalies detected
+\end{itemize}
+
+\section{Validation and Testing: Proving Robustness}
+
+\subsection{Simulation and Backtesting}
+
+\textbf{Level 1: Synthetic Data}
+\begin{itemize}
+    \item Geometric Brownian Motion (GBM) with jumps
+    \item Heston stochastic volatility model
+    \item Agent-based market simulation (zero-intelligence traders)
+\end{itemize}
+
+\textbf{Level 2: Historical Data}
+\begin{itemize}
+    \item Walk-forward backtesting (train on Year 1, test on Year 2, roll forward)
+    \item Out-of-sample testing on 2008 financial crisis, 2020 COVID crash
+    \item Cross-asset validation (equities, futures, FX)
+\end{itemize}
+
+\textbf{Level 3: Paper Trading}
+\begin{itemize}
+    \item Live market data, simulated execution
+    \item Monitor slippage, fill rates, adverse selection
+    \item Compare with baseline strategies (TWAP, VWAP, Almgren-Chriss)
+\end{itemize}
+
+\textbf{Level 4: Live Trading (Minimal Capital)}
+\begin{itemize}
+    \item Start with \$10K-\$100K allocation
+    \item Gradual ramp-up as Sharpe ratio stabilizes
+    \item Continuous monitoring of reality gap (sim vs. live performance)
+\end{itemize}
+
+\subsection{Comparative Benchmarks}
+
+\begin{tabularx}{\textwidth}{|l|L|L|}
+\hline
+\textbf{Metric} & \textbf{JANUS Target} & \textbf{Baseline (LSTM + RL)} \\
+\hline
+Sharpe Ratio & >2.0 & 1.2-1.5 \\
+\hline
+Maximum Drawdown & <10\% & 15-25\% \\
+\hline
+Constraint Violations & 0 (hard guarantee) & 1-2\% of trades \\
+\hline
+Catastrophic Forgetting & <5\% degradation over 6 months & 20-30\% degradation \\
+\hline
+Latency (99th percentile) & <100ms & <200ms \\
+\hline
+Explainability Score & >0.8 (human-ratable) & 0.2-0.4 (black box) \\
+\hline
+\end{tabularx}
+
+\section{Future Directions: Towards Quant 5.0}
+
+\subsection{Quantum Computing Integration}
+
+\begin{itemize}
+    \item \textbf{Portfolio Optimization}: Quantum annealing for quadratic programming (QAOA)
+    \item \textbf{Monte Carlo Simulation}: Quantum amplitude estimation for VaR calculation
+    \item \textbf{Option Pricing}: Quantum algorithms for Black-Scholes PDE solving
+\end{itemize}
+
+\subsection{Continual Learning and Meta-Learning}
+
+\begin{itemize}
+    \item \textbf{Meta-RL}: Learn to adapt quickly to new market regimes (MAML, Reptile)
+    \item \textbf{Elastic Weight Consolidation}: Prevent catastrophic forgetting without experience replay
+    \item \textbf{Neural Architecture Search}: Automatically discover optimal network topologies for new assets
+\end{itemize}
+
+\subsection{Multi-Agent Cooperation and Competition}
+
+\begin{itemize}
+    \item \textbf{Multi-Agent RL}: Multiple JANUS instances trade different strategies, share knowledge
+    \item \textbf{Adversarial Training}: One agent simulates market manipulator, other learns to detect/avoid
+    \item \textbf{Cooperative Execution}: Distribute large orders across multiple brokers to minimize impact
+\end{itemize}
+
+\subsection{Regulatory AI and Automated Compliance}
+
+\begin{itemize}
+    \item \textbf{Regulatory Knowledge Graph}: Encode SEC rules, MiFID II directives as LTN predicates
+    \item \textbf{Automated Auditing}: LTN generates human-readable compliance reports
+    \item \textbf{Proactive Compliance}: System suggests regulatory changes before violations occur
+\end{itemize}
+
+\section{Conclusion: The Path Forward}
+
+Project JANUS represents a paradigm shift in quantitative finance—from \textit{black box} deep learning to \textit{glass box} neuromorphic intelligence. By emulating the brain's dual-process architecture (wake/sleep, fast/slow, reactive/reflective), JANUS achieves:
+
+\begin{itemize}
+    \item \textbf{Robustness}: Continual learning without catastrophic forgetting
+    \item \textbf{Safety}: Hard logical constraints prevent regulatory violations
+    \item \textbf{Transparency}: Every decision is explainable and auditable
+    \item \textbf{Performance}: Sub-100ms latency with Rust-native inference
+\end{itemize}
+
+The system is not a replacement for human traders, but a \textit{cognitive prosthetic}—augmenting human intuition with machine precision, while maintaining the ability to explain its reasoning.
+
+\textbf{Key Innovations:}
+\begin{enumerate}
+    \item \textbf{Visual Time Series Encoding}: GAF + ViViT for spatiotemporal pattern recognition
+    \item \textbf{Neuro-Symbolic AI}: LTN for differentiable logic + constraint satisfaction
+    \item \textbf{Hippocampal Replay}: SWR simulation for prioritized experience consolidation
+    \item \textbf{Schema-Based Memory}: UMAP clustering for abstract strategy formation
+    \item \textbf{Dual-Pathway Decision}: Basal ganglia Go/No-Go architecture
+    \item \textbf{Rust-First ML}: Memory-safe, high-performance inference
+\end{enumerate}
+
+\subsection{Companion Documents}
+
+This document provides the \textit{architectural overview}. For detailed specifications, see:
+
+\begin{enumerate}
+    \item \textbf{JANUS Forward Service}: Mathematical formulations for GAF, ViViT, LTN, and decision pathways
+    \item \textbf{JANUS Backward Service}: Detailed algorithms for PER, SWR simulation, schema consolidation, and UMAP
+    \item \textbf{Neuromorphic Architecture Map}: Brain region → trading component mapping with biological justifications
+    \item \textbf{Rust Implementation Guide}: Production deployment, Docker/Kubernetes configs, monitoring setup
+\end{enumerate}
+
+\subsection{Call to Action}
+
+The future of quantitative finance demands systems that are:
+\begin{itemize}
+    \item \textbf{Intelligent} (learn from experience)
+    \item \textbf{Interpretable} (explain their decisions)
+    \item \textbf{Compliant} (guarantee regulatory adherence)
+    \item \textbf{Robust} (handle black swan events)
+\end{itemize}
+
+JANUS is a blueprint for achieving all four. The code is open-source, the architecture is reproducible, and the vision is clear: \textit{trading systems should be as trustworthy as the markets they serve}.
+
+\section*{References}
+
+\begin{enumerate}[leftmargin=*]
+    \item Wang, Z., \& Oates, T. (2015). \textit{Imaging time-series to improve classification and imputation}. Proceedings of IJCAI.
+
+    \item Arnab, A., Dehghani, M., Heigold, G., Sun, C., Lučić, M., \& Schmid, C. (2021). \textit{ViViT: A Video Vision Transformer}. ICCV 2021.
+
+    \item Badreddine, S., d'Avila Garcez, A., Serafini, L., \& Spranger, M. (2022). \textit{Logic Tensor Networks}. Artificial Intelligence, 303, 103649.
+
+    \item Almgren, R., \& Chriss, N. (2001). \textit{Optimal execution of portfolio transactions}. Journal of Risk, 3, 5-40.
+
+    \item Easley, D., López de Prado, M. M., \& O'Hara, M. (2012). \textit{Flow toxicity and liquidity in a high-frequency world}. The Review of Financial Studies, 25(5), 1457-1493.
+
+    \item Schaul, T., Quan, J., Antonoglou, I., \& Silver, D. (2015). \textit{Prioritized experience replay}. ICLR 2016.
+
+    \item Buzsáki, G. (2015). \textit{Hippocampal sharp wave-ripple: A cognitive biomarker for episodic memory and planning}. Hippocampus, 25(10), 1073-1188.
+
+    \item McClelland, J. L., McNaughton, B. L., \& O'Reilly, R. C. (1995). \textit{Why there are complementary learning systems in the hippocampus and neocortex}. Psychological Review, 102(3), 419.
+
+    \item McInnes, L., Healy, J., \& Melville, J. (2018). \textit{UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction}. arXiv:1802.03426.
+
+    \item Ding, Z., Wijaya, D., \& Saligrama, V. (2021). \textit{AlignedUMAP: Aligned Uniform Manifold Approximation and Projection}. NeurIPS 2021 Workshop on Learning Meaningful Representations of Life.
+\end{enumerate}
+
+\section*{Appendix: Implementation Checklist}
+
+\subsection*{Forward Service (Rust)}
+
+\begin{itemize}
+    \item[$\square$] GAF transformation module with learnable parameters
+    \item[$\square$] GAF video generation with sliding windows
+    \item[$\square$] ONNX Runtime integration for ViViT inference
+    \item[$\square$] LTN predicate evaluation engine
+    \item[$\square$] Lukasiewicz t-norm implementations
+    \item[$\square$] Gated cross-attention fusion
+    \item[$\square$] Basal ganglia dual pathways (Go/No-Go)
+    \item[$\square$] Cerebellar forward model for slippage prediction
+    \item[$\square$] gRPC server with Tokio async runtime
+    \item[$\square$] Prometheus metrics exporter
+    \item[$\square$] Health check endpoints
+    \item[$\square$] Model hot-swapping mechanism
+\end{itemize}
+
+\subsection*{Backward Service (Rust)}
+
+\begin{itemize}
+    \item[$\square$] Prioritized replay buffer with SumTree
+    \item[$\square$] SWR simulation with time compression
+    \item[$\square$] Importance sampling correction
+    \item[$\square$] Schema formation via clustering
+    \item[$\square$] Recall-gated consolidation
+    \item[$\square$] Qdrant client for vector database
+    \item[$\square$] UMAP projection (ONNX or native)
+    \item[$\square$] AlignedUMAP for multi-epoch analysis
+    \item[$\square$] Parallel batch processing with Rayon
+    \item[$\square$] PostgreSQL client for experience logging
+\end{itemize}
+
+\subsection*{Training Gateway (Python)}
+
+\begin{itemize}
+    \item[$\square$] PyTorch training loop
+    \item[$\square$] FastAPI REST endpoints
+    \item[$\square$] Celery task queue for async jobs
+    \item[$\square$] ONNX export pipeline
+    \item[$\square$] Model validation scripts
+    \item[$\square$] Hyperparameter tuning (Optuna)
+    \item[$\square$] Experiment tracking (MLflow or Weights \& Biases)
+\end{itemize}
+
+\subsection*{Infrastructure}
+
+\begin{itemize}
+    \item[$\square$] Docker Compose for local development
+    \item[$\square$] Kubernetes manifests (Deployments, Services, ConfigMaps)
+    \item[$\square$] Helm charts for versioned releases
+    \item[$\square$] PostgreSQL for metadata
+    \item[$\square$] Qdrant for vector storage
+    \item[$\square$] Redis for pub/sub and caching
+    \item[$\square$] Prometheus + Grafana monitoring
+    \item[$\square$] CI/CD pipeline (GitHub Actions or GitLab CI)
+\end{itemize}
+
+\subsection*{Validation}
+
+\begin{itemize}
+    \item[$\square$] Unit tests (>80\% coverage)
+    \item[$\square$] Integration tests (end-to-end flows)
+    \item[$\square$] Synthetic market simulations
+    \item[$\square$] Historical backtest suite
+    \item[$\square$] Black swan stress tests
+    \item[$\square$] Paper trading validation
+    \item[$\square$] Latency profiling
+    \item[$\square$] Reality gap analysis
+\end{itemize}
