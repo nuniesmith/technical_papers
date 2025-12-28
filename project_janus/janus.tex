@@ -280,11 +280,11 @@ Given raw market data $X = \{x_1, x_2, \ldots, x_T\}$ where $x_t \in \mathbb{R}^
 
 \subsubsection{Step 1: Learnable Normalization}
 
-Instead of fixed min-max scaling, we use learnable affine transformations:
+Instead of fixed min-max scaling, we use learnable affine transformations with domain constraints:
 \begin{equation}
-\tilde{x}_t = \gamma \odot \frac{x_t - \mu}{\sigma} + \beta
+\tilde{x}_t = \tanh\left(\gamma \odot \frac{x_t - \mu}{\sigma} + \beta\right)
 \end{equation}
-where $\gamma, \beta \in \mathbb{R}^F$ are learned parameters, and $\mu, \sigma$ are running statistics.
+where $\gamma, \beta \in \mathbb{R}^F$ are learned parameters, and $\mu, \sigma$ are running statistics. The $\tanh$ function guarantees $\tilde{x}_t \in (-1, 1)$, ensuring the subsequent $\arccos$ operation is well-defined.
 
 \subsubsection{Step 2: Polar Coordinate Transformation}
 
@@ -365,6 +365,13 @@ A predicate $P(x)$ is grounded as a neural network $f_\theta: \mathbb{R}^d \to [
 \subsection{Lukasiewicz T-Norm Operations}
 
 \subsubsection{Conjunction (AND)}
+
+For training, we use Product Logic to ensure smooth gradients:
+\begin{equation}
+u \land v = u \cdot v
+\end{equation}
+
+For inference/evaluation, standard Łukasiewicz logic may be used:
 \begin{equation}
 u \land v = \max(0, u + v - 1)
 \end{equation}
@@ -380,6 +387,13 @@ u \lor v = \min(1, u + v)
 \end{equation}
 
 \subsubsection{Implication (IF-THEN)}
+
+For training (Product Logic):
+\begin{equation}
+u \Rightarrow v = 1 - u + u \cdot v
+\end{equation}
+
+For inference (Łukasiewicz Logic):
 \begin{equation}
 u \Rightarrow v = \min(1, 1 - u + v)
 \end{equation}
@@ -496,19 +510,21 @@ Uses random projections to ensure diverse encoding:
 
 Compute TD-error based priority:
 \begin{equation}
-p_i = |\delta_i|^\alpha + \epsilon
+p_i = |\delta_i| + \epsilon
 \end{equation}
-where $\delta_i = r_i + \gamma \max_{a'} Q(s_{i+1}, a') - Q(s_i, a_i)$.
+where $\delta_i = r_i + \gamma \max_{a'} Q(s_{i+1}, a') - Q(s_i, a_i)$ and $\epsilon = 10^{-6}$ ensures numerical stability.
 
 \subsubsection{Sampling Probability}
 \begin{equation}
-P(i) = \frac{p_i^\beta}{\sum_j p_j^\beta}
+P(i) = \frac{p_i^\alpha}{\sum_j p_j^\alpha}
 \end{equation}
+where $\alpha \in [0, 1]$ controls prioritization strength (typically $\alpha = 0.6$).
 
 \subsubsection{Importance Sampling Correction}
 \begin{equation}
 w_i = \left(\frac{1}{N \cdot P(i)}\right)^\beta
 \end{equation}
+where $\beta \in [0, 1]$ is annealed from $0.4 \to 1.0$ during training to fully correct bias at convergence.
 
 \subsection{Long-Term Memory (Neocortex)}
 
@@ -533,9 +549,16 @@ Only update schemas from successfully recalled experiences:
 Maintains consistent embeddings across sleep cycles.
 
 \subsubsection{Objective Function}
+
+The full UMAP loss includes both attraction and repulsion terms:
 \begin{equation}
-\mathcal{L}_{\text{UMAP}} = \sum_{ij} w_{ij} \log\left(\frac{w_{ij}}{1 + \|\mathbf{y}_i - \mathbf{y}_j\|^2}\right)
+\mathcal{L}_{\text{UMAP}} = \sum_{i \neq j} \left[
+    w_{ij} \log(q_{ij}) + (1 - w_{ij}) \log(1 - q_{ij})
+\right]
 \end{equation}
+where $q_{ij} = \left(1 + \|\mathbf{y}_i - \mathbf{y}_j\|^2\right)^{-1}$.
+
+\textbf{Note:} In practice, the repulsion term $(1 - w_{ij})$ is approximated via \emph{negative sampling} to achieve $\mathcal{O}(N)$ complexity. For each positive edge, we sample $k=5$ random negative pairs.
 
 \subsection{Parametric UMAP for Real-Time Monitoring}
 
