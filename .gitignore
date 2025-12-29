@@ -38,7 +38,7 @@ desktop.ini
 .idea/
 *.sublime-*
 
-# Python virtual environments (for training gateway)
+# Python virtual environments and build artifacts
 venv/
 env/
 .env
@@ -47,6 +47,25 @@ __pycache__/
 *.pyo
 *.egg-info/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# Test and coverage artifacts
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+*.cover
+.hypothesis/
+
+# Test outputs
+test_outputs*/
+outputs/
+**/test_outputs*/
+**/outputs/
 
 # Rust build artifacts (for future implementation)
 target/
