@@ -6,12 +6,14 @@
 
 **Before**: Pinned requirements in text format
 **After**: Modern PEP 621 configuration with:
+
 - Unpinned dependencies (flexible version ranges)
 - Optional dependency groups (`[dev]`, `[all]`, `[advanced]`, etc.)
 - Tool configurations (ruff, black, isort, mypy, pytest)
 - Build system specification
 
 **Key Changes**:
+
 - Removed all version pins (e.g., `numpy>=1.24.0,<2.0.0` → `numpy`)
 - Added `[project.optional-dependencies]` for modular installation
 - Configured all tools in one file (single source of truth)
@@ -19,12 +21,14 @@
 ### 2. Comprehensive Test Suite (`tests/`)
 
 **New Files**:
+
 - `tests/__init__.py` - Test suite initialization
 - `tests/conftest.py` - Shared fixtures and pytest configuration
 - `tests/test_all_visuals.py` - Smoke tests for all 13 visualizations
 - `tests/test_visual_5.py` - Detailed example test suite
 
 **Test Coverage**:
+
 - ✅ Import validation
 - ✅ Execution tests
 - ✅ Output generation
@@ -36,6 +40,7 @@
 ### 3. Development Automation (`Makefile`)
 
 **New Commands**:
+
 ```bash
 make install-dev     # Setup development environment
 make test            # Run tests (excluding slow)
@@ -51,6 +56,7 @@ make clean           # Clean build artifacts
 ### 4. Pre-commit Hooks (`.pre-commit-config.yaml`)
 
 **Automated Checks**:
+
 - Python formatting (Black)
 - Import sorting (isort)
 - Linting (Ruff)
@@ -62,12 +68,14 @@ make clean           # Clean build artifacts
 ### 5. Enhanced CI/CD (`.github/workflows/ci.yml`)
 
 **New Jobs**:
+
 1. **python-lint-test**: Matrix testing on Python 3.9-3.12
 2. **python-test-full**: Full test suite with all dependencies
 3. **build-latex**: LaTeX PDF compilation (existing, kept)
 4. **ci-summary**: Pipeline status summary
 
 **CI Features**:
+
 - Parallel testing across Python versions
 - Code coverage tracking (Codecov integration)
 - Artifact uploads (test outputs, coverage reports)
@@ -76,6 +84,7 @@ make clean           # Clean build artifacts
 ### 6. Documentation
 
 **New Files**:
+
 - `CONTRIBUTING.md` - Development workflow guide
 - `PYTHON_SETUP.md` - Complete setup documentation
 - `SETUP_SUMMARY.md` - This file
@@ -86,6 +95,8 @@ make clean           # Clean build artifacts
 - `project_janus/examples/requirements.txt` - Simple requirements file
 
 ## 🚀 Quick Start
+
+### Option 1: Using Virtual Environment (Recommended for Development)
 
 ```bash
 # 1. Create virtual environment
@@ -107,6 +118,36 @@ make lint
 # 6. Generate visualizations
 cd project_janus/examples
 python visual_5_ltn_truth_surface.py --save-all --output-dir ../../outputs
+```
+
+### Option 2: Global Pre-commit Installation (Simplified Git Workflow)
+
+If you prefer to commit without activating the virtualenv each time:
+
+```bash
+# 1. Install pipx (one-time setup)
+sudo apt install pipx
+pipx ensurepath
+
+# 2. Install pre-commit globally
+pipx install pre-commit
+
+# 3. Install Git hooks
+pre-commit install
+
+# Now you can commit without activating venv:
+git commit -m "your message"  # pre-commit runs automatically
+```
+
+**Benefits of global installation**:
+
+- ✅ Commit from any directory without activating venv
+- ✅ Pre-commit hooks work system-wide
+- ✅ No need to remember `source venv/bin/activate` before commits
+- ✅ Isolated installation (pipx manages its own virtualenv)
+
+**Note**: The venv still has pre-commit for other make targets, but Git hooks will use the global version.
+
 ```
 
 ## 📝 Key Benefits
@@ -159,6 +200,7 @@ make test
 ```
 
 ### Run Full Suite
+
 ```bash
 make test-all
 # Includes UMAP and other slow tests
@@ -166,11 +208,13 @@ make test-all
 ```
 
 ### Run Specific Test
+
 ```bash
 pytest tests/test_visual_5.py::TestLukasiewiczOperations::test_lukasiewicz_and_boundary_cases -v
 ```
 
 ### Generate Coverage Report
+
 ```bash
 make test-coverage
 open htmlcov/index.html
@@ -179,18 +223,21 @@ open htmlcov/index.html
 ## 🎨 Linting Examples
 
 ### Check Code Quality
+
 ```bash
 make lint
 # Runs: ruff, black, isort, mypy
 ```
 
 ### Auto-fix Issues
+
 ```bash
 make ruff-fix
 make format
 ```
 
 ### Pre-commit Check
+
 ```bash
 pre-commit run --all-files
 ```
@@ -198,6 +245,7 @@ pre-commit run --all-files
 ## 📊 CI Integration
 
 ### On Every Push
+
 1. Runs linters (ruff, black, isort)
 2. Runs type checker (mypy)
 3. Runs tests on Python 3.9, 3.10, 3.11, 3.12
@@ -206,6 +254,7 @@ pre-commit run --all-files
 6. Commits PDFs back to repo
 
 ### What to Expect
+
 - Pull requests show CI status
 - Tests must pass before merge
 - Coverage reports on Codecov
@@ -214,16 +263,19 @@ pre-commit run --all-files
 ## 🔍 Next Steps
 
 ### For Local Development
+
 1. Run `make venv` (creates virtual environment)
 2. Run `make install-dev` (installs dependencies)
-3. Run `source venv/bin/activate` (activates venv)
-4. Create feature branch
-5. Make changes
-6. Run `make check`
-7. Commit (pre-commit runs automatically)
-8. Push and create PR
+3. **(Optional)** Install pre-commit globally: `pipx install pre-commit && pre-commit install`
+4. Run `source venv/bin/activate` (activates venv - not needed if pre-commit is global)
+5. Create feature branch
+6. Make changes
+7. Run `make check`
+8. Commit (pre-commit runs automatically)
+9. Push and create PR
 
 ### For FKS Implementation
+
 1. Review test examples in `tests/`
 2. Check visualization implementations in `project_janus/examples/`
 3. Use fixtures from `conftest.py`
@@ -231,6 +283,7 @@ pre-commit run --all-files
 5. Refer to `CONTRIBUTING.md` for workflow
 
 ### For CI Monitoring
+
 1. Check GitHub Actions tab
 2. Review failed jobs
 3. Download artifacts for debugging
@@ -239,6 +292,7 @@ pre-commit run --all-files
 ## 🎉 Summary
 
 You now have a **production-ready Python development environment** with:
+
 - Modern tooling (Ruff, Black, pytest)
 - Comprehensive testing
 - Automated quality checks
@@ -254,12 +308,28 @@ All ready for implementing and validating the JANUS algorithm in your FKS projec
 ## 🐍 Virtual Environment Notes
 
 This project uses Python virtual environments (PEP 668 compliance):
+
 - **Create**: `make venv`
 - **Activate**: `source venv/bin/activate`
 - **Deactivate**: `deactivate`
 - **Remove**: `make clean-venv`
 
 All make commands automatically use the virtual environment when it exists.
+
+### Pre-commit Installation Options
+
+**Option A: Venv-based** (default from `setup.sh`):
+
+- Pre-commit installed in project venv
+- Must activate venv before committing: `source venv/bin/activate`
+- Isolated per-project
+
+**Option B: Global via pipx** (recommended for ease of use):
+
+- Pre-commit available system-wide
+- No need to activate venv for commits
+- Install: `pipx install pre-commit && pre-commit install`
+- Works across all your Git repositories
 
 ---
 

@@ -50,6 +50,7 @@ make install-all
 ```
 
 This installs:
+
 - Core dependencies (numpy, matplotlib, scipy, scikit-learn)
 - Optional dependencies (umap-learn, torch, seaborn, etc.)
 - Development tools (pytest, ruff, black, mypy, pre-commit)
@@ -73,15 +74,48 @@ pip install -e .[all,dev]
 
 ### Pre-commit Hooks
 
-We use pre-commit hooks to ensure code quality:
+We use pre-commit hooks to ensure code quality. You have two installation options:
+
+#### Option A: Virtual Environment (Default)
 
 ```bash
+# Activate venv first
+source venv/bin/activate
+
 # Install hooks (done automatically with make install-dev)
 pre-commit install
 
 # Run manually on all files
 pre-commit run --all-files
 ```
+
+**Note**: You must activate the venv before committing: `source venv/bin/activate`
+
+#### Option B: Global Installation (Recommended for Convenience)
+
+Install pre-commit globally so it works without activating the venv:
+
+```bash
+# One-time setup: Install pipx
+sudo apt install pipx
+pipx ensurepath
+
+# Install pre-commit globally
+pipx install pre-commit
+
+# Install Git hooks
+pre-commit install
+
+# Now commits work without venv activation
+git commit -m "your message"
+```
+
+**Benefits**:
+
+- ✅ No need to activate venv before committing
+- ✅ Works across all your Git repositories
+- ✅ Isolated installation (pipx manages its own venv)
+- ✅ Simplifies daily workflow
 
 ## 🔄 Development Workflow
 
@@ -232,13 +266,13 @@ class TestVisualization:
     def test_basic_functionality(self, output_dir):
         """Test basic visualization generation."""
         output_file = output_dir / "test.png"
-        
+
         fig = v5.visualize_truth_surface(
             operation="and",
             save_path=str(output_file),
             dpi=100,
         )
-        
+
         assert fig is not None
         assert output_file.exists()
         assert output_file.stat().st_size > 10000
@@ -253,7 +287,7 @@ class TestVisualization:
                 save_path=str(output_dir / "perf.png"),
                 dpi=100,
             )
-        
+
         assert t.elapsed < 5.0, f"Took {t.elapsed:.2f}s (expected < 5s)"
 ```
 
@@ -441,7 +475,7 @@ When reporting bugs, please include:
 
 By contributing, you agree that your contributions will be licensed under the same license as the project (MIT).
 
-## 🙏 Thank You!
+## 🙏 Thank You
 
 Your contributions help make Project JANUS better for everyone. We appreciate your time and effort!
 
