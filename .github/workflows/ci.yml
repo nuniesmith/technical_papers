@@ -86,7 +86,7 @@ jobs:
                   pytest -v --cov=project_janus --cov-report=html
 
             - name: Upload test outputs as artifacts
-              uses: upload-artifact@v4
+              uses: actions/upload-artifact@v4
               if: always()
               with:
                   name: test-outputs
