@@ -13,10 +13,32 @@ Technical paper and visualization suite for the JANUS (Joint Adaptive Neuro-symb
 
 ### Compile the Paper
 
+The paper now includes a comprehensive bibliography with 80+ citations. To compile with references:
+
 ```bash
 cd technical_papers/project_janus
+
+# Full compilation with bibliography (recommended)
 pdflatex janus.tex
-pdflatex janus.tex  # Run twice for proper references
+biber janus          # Process bibliography with biblatex/biber
+pdflatex janus.tex   # Resolve citations
+pdflatex janus.tex   # Resolve cross-references
+
+# Alternative: Use latexmk for automatic compilation
+latexmk -pdf -bibtex janus.tex
+```
+
+**Note**: The document uses `biblatex` with the `biber` backend. If you don't have `biber` installed:
+
+```bash
+# On Ubuntu/Debian
+sudo apt-get install biber
+
+# On macOS with MacTeX
+# biber is included in MacTeX
+
+# On Windows with MiKTeX
+# Install biber via MiKTeX Package Manager
 ```
 
 Or simply push to `main` - GitHub Actions will auto-compile and commit the PDF.
@@ -139,15 +161,33 @@ technical_papers/project_janus/
 
 ### LaTeX (for paper compilation)
 - Standard packages: `amsmath`, `amssymb`, `listings`, `algorithm`, `tcolorbox`, `hyperref`
+- Bibliography: `biblatex` with `biber` backend
+- Bibliography file: `janus.bib` (80+ sources across ML, neuroscience, finance, and systems)
 
 ### Python (for visualizations)
 - **Core**: numpy, matplotlib, scipy, scikit-learn
 - **Optional**: umap-learn, torch (for UMAP and attention visuals; PCA fallbacks provided)
 
+## 📚 Bibliography
+
+The paper includes 80+ citations organized into categories:
+
+- **Machine Learning & Computer Vision**: GAF encoding, ViViT, Chronos, Vision Transformers
+- **Neuro-Symbolic AI**: Logic Tensor Networks, Łukasiewicz logic, fuzzy reasoning
+- **Neuroscience**: Complementary Learning Systems, Sharp-Wave Ripples, basal ganglia, dopamine modulation
+- **Reinforcement Learning**: Prioritized Experience Replay, Feudal Networks, OpAL
+- **Market Microstructure**: Almgren-Chriss execution, VPIN/flow toxicity, wash sale rules
+- **Dimensionality Reduction**: UMAP, AlignedUMAP, Parametric UMAP
+- **Hardware & Systems**: tch-rs, Candle, Tokio, Polars, FPGA acceleration, JAX-LOB
+- **Generative Models**: Diffusion models for LOB simulation
+- **Quantum Computing**: Portfolio optimization
+
+See `janus.bib` for full bibliography.
+
 ## 🤖 CI/CD
 
 GitHub Actions automatically:
-1. Compiles `janus.tex` on every push to `main`
+1. Compiles `janus.tex` with full bibliography on every push to `main`
 2. Uploads PDF as artifact (90-day retention)
 3. Commits PDF back to repository
 
