@@ -37,7 +37,7 @@
 
 % --- CONFIGURATION ---
 \onehalfspacing
-\setlength{\headheight}{15pt}
+\setlength{\headheight}{16pt}
 
 \definecolor{janusblue}{RGB}{0, 51, 102}
 \definecolor{accentgold}{RGB}{204, 153, 51}
@@ -48,7 +48,6 @@
 \definecolor{rustorange}{RGB}{255, 140, 0}
 \definecolor{codegray}{RGB}{245, 245, 245}
 \definecolor{rustcolor}{RGB}{70, 130, 180}
-\definecolor{pythoncolor}{RGB}{55, 118, 171}
 
 % --- UNICODE CHARACTER DECLARATIONS ---
 \newunicodechar{▼}{\ensuremath{\blacktriangledown}}
@@ -148,22 +147,6 @@
     morekeywords={fn, let, mut, pub, struct, impl, use, mod, trait, enum, match, if, else, return, self, Self, true, false, async, await}
 }
 
-\lstdefinestyle{python}{
-    language=Python,
-    basicstyle=\ttfamily\small,
-    breaklines=true,
-    frame=single,
-    backgroundcolor=\color{codegray},
-    keywordstyle=\color{pythoncolor},
-    commentstyle=\color{green!50!black},
-    stringstyle=\color{red},
-    numbers=left,
-    numberstyle=\tiny\color{gray},
-    showstringspaces=false,
-    tabsize=4,
-    morecomment=[l]{\#}
-}
-
 \lstset{
     basicstyle=\ttfamily\small,
     breaklines=true,
@@ -206,6 +189,8 @@
         \item \textbf{\textcolor{neurogreen}{Neuromorphic Architecture}} — Brain-region mapping
         \vspace{0.2cm}
         \item \textbf{\textcolor{rustorange}{Rust Implementation}} — Production deployment guide
+        \vspace{0.2cm}
+        \item \textbf{\textcolor{neurogreen}{Advanced Neuroscience Integration}} — Extended brain-inspired mechanisms
     \end{enumerate}
     \end{tcolorbox}
 
@@ -233,6 +218,7 @@
 % ============================================
 \part{Main Architecture}
 \label{part:main}
+\setcounter{section}{0}
 
 \section*{Overview}
 
@@ -253,7 +239,7 @@ The trajectory of algorithmic trading has historically been defined by a tension
 
 The architectural philosophy of JANUS is strictly biomimetic, mirroring the Dual-Process Theory of cognition \citep{kahneman2011thinking, evans2008dual}. The system is bifurcated into two distinct but interacting services:
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -269,7 +255,7 @@ This separation allows JANUS to optimize for latency on the hot path (Forward Se
 
 In addition to the core Forward and Backward services, the production system deploys three supporting services: an \textbf{Execution Service} for multi-exchange order routing, a \textbf{Data Service} for centralized market data management, and a \textbf{CNS (Central Nervous System) Service} for system-wide health monitoring and preflight validation (Section~\ref{sec:cns}).
 
-\textbf{Note:} The detailed mathematical specifications for each component are presented in Parts 2-5 below.
+\textbf{Note:} The detailed mathematical specifications for each component are presented in Parts 2-6 below.
 
 % ============================================
 % PART 2: FORWARD SERVICE
@@ -277,6 +263,7 @@ In addition to the core Forward and Backward services, the production system dep
 \newpage
 \part{Forward Service (Janus Bifrons)}
 \label{part:forward}
+\setcounter{section}{0}
 
 % Forward Service Content
 \section*{Abstract}
@@ -284,7 +271,7 @@ In addition to the core Forward and Backward services, the production system dep
 JANUS Forward represents the ``wake state'' of the JANUS trading system, responsible for all real-time decision-making during market hours. This service combines:
 
 \begin{itemize}
-    \item \textbf{Visual Pattern Recognition} using Gramian Angular Fields (GAF) \citep{wang2015imaging} with LSTM temporal modeling, and a planned upgrade path to Video Vision Transformers (ViViT) \citep{arnab2021vivit}
+    \item \textbf{Visual Pattern Recognition} using Gramian Angular Fields (GAF) \citep{wang2015imaging} with LSTM and Video Vision Transformer (ViViT) \citep{arnab2021vivit} temporal modeling
     \item \textbf{Symbolic Reasoning} via Logic Tensor Networks (LTN) \citep{badreddine2022logic} for constraint satisfaction
     \item \textbf{Multimodal Fusion} integrating time series, visual, order book, and sentiment data through specialized fusion engines
     \item \textbf{Dual-Pathway Decision Making} inspired by basal ganglia architecture \citep{collins2014opponent}
@@ -314,7 +301,7 @@ For inference, we apply min-max normalization to the domain $[-1, 1]$, followed 
 \end{equation}
 ensuring the subsequent $\arccos$ operation is well-defined with $\tilde{x}_t \in [-1, 1]$.
 
-For the training pipeline (Python/PyTorch), we employ learnable affine transformations with domain constraints:
+For the training pipeline, we employ learnable affine transformations with domain constraints:
 \begin{equation}
 \tilde{x}_t = \tanh\left(\gamma \odot \frac{x_t - \mu}{\sigma} + \beta\right)
 \end{equation}
@@ -366,13 +353,13 @@ The data ingestion pipeline handles windowed buffering and streaming through ded
 
 \subsection{Vision Model Architecture}
 
-\subsubsection{Current: DiffGAF-LSTM}
+\subsubsection{DiffGAF-LSTM}
 
-The production vision model pairs the DiffGAF encoding with an LSTM temporal model. GAF frames are encoded and fed sequentially into an LSTM network that captures inter-frame temporal dependencies. This architecture provides robust performance while maintaining the differentiability required for end-to-end training.
+The DiffGAF-LSTM vision model pairs the DiffGAF encoding with an LSTM temporal model. GAF frames are encoded and fed sequentially into an LSTM network that captures inter-frame temporal dependencies. This architecture provides robust performance while maintaining the differentiability required for end-to-end training.
 
-\subsubsection{Planned: Video Vision Transformer (ViViT)}
+\subsubsection{Video Vision Transformer (ViViT)}
 
-The planned upgrade path uses a factorized spatiotemporal transformer \citep{arnab2021vivit}. Unlike standard Vision Transformers \citep{dosovitskiy2020image} which process static images, ViViT factorizes attention across both space (price/volume levels of the limit order book) and time (sequences of LOB snapshots), enabling the system to track dynamic microstructure events.
+The ViViT model uses a factorized spatiotemporal transformer \citep{arnab2021vivit}. Unlike standard Vision Transformers \citep{dosovitskiy2020image} which process static images, ViViT factorizes attention across both space (price/volume levels of the limit order book) and time (sequences of LOB snapshots), enabling the system to track dynamic microstructure events.
 
 \textbf{Patch Embedding:}
 Divide each frame $\mathbf{G}_k$ into non-overlapping patches:
@@ -393,7 +380,7 @@ Apply attention across frames:
 \mathbf{H}^{(l)} = \text{MSA}(\text{LN}([\mathbf{Z}^{(l)}_1, \ldots, \mathbf{Z}^{(l)}_N]))
 \end{equation}
 
-The ViViT architecture is designed to consume ONNX-exported models from the Python training pipeline, with graceful degradation to the DiffGAF-LSTM model when the ViViT model is unavailable.
+Both the DiffGAF-LSTM and ViViT architectures are implemented natively in Rust, with the system selecting the appropriate model based on configuration and available resources. The ViViT model gracefully degrades to the DiffGAF-LSTM model when computational constraints require it.
 
 \section{Ensemble Regime Detection}
 \label{sec:regime_detection}
@@ -422,7 +409,7 @@ Classical technical analysis signals (trend strength indicators, volatility meas
 
 The ensemble classifier identifies seven market regimes, each mapped to distinct trading behavior profiles:
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \begin{tabularx}{\textwidth}{|l|L|L|}
 \hline
@@ -466,7 +453,7 @@ Map logical constants to real vectors:
 
 A predicate $P(x)$ is grounded as a neural network $f_\theta: \mathbb{R}^d \to [0,1]$, where truth values range continuously from 0 to 1 rather than being discrete binary values.
 
-\subsection{Lukasiewicz T-Norm Operations}
+\subsection{Łukasiewicz T-Norm Operations}
 
 Following \citet{badreddine2022logic} and \citet{lukasiewicz2024deep}, we employ fuzzy logic operators that are differentiable and thus compatible with backpropagation.
 
@@ -601,6 +588,7 @@ g = \sigmoid(\mathbf{W}_g[\mathbf{v}; \mathbf{t}; \mathbf{s}] + \mathbf{b}_g)
 Each modality-specific fusion engine applies this gating independently, allowing the system to dynamically suppress noisy order book data during low-liquidity periods while amplifying sentiment signals during news-driven regimes.
 
 \section{Decision Engine: Basal Ganglia Pathways}
+\label{sec:decision_engine}
 
 Action selection in JANUS is mediated by a model of the Basal Ganglia, comprising Direct (``Go'') and Indirect (``No-Go'') pathways \citep{collins2014opponent, foster2013hierarchical}. This architecture, known as Opponent Actor Learning (OpAL), creates dynamic risk tolerance that adapts to market conditions.
 
@@ -679,6 +667,7 @@ where $e(t)$ is the deviation between predicted and realized execution cost. Ada
 \newpage
 \part{Backward Service (Janus Consivius)}
 \label{part:backward}
+\setcounter{section}{0}
 
 \section*{Abstract}
 
@@ -846,6 +835,7 @@ The vector database layer complements the relational storage, serving the specif
 \newpage
 \part{Neuromorphic Architecture}
 \label{part:neuro}
+\setcounter{section}{0}
 
 \section*{Abstract}
 
@@ -874,7 +864,7 @@ The brain efficiently solves problems similar to trading \citep{daw2006cortical}
 
 This mapping is grounded in empirical neuroscience and cognitive modeling \citep{frank2006working, collins2014opponent, foster2013hierarchical}. JANUS implements ten brain regions, each serving a distinct functional role:
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \begin{tabularx}{\textwidth}{|l|L|L|}
 \hline
@@ -909,7 +899,7 @@ The following sections detail how each brain region's computational principles a
 
 \subsection{Visual Cortex: Pattern Recognition}
 
-The visual cortex processes market data as images through the DiffGAF pipeline (Section~\ref{sec:visual_forward}), with submodules for GAF encoding (GASF/GADF), vision model inference (DiffGAF-LSTM, planned ViViT), data ingestion and buffering, and UMAP-based visualization of learned representations.
+The visual cortex processes market data as images through the DiffGAF pipeline (Section~\ref{sec:visual_forward}), with submodules for GAF encoding (GASF/GADF), vision model inference (DiffGAF-LSTM and ViViT), data ingestion and buffering, and UMAP-based visualization of learned representations.
 
 \subsection{Cortex: Strategic Planning \& Long-term Memory}
 
@@ -946,6 +936,7 @@ The hippocampus provides fast learning and episodic memory storage, with consoli
 \end{itemize}
 
 \subsection{Thalamus: Attentional Gating \& Modality Fusion}
+\label{sec:thalamus}
 
 The Thalamus functions as the ``gatekeeper'' of perception in JANUS, regulating the flow of visual and numerical data into the decision engine \citep{thalamus2018attention, halassa2014thalamic}.
 
@@ -984,7 +975,7 @@ The Hypothalamus sits at the second stage of the brain wiring pipeline, translat
 
 \subsection{Basal Ganglia: Action Selection \& Reinforcement Learning}
 
-The basal ganglia implements Opponent Actor Learning (OpAL) \citep{collins2014opponent}, balancing Go (Direct) and No-Go (Indirect) pathways modulated by dopamine \citep{dopamine2020reward}. See Section~\ref{part:forward} for the complete mathematical formulation.
+The basal ganglia implements Opponent Actor Learning (OpAL) \citep{collins2014opponent}, balancing Go (Direct) and No-Go (Indirect) pathways modulated by dopamine \citep{dopamine2020reward}. See Section~\ref{sec:decision_engine} for the complete mathematical formulation.
 
 \subsection{Prefrontal Cortex: Logic, Planning \& Compliance}
 
@@ -1081,112 +1072,98 @@ The Integration module provides the ``white matter'' connecting brain regions, h
 \newpage
 \part{Rust Implementation}
 \label{part:rust}
+\setcounter{section}{0}
 
 \section*{Abstract}
 
 This document provides production-ready Rust implementation specifications for Project JANUS. The choice of Rust is strategic, prioritizing memory safety and concurrency \citep{tradfi2023hft}, with zero-cost abstractions essential for nanosecond-critical high-frequency trading environments. This section includes:
 
 \begin{itemize}
-    \item \textbf{ML Framework Strategy} leveraging tch-rs \citep{mazare2024tch}, Candle \citep{candle2024}, and ONNX Runtime
+    \item \textbf{ML Framework Strategy} leveraging Candle \citep{candle2024} and tch-rs \citep{mazare2024tch} for end-to-end Rust-native ML
     \item \textbf{High-Performance Services} with async Tokio runtime \citep{tokio2024}
-    \item \textbf{Hybrid Training Pipeline} (Python training, Rust deployment)
+    \item \textbf{Rust-Native Training \& Inference Pipeline} — full ML lifecycle in Rust
     \item \textbf{Deployment Architecture} (Docker Compose + Kubernetes)
 \end{itemize}
 
 \section{Architectural Overview}
 
-\subsection{The Rust-First Philosophy}
+\subsection{The Rust-Only Philosophy}
 
-The move to Rust is justified by requirements in high-frequency trading systems \citep{tradfi2023hft}:
+The exclusive use of Rust across the entire stack—training, inference, and production services—is justified by requirements in high-frequency trading systems \citep{tradfi2023hft}:
 
 \begin{enumerate}
     \item \textbf{Performance:} Zero-cost abstractions, no GC pauses—critical for sub-microsecond latency
     \item \textbf{Safety:} Memory safety without runtime overhead, preventing undefined behavior
     \item \textbf{Concurrency:} Fearless async/await with Tokio \citep{tokio2024} for handling high-frequency websocket feeds
-    \item \textbf{Ecosystem:} Production-ready ML inference via tch-rs \citep{mazare2024tch} and Candle \citep{candle2024}
+    \item \textbf{Ecosystem:} End-to-end ML training and inference via Candle \citep{candle2024} and tch-rs \citep{mazare2024tch}
+    \item \textbf{Unified Stack:} Single language for the entire pipeline eliminates cross-language serialization overhead, deployment complexity, and FFI boundary risks
 \end{enumerate}
 
 \subsection{Component Diagram}
 
-\begin{tcolorbox}[colback=codegray, colframe=rustcolor, title=System Architecture]
+\begin{tcolorbox}[colback=codegray, colframe=rustcolor, title=System Architecture (Pure Rust)]
 \begin{verbatim}
 ┌─────────────────────────────────────────────────┐
-│            Python Training Gateway              │
-│    (FastAPI + PyTorch + HuggingFace)            │
+│           Rust Training Service                 │
+│      (Candle + tch-rs + DiffGAF + LTN)          │
 └────────────┬────────────────────────────────────┘
-             │ ONNX Export
+             │ Native Model Artifacts
              ▼
 ┌─────────────────────────────────────────────────┐
 │           Rust Forward Service                  │
-│  (Tokio + ONNX Runtime + DiffGAF + LTN)        │
+│    (Tokio + Candle + DiffGAF + LTN)             │
 │  gRPC: 50051 | HTTP: 7000                       │
 └────────────┬────────────────────────────────────┘
              │
     ┌────────┼────────────────┐
     ▼        ▼                ▼
-┌─────────┐ ┌──────────────┐ ┌──────────────────┐
-│Execution│ │   Backward   │ │   CNS Service    │
-│ Service │ │   Service    │ │ (Health Monitor) │
-│HTTP:8081│ │  (internal)  │ │   (internal)     │
-│gRPC:5052│ │              │ │                  │
-└─────────┘ └──────┬───────┘ └──────────────────┘
-                   │
-    ┌──────────────┼──────────────┐
-    ▼              ▼              ▼
-┌─────────┐ ┌──────────┐ ┌──────────────┐
+┌──────────┐ ┌──────────────┐ ┌──────────────────┐
+│Execution │ │   Backward   │ │   CNS Service    │
+│ Service  │ │   Service    │ │ (Health Monitor) │
+│HTTP:8081 │ │  (internal)  │ │   (internal)     │
+│gRPC:50052│ │              │ │                  │
+└──────────┘ └──────┬───────┘ └──────────────────┘
+                    │
+    ┌───────────────┼──────────────┐
+    ▼               ▼              ▼
+┌──────────┐ ┌──────────┐ ┌──────────────┐
 │PostgreSQL│ │  Redis   │ │  Data Service│
-│  :5432  │ │  :6379   │ │  (internal)  │
-└─────────┘ └──────────┘ └──────────────┘
+│  :5432   │ │  :6379   │ │  (internal)  │
+└──────────┘ └──────────┘ └──────────────┘
 \end{verbatim}
 \end{tcolorbox}
 
 \section{Machine Learning Framework Strategy}
 
-\subsection{Framework Comparison Matrix}
+\subsection{Framework Stack}
 
-The following frameworks are evaluated for JANUS deployment \citep{mazare2024tch, candle2024}:
+The following Rust-native frameworks comprise the JANUS ML stack \citep{mazare2024tch, candle2024}:
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \begin{tabularx}{\textwidth}{|l|L|L|L|}
 \hline
 \textbf{Framework} & \textbf{Pros} & \textbf{Cons} & \textbf{Use Case} \\
 \hline
-tch-rs \citep{mazare2024tch} & Native PyTorch, GPU support & C++ deps, larger binary & Training \& inference \\
+Candle \citep{candle2024} & Pure Rust, HuggingFace integration, minimal deps & Younger ecosystem & Primary training \& inference \\
 \hline
-ONNX Runtime & Universal, production-ready & No training & Inference only \\
-\hline
-Candle \citep{candle2024} & Pure Rust, HF integration & Young ecosystem & Future migration \\
+tch-rs \citep{mazare2024tch} & Mature PyTorch backend, full GPU support & C++ libtorch dependency & GPU-intensive training \& inference \\
 \hline
 Polars \citep{polars2024} & High-speed DataFrames & N/A & Data manipulation \\
 \hline
 \end{tabularx}
 \end{table}
 
-\subsection{Current State and Migration Path}
+\subsection{Rust-Native ML Architecture}
 
-The system is currently in \textbf{Phase 1 (Hybrid)}, with Candle already integrated for select components:
+The system operates as a \textbf{fully Rust-native} ML pipeline with no external language dependencies:
 
-\subsubsection{Phase 1: Hybrid (Current)}
 \begin{itemize}
-    \item Train models in PyTorch (Python)
-    \item Export to ONNX format
-    \item Rust inference via \texttt{ort} and \texttt{tract} crates
-    \item Candle integrated for select neural network operations
-\end{itemize}
-
-\subsubsection{Phase 2: Rust-Native Inference}
-\begin{itemize}
-    \item Optimize ONNX models for Rust
-    \item Custom kernels for DiffGAF/LTN
-    \item Benchmark against Python baseline
-\end{itemize}
-
-\subsubsection{Phase 3: Full Rust ML}
-\begin{itemize}
-    \item Migrate training to Candle
-    \item End-to-end Rust pipeline
-    \item Custom GPU kernels via wgpu
+    \item End-to-end training and inference in Rust via Candle and tch-rs
+    \item Custom differentiable kernels for DiffGAF and LTN operations
+    \item Native model serialization using \texttt{safetensors} format
+    \item GPU acceleration via CUDA (tch-rs) and wgpu (Candle)
+    \item Zero cross-language overhead—no FFI bridges, no serialization boundaries
 \end{itemize}
 
 \section{Forward Service: Rust Implementation}
@@ -1225,7 +1202,7 @@ where:
 
 \subsection{GAF Transformation Algorithm}
 
-The GAF transformation converts time series to 2D images via the following algorithm \citep{wang2015imaging}. For training, JANUS plans to utilize JAX-LOB \citep{fu2024jaxlob}, a GPU-accelerated limit order book simulator that enables parallel simulation of thousands of order books, solving the data scarcity problem inherent in traditional trading systems.
+The GAF transformation converts time series to 2D images via the following algorithm \citep{wang2015imaging}. For training data generation, JANUS employs a Rust-native GPU-accelerated limit order book simulator, inspired by JAX-LOB \citep{fu2024jaxlob}, that enables parallel simulation of thousands of order books, solving the data scarcity problem inherent in traditional trading systems.
 
 \textbf{Algorithm: GAF Computation}
 \begin{algorithmic}[1]
@@ -1276,7 +1253,7 @@ The service follows an event-driven architecture with the following characterist
 
 \textbf{Request Processing Pipeline:}
 \begin{enumerate}
-    \item \textbf{Initialization:} Load ONNX model $\mathcal{M}_{\text{ViViT}}$ and LTN engine $\mathcal{E}_{\text{LTN}}$
+    \item \textbf{Initialization:} Load native Rust model $\mathcal{M}_{\text{ViViT}}$ and LTN engine $\mathcal{E}_{\text{LTN}}$
     \item \textbf{Connection Handling:} Bind gRPC listener on port 50051 and HTTP on port 7000
     \item \textbf{Concurrent Processing:} For each incoming request:
     \begin{itemize}
@@ -1425,7 +1402,7 @@ The system deploys as five core services plus supporting infrastructure:
     \item \textbf{Forward Service:}
     \begin{itemize}
         \item Ports: gRPC 50051, HTTP 7000
-        \item Dependencies: ONNX model files, Redis, PostgreSQL
+        \item Dependencies: Native model artifacts, Redis, PostgreSQL
         \item Resource limits: 2GB memory, 2 CPU cores
     \end{itemize}
 
@@ -1479,28 +1456,33 @@ The system deploys as five core services plus supporting infrastructure:
 Model artifacts are stored on shared read-only volumes; PostgreSQL and QuestDB use persistent volumes with automated backups; Redis data is ephemeral with configurable persistence; experience buffers rotate daily.
 
 % ============================================
-% CONCLUSION
+% PART 6: ADVANCED NEUROSCIENCE INTEGRATION
 % ============================================
 \newpage
-\section{Advanced Neuroscience Integration}
-\label{sec:advanced_neuro}
+\part{Advanced Neuroscience Integration}
+\label{part:advanced_neuro}
+\setcounter{section}{0}
 
-\subsection{Thalamic Oscillations and Attentional Gating}
+\section{Thalamic Oscillations and Attentional Gating}
 
 The Thalamus functions as the ``gatekeeper'' of perception in JANUS, regulating the flow of visual and numerical data into the decision engine. Wilson-Cowan mean-field models \citep{wilson1972excitatory, wilson2024bidirectional} are planned for simulating the oscillatory dynamics of neural populations to generate ``attention masks'' that suppress noise and amplify signal.
 
-Currently, the Thalamus module implements attentional gating through multi-head cross-attention with saliency computation and gating mechanisms (Section~\ref{sec:hypothalamus}). The Thalamic Reticular Nucleus provides attentional gating \citep{thalamus2018attention, halassa2014thalamic}, enabling JANUS to focus computational resources on the most informative market data streams.
+Currently, the Thalamus module implements attentional gating through multi-head cross-attention with saliency computation and gating mechanisms (Section~\ref{sec:thalamus}). The Thalamic Reticular Nucleus provides attentional gating \citep{thalamus2018attention, halassa2014thalamic}, enabling JANUS to focus computational resources on the most informative market data streams.
 
-\subsection{Dopaminergic Modulation and Market Regimes}
+\section{Dopaminergic Modulation and Market Regimes}
 
 The balance between Direct (Go) and Indirect (No-Go) pathways is modulated by a simulated dopamine signal \citep{dopamine2020reward}. High dopamine (bull market/high confidence) amplifies the Direct pathway; low dopamine (bear market/uncertainty) amplifies the Indirect pathway. This creates dynamic risk tolerance that adapts to market volatility, implementing allostatic regulation \citep{sterling2012allostasis} rather than simple homeostatic feedback.
 
 The Hypothalamus module (Section~\ref{sec:hypothalamus}) translates regime detection into calibrated risk parameters that modulate dopaminergic signaling throughout the decision pipeline.
 
-\subsection{Fear Extinction and Adaptive Risk Management}
+\section{Fear Extinction and Adaptive Risk Management}
 
 The Amygdala module implements fear extinction mechanisms \citep{monfils2009extinction, substantia2016connections}, allowing the system to ``unlearn'' fear when threats have passed. This prevents the agent from becoming permanently paralyzed by a single traumatic market event (e.g., flash crash), while maintaining protective circuit breakers for genuine systemic risks.
 
+% ============================================
+% CONCLUSION
+% ============================================
+\newpage
 \section*{Conclusion}
 
 Project JANUS represents a paradigm shift in quantitative trading: from opaque black boxes to transparent, brain-inspired systems that combine the best of deep learning and symbolic reasoning.
@@ -1513,16 +1495,15 @@ Project JANUS represents a paradigm shift in quantitative trading: from opaque b
     \item \textbf{Multi-Timescale Memory:} Three-tier hierarchy with sleep-phase consolidation mirrors hippocampal-neocortical transfer
     \item \textbf{Ensemble Regime Detection:} HMM, statistical, and technical methods fused for robust market state identification
     \item \textbf{Production-Ready Safety:} Dual-layer kill switch, multi-method anomaly detection, and CNS health monitoring
-    \item \textbf{Production-Ready Rust:} High-performance, safe, and maintainable five-service architecture
+    \item \textbf{Pure Rust Stack:} End-to-end training and inference in Rust with high-performance, safe, and maintainable five-service architecture
 \end{enumerate}
 
 \subsection*{Future Work}
 
 \begin{itemize}
-    \item ViViT spatiotemporal transformer upgrade for the vision pipeline
     \item Wilson-Cowan thalamic oscillation models for attention dynamics
-    \item Chronos \citep{ansari2024chronos, ansari2024chronos2} integration for foundation model time series forecasting
-    \item BERT text embeddings for structured sentiment analysis
+    \item Chronos \citep{ansari2024chronos, ansari2024chronos2} integration for foundation model time series forecasting (Rust-native)
+    \item BERT text embeddings for structured sentiment analysis via Candle \citep{candle2024}
     \item Parametric UMAP for real-time schema monitoring
     \item Quantum computing integration for portfolio optimization \citep{quantum2024portfolio}
     \item Continual learning without catastrophic forgetting using CLS principles \citep{mcclelland1995complementary}
@@ -1531,7 +1512,8 @@ Project JANUS represents a paradigm shift in quantitative trading: from opaque b
     \item Hardware acceleration using FPGAs \citep{marino2023mevit, vemeko2023fpga, amd2023alveo} and neuromorphic chips
     \item Enhanced market microstructure analysis using VPIN and flow toxicity metrics \citep{easley2011vpin, easley2012flow}
     \item Generative diffusion models for synthetic market data generation \citep{diffusion2024lob}
-    \item Scalable training with GPU-accelerated simulators \citep{fu2024jaxlob}
+    \item Rust-native GPU-accelerated LOB simulator for scalable training \citep{fu2024jaxlob}
+    \item Custom GPU kernels via wgpu for Candle-based training acceleration
     \item Full Qdrant integration as primary vector database for schema storage
 \end{itemize}
 
