@@ -126,9 +126,15 @@ pre-commit: check-venv ## Run pre-commit hooks on all files
 
 ##@ LaTeX
 
-latex: ## Build all LaTeX PDFs
+latex: ## Build all LaTeX PDFs (with bibliography)
 	@echo "$(BLUE)Building LaTeX documents...$(NC)"
+	@echo "$(BLUE)  Pass 1/4: Initial pdflatex...$(NC)"
 	cd project_janus && pdflatex -interaction=nonstopmode janus.tex
+	@echo "$(BLUE)  Pass 2/4: Processing bibliography with biber...$(NC)"
+	cd project_janus && biber janus
+	@echo "$(BLUE)  Pass 3/4: Resolving citations...$(NC)"
+	cd project_janus && pdflatex -interaction=nonstopmode janus.tex
+	@echo "$(BLUE)  Pass 4/4: Finalizing cross-references...$(NC)"
 	cd project_janus && pdflatex -interaction=nonstopmode janus.tex
 	@echo "$(GREEN)✓ LaTeX PDFs built$(NC)"
 
@@ -138,6 +144,10 @@ latex-clean: ## Clean LaTeX auxiliary files
 	find project_janus -name "*.out" -delete
 	find project_janus -name "*.toc" -delete
 	find project_janus -name "*.synctex.gz" -delete
+	find project_janus -name "*.bbl" -delete
+	find project_janus -name "*.blg" -delete
+	find project_janus -name "*.bcf" -delete
+	find project_janus -name "*.run.xml" -delete
 	@echo "$(GREEN)✓ LaTeX auxiliary files cleaned$(NC)"
 
 ##@ Visualization
