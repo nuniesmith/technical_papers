@@ -37,7 +37,7 @@
 
 % --- CONFIGURATION ---
 \onehalfspacing
-\setlength{\headheight}{16pt}
+\setlength{\headheight}{18pt}
 
 \definecolor{janusblue}{RGB}{0, 51, 102}
 \definecolor{accentgold}{RGB}{204, 153, 51}
@@ -502,7 +502,7 @@ The implementation extends classical fuzzy logic with linguistic hedge operators
 \begin{align}
 \text{very}(x) &= x^2 \\
 \text{somewhat}(x) &= \sqrt{x} \\
-\text{slightly}(x) &= x - x^2 \\
+\text{slightly}(x) &= \sqrt{x} - x \\
 \text{extremely}(x) &= x^3
 \end{align}
 
@@ -580,7 +580,7 @@ Following the attention mechanism of \citet{vaswani2017attention}, with support 
 
 \subsubsection{Gating Mechanism}
 
-The gating function suppresses noise and amplifies signal, similar to thalamic regulation \citep{halassa2014thalamic}:
+The gating function suppresses noise and amplifies signal, similar to thalamic regulation \citep{halassa2017thalamic}:
 \begin{equation}
 g = \sigmoid(\mathbf{W}_g[\mathbf{v}; \mathbf{t}; \mathbf{s}] + \mathbf{b}_g)
 \end{equation}
@@ -882,7 +882,7 @@ Cerebellum & Motor prediction & Market impact forecasting \citep{almgren2001opti
 \hline
 Amygdala & Threat detection \citep{amygdala2019fear} & Risk circuit breakers \\
 \hline
-Thalamus & Attentional gating \citep{halassa2014thalamic} & Modality fusion and signal routing \\
+Thalamus & Attentional gating \citep{halassa2017thalamic} & Modality fusion and signal routing \\
 \hline
 Hypothalamus & Homeostatic regulation \citep{sterling2012allostasis} & Position sizing and risk appetite \\
 \hline
@@ -938,7 +938,7 @@ The hippocampus provides fast learning and episodic memory storage, with consoli
 \subsection{Thalamus: Attentional Gating \& Modality Fusion}
 \label{sec:thalamus}
 
-The Thalamus functions as the ``gatekeeper'' of perception in JANUS, regulating the flow of visual and numerical data into the decision engine \citep{thalamus2018attention, halassa2014thalamic}.
+The Thalamus functions as the ``gatekeeper'' of perception in JANUS, regulating the flow of visual and numerical data into the decision engine \citep{thalamus2018attention, halassa2017thalamic}.
 
 \subsubsection{Trading Implementation}
 
@@ -1105,33 +1105,33 @@ The exclusive use of Rust across the entire stack—training, inference, and pro
 
 \begin{tcolorbox}[colback=codegray, colframe=rustcolor, title=System Architecture (Pure Rust)]
 \begin{verbatim}
-┌─────────────────────────────────────────────────┐
-│           Rust Training Service                 │
-│       (Candle + DiffGAF + LTN + DQN)            │
-└────────────┬────────────────────────────────────┘
-             │ Native Model Artifacts
-             ▼
-┌─────────────────────────────────────────────────┐
-│           Rust Forward Service                  │
-│    (Tokio + Neuromorphic Brain + Strategies)     │
-│  gRPC: 50051 | HTTP: 7000                       │
-└────────────┬────────────────────────────────────┘
-             │
-    ┌────────┼────────────────┐
-    ▼        ▼                ▼
-┌──────────┐ ┌──────────────┐ ┌──────────────────┐
-│Execution │ │   Backward   │ │   CNS Service    │
-│ Service  │ │   Service    │ │ (Health Monitor) │
-│HTTP:8081 │ │  (internal)  │ │   (internal)     │
-│gRPC:50052│ │              │ │                  │
-└──────────┘ └──────┬───────┘ └──────────────────┘
-                    │
-    ┌───────────────┼──────────────┐
-    ▼               ▼              ▼
-┌──────────┐ ┌──────────┐ ┌──────────────┐
-│PostgreSQL│ │  Redis   │ │  Data Service│
-│  :5432   │ │  :6379   │ │  (internal)  │
-└──────────┘ └──────────┘ └──────────────┘
++-------------------------------------------------+
+|           Rust Training Service                 |
+|       (Candle + DiffGAF + LTN + DQN)            |
++------------+------------------------------------+
+             | Native Model Artifacts
+             v
++-------------------------------------------------+
+|           Rust Forward Service                  |
+|    (Tokio + Neuromorphic Brain + Strategies)     |
+|  gRPC: 50051 | HTTP: 7000                       |
++------------+------------------------------------+
+             |
+    +--------+----------------+
+    v        v                v
++----------+ +--------------+ +------------------+
+|Execution | |   Backward   | |   CNS Service    |
+| Service  | |   Service    | | (Health Monitor) |
+|HTTP:8081 | |  (internal)  | |   (internal)     |
+|gRPC:50052| |              | |                  |
++----------+ +------+-------+ +------------------+
+                    |
+    +---------------+--------------+
+    v               v              v
++----------+ +----------+ +--------------+
+|PostgreSQL| |  Redis   | |  Data Service|
+|  :5432   | |  :6379   | |  (internal)  |
++----------+ +----------+ +--------------+
 \end{verbatim}
 \end{tcolorbox}
 
@@ -1208,7 +1208,9 @@ where:
 
 The GAF transformation converts time series to 2D images via the following algorithm \citep{wang2015imaging}. For training data generation, JANUS employs a Rust-native GPU-accelerated limit order book simulator, inspired by JAX-LOB \citep{fu2024jaxlob}, that enables parallel simulation of thousands of order books, solving the data scarcity problem inherent in traditional trading systems.
 
-\textbf{Algorithm: GAF Computation}
+\begin{algorithm}[htbp]
+\caption{GAF Computation}
+\label{alg:gaf}
 \begin{algorithmic}[1]
 \State \textbf{Input:} Time series $X = \{x_1, \ldots, x_W\}$, window size $W$
 \State \textbf{Output:} Gramian matrix $\mathbf{G} \in \mathbb{R}^{W \times W}$
@@ -1222,6 +1224,7 @@ The GAF transformation converts time series to 2D images via the following algor
 \EndFor
 \State \Return $\mathbf{G}$ reshaped to $[1, W, W]$ tensor
 \end{algorithmic}
+\end{algorithm}
 
 \textbf{Computational Complexity:} $\mathcal{O}(W^2)$ for matrix construction, where $W$ is the window size.
 
@@ -1295,7 +1298,9 @@ where $e_i$ is an experience and $p_i \in \mathbb{R}^+$ is its priority.
     \item $C$: Buffer capacity
 \end{itemize}
 
-\textbf{Sampling Algorithm:}
+\begin{algorithm}[htbp]
+\caption{Prioritized Experience Sampling}
+\label{alg:sampling}
 \begin{algorithmic}[1]
 \State \textbf{Input:} Buffer $\mathcal{B}$, batch size $B$
 \State \textbf{Output:} Sampled batch $\{e_{i_1}, \ldots, e_{i_B}\}$
@@ -1307,6 +1312,7 @@ where $e_i$ is an experience and $p_i \in \mathbb{R}^+$ is its priority.
 \EndFor
 \State \Return batch
 \end{algorithmic}
+\end{algorithm}
 
 \textbf{Importance Weights:}
 \begin{equation}
@@ -1318,7 +1324,9 @@ These weights correct for the non-uniform sampling distribution.
 
 Schemas are formed by clustering experience embeddings and storing centroids.
 
-\textbf{Algorithm: Schema Update}
+\begin{algorithm}[htbp]
+\caption{Schema Update}
+\label{alg:schema_update}
 \begin{algorithmic}[1]
 \State \textbf{Input:} Experiences $\mathcal{E} = \{e_1, \ldots, e_N\}$, number of clusters $K$
 \State \textbf{Output:} Updated schema database
@@ -1333,6 +1341,7 @@ Schemas are formed by clustering experience embeddings and storing centroids.
     \State \textbf{Upsert} schema $k$ with vector $\mathbf{z}_k$ and metadata $(n_k, \bar{r}_k)$
 \EndFor
 \end{algorithmic}
+\end{algorithm}
 
 \textbf{Note:} In production, the primary schema classification uses deterministic feature-range matching for interpretability. The K-means clustering algorithm above is used for schema \emph{formation} from accumulated experiences during deep consolidation phases.
 
@@ -1467,27 +1476,27 @@ The \texttt{neuromorphic} crate is the largest module in the JANUS codebase, imp
 \begin{tcolorbox}[colback=codegray, colframe=neurogreen, title=Neuromorphic Crate Structure]
 \begin{verbatim}
 neuromorphic/
-├── visual_cortex/    # GAF, ViViT, preprocessing, UMAP viz
-├── cortex/           # Schemas, knowledge base, planning
-│   └── memory/       # 7 regime schemas + Markov transitions
-├── hippocampus/      # Episodic buffer, SWR, consolidation
-│   └── swr/          # Ripple detection, compressed replay
-├── thalamus/         # Attention, fusion, gating, routing
-│   └── fusion/       # Orderbook, price, volume, sentiment
-├── hypothalamus/     # Position sizing, homeostasis, energy
-│   └── position_sizing/  # Drawdown scaling, Kelly criterion
-├── basal_ganglia/    # Direct/Indirect pathways, OpAL
-│   └── praxeological/  # Go/No-Go signals, confidence
-├── amygdala/         # Threat detection, VPIN, kill switch
-│   └── vpin/         # Calculator, flash crash, toxicity
-├── cerebellum/       # Forward models, error correction
-│   ├── error_correction/  # PID controller, feedback loops
-│   └── forward_models/    # Smith predictor, fill prob
-├── prefrontal/       # LTN, fuzzy logic, conscience, goals
-│   └── ltn/          # Hedges: very, somewhat, extremely
-├── integration/      # Coordinator, message bus, bridges
-│   └── engine/       # Cognitive core, orchestrator
-└── distributed/      # Multi-node coordination
++-- visual_cortex/    # GAF, ViViT, preprocessing, UMAP viz
++-- cortex/           # Schemas, knowledge base, planning
+|   +-- memory/       # 7 regime schemas + Markov transitions
++-- hippocampus/      # Episodic buffer, SWR, consolidation
+|   +-- swr/          # Ripple detection, compressed replay
++-- thalamus/         # Attention, fusion, gating, routing
+|   +-- fusion/       # Orderbook, price, volume, sentiment
++-- hypothalamus/     # Position sizing, homeostasis, energy
+|   +-- position_sizing/  # Drawdown scaling, Kelly criterion
++-- basal_ganglia/    # Direct/Indirect pathways, OpAL
+|   +-- praxeological/  # Go/No-Go signals, confidence
++-- amygdala/         # Threat detection, VPIN, kill switch
+|   +-- vpin/         # Calculator, flash crash, toxicity
++-- cerebellum/       # Forward models, error correction
+|   +-- error_correction/  # PID controller, feedback loops
+|   +-- forward_models/    # Smith predictor, fill prob
++-- prefrontal/       # LTN, fuzzy logic, conscience, goals
+|   +-- ltn/          # Hedges: very, somewhat, extremely
++-- integration/      # Coordinator, message bus, bridges
+|   +-- engine/       # Cognitive core, orchestrator
++-- distributed/      # Multi-node coordination
 \end{verbatim}
 \end{tcolorbox}
 
@@ -1636,7 +1645,7 @@ Model artifacts are stored on shared read-only volumes; PostgreSQL and QuestDB u
 
 The Thalamus functions as the ``gatekeeper'' of perception in JANUS, regulating the flow of visual and numerical data into the decision engine. Wilson-Cowan mean-field models \citep{wilson1972excitatory, wilson2024bidirectional} are planned for simulating the oscillatory dynamics of neural populations to generate ``attention masks'' that suppress noise and amplify signal.
 
-Currently, the Thalamus module implements attentional gating through multi-head cross-attention with saliency computation and gating mechanisms (Section~\ref{sec:thalamus}). The Thalamic Reticular Nucleus provides attentional gating \citep{thalamus2018attention, halassa2014thalamic}, enabling JANUS to focus computational resources on the most informative market data streams.
+Currently, the Thalamus module implements attentional gating through multi-head cross-attention with saliency computation and gating mechanisms (Section~\ref{sec:thalamus}). The Thalamic Reticular Nucleus provides attentional gating \citep{thalamus2018attention, halassa2017thalamic}, enabling JANUS to focus computational resources on the most informative market data streams.
 
 \section{Dopaminergic Modulation and Market Regimes}
 
