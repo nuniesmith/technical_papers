@@ -1079,9 +1079,11 @@ The Integration module provides the ``white matter'' connecting brain regions, h
 This document provides production-ready Rust implementation specifications for Project JANUS. The choice of Rust is strategic, prioritizing memory safety and concurrency \citep{tradfi2023hft}, with zero-cost abstractions essential for nanosecond-critical high-frequency trading environments. This section includes:
 
 \begin{itemize}
-    \item \textbf{ML Framework Strategy} leveraging Candle \citep{candle2024} and tch-rs \citep{mazare2024tch} for end-to-end Rust-native ML
+    \item \textbf{ML Framework Strategy} leveraging Candle \citep{candle2024} for end-to-end Rust-native ML
     \item \textbf{High-Performance Services} with async Tokio runtime \citep{tokio2024}
     \item \textbf{Rust-Native Training \& Inference Pipeline} — full ML lifecycle in Rust
+    \item \textbf{Neuromorphic Module} — complete brain-region implementations in pure Rust
+    \item \textbf{Trading Strategies} — nine regime-aware strategies with gating and affinity
     \item \textbf{Deployment Architecture} (Docker Compose + Kubernetes)
 \end{itemize}
 
@@ -1095,7 +1097,7 @@ The exclusive use of Rust across the entire stack—training, inference, and pro
     \item \textbf{Performance:} Zero-cost abstractions, no GC pauses—critical for sub-microsecond latency
     \item \textbf{Safety:} Memory safety without runtime overhead, preventing undefined behavior
     \item \textbf{Concurrency:} Fearless async/await with Tokio \citep{tokio2024} for handling high-frequency websocket feeds
-    \item \textbf{Ecosystem:} End-to-end ML training and inference via Candle \citep{candle2024} and tch-rs \citep{mazare2024tch}
+    \item \textbf{Ecosystem:} End-to-end ML training and inference via Candle \citep{candle2024}
     \item \textbf{Unified Stack:} Single language for the entire pipeline eliminates cross-language serialization overhead, deployment complexity, and FFI boundary risks
 \end{enumerate}
 
@@ -1105,13 +1107,13 @@ The exclusive use of Rust across the entire stack—training, inference, and pro
 \begin{verbatim}
 ┌─────────────────────────────────────────────────┐
 │           Rust Training Service                 │
-│      (Candle + tch-rs + DiffGAF + LTN)          │
+│       (Candle + DiffGAF + LTN + DQN)            │
 └────────────┬────────────────────────────────────┘
              │ Native Model Artifacts
              ▼
 ┌─────────────────────────────────────────────────┐
 │           Rust Forward Service                  │
-│    (Tokio + Candle + DiffGAF + LTN)             │
+│    (Tokio + Neuromorphic Brain + Strategies)     │
 │  gRPC: 50051 | HTTP: 7000                       │
 └────────────┬────────────────────────────────────┘
              │
@@ -1137,7 +1139,7 @@ The exclusive use of Rust across the entire stack—training, inference, and pro
 
 \subsection{Framework Stack}
 
-The following Rust-native frameworks comprise the JANUS ML stack \citep{mazare2024tch, candle2024}:
+The following Rust-native frameworks comprise the JANUS ML stack \citep{candle2024}:
 
 \begin{table}[htbp]
 \centering
@@ -1145,9 +1147,9 @@ The following Rust-native frameworks comprise the JANUS ML stack \citep{mazare20
 \hline
 \textbf{Framework} & \textbf{Pros} & \textbf{Cons} & \textbf{Use Case} \\
 \hline
-Candle \citep{candle2024} & Pure Rust, HuggingFace integration, minimal deps & Younger ecosystem & Primary training \& inference \\
+Candle \citep{candle2024} & Pure Rust, HuggingFace integration, minimal deps, autograd & Younger ecosystem & Primary training \& inference (DiffGAF, ViViT, LTN, DQN) \\
 \hline
-tch-rs \citep{mazare2024tch} & Mature PyTorch backend, full GPU support & C++ libtorch dependency & GPU-intensive training \& inference \\
+ndarray & Zero-dependency numerical arrays, mature ecosystem & No autograd & Traditional fuzzy logic, GAF encoding, feature engineering \\
 \hline
 Polars \citep{polars2024} & High-speed DataFrames & N/A & Data manipulation \\
 \hline
@@ -1159,11 +1161,13 @@ Polars \citep{polars2024} & High-speed DataFrames & N/A & Data manipulation \\
 The system operates as a \textbf{fully Rust-native} ML pipeline with no external language dependencies:
 
 \begin{itemize}
-    \item End-to-end training and inference in Rust via Candle and tch-rs
+    \item End-to-end training and inference in Rust via Candle with autograd support
     \item Custom differentiable kernels for DiffGAF and LTN operations
+    \item Double DQN with online/target networks for reinforcement learning
     \item Native model serialization using \texttt{safetensors} format
-    \item GPU acceleration via CUDA (tch-rs) and wgpu (Candle)
+    \item GPU acceleration via wgpu (Candle) and CUDA (optional)
     \item Zero cross-language overhead—no FFI bridges, no serialization boundaries
+    \item Training infrastructure: AdamW/SGD optimizers, warmup+cosine LR scheduling, prioritized replay buffers
 \end{itemize}
 
 \section{Forward Service: Rust Implementation}
@@ -1353,7 +1357,18 @@ The Execution Service is a dedicated microservice responsible for multi-exchange
 
 \subsection{Multi-Exchange Support}
 
-The service supports multiple cryptocurrency exchanges (Kraken, Bybit, Binance) through a unified interface, with exchange-specific adapters handling authentication, rate limiting, and order format translation.
+The service supports multiple cryptocurrency exchanges through a unified adapter interface (\texttt{exchanges} crate), with exchange-specific adapters handling authentication, rate limiting, and order format translation:
+
+\begin{itemize}
+    \item \textbf{Kraken:} Full REST and WebSocket adapter with order normalization (primary exchange)
+    \item \textbf{Bybit:} Dedicated client crate (\texttt{bybit-client}) with unified order types
+    \item \textbf{Coinbase:} REST adapter with authentication and rate limiting
+    \item \textbf{OKX:} REST adapter with order format translation
+    \item \textbf{Binance:} Legacy connector maintained for backward compatibility
+    \item \textbf{Kucoin:} Legacy connector maintained for backward compatibility
+\end{itemize}
+
+Each adapter implements a common \texttt{ExchangeAdapter} trait, enabling transparent exchange selection at runtime. The \texttt{normalizer} module translates exchange-specific order responses into canonical JANUS types.
 
 \subsection{Service Interface}
 
@@ -1361,6 +1376,19 @@ The service supports multiple cryptocurrency exchanges (Kraken, Bybit, Binance) 
     \item HTTP API on port 8081 for order management
     \item gRPC on port 50052 for low-latency inter-service communication
     \item Standardized order lifecycle (place, modify, cancel, query)
+    \item Circuit breaker per exchange with configurable failure thresholds and recovery timeouts
+    \item Rate limiter with token bucket and sliding window algorithms
+\end{itemize}
+
+\subsection{Execution Algorithms}
+
+The system provides production execution algorithms:
+
+\begin{itemize}
+    \item \textbf{TWAP:} Time-Weighted Average Price execution with configurable slice intervals
+    \item \textbf{VWAP:} Volume-Weighted Average Price execution with volume profile estimation
+    \item \textbf{Iceberg:} Hidden large orders by exposing small visible tip orders to minimize market impact
+    \item \textbf{Execution Analytics:} Per-venue latency tracking, fill rate monitoring, and slippage analysis
 \end{itemize}
 
 \section{CNS Service: System Health Monitoring}
@@ -1370,32 +1398,151 @@ The Central Nervous System (CNS) Service provides system-wide health monitoring 
 
 \subsection{Preflight Validation}
 
-Before entering live or paper trading, the CNS Service executes 14+ preflight checks including:
-\begin{itemize}
-    \item Database connectivity and schema integrity
-    \item Exchange API authentication and rate limit status
-    \item Model file availability and version consistency
-    \item Memory and CPU resource adequacy
-    \item Kill switch state verification
-    \item Market data feed health
-\end{itemize}
+Before entering live or paper trading, the CNS Service executes a five-phase preflight sequence, each with configurable criticality levels (Critical, Required, Optional):
+
+\begin{enumerate}
+    \item \textbf{Infrastructure Phase:} Database connectivity, Redis availability, Qdrant health, shared memory paths
+    \item \textbf{Sensory Phase:} Exchange API authentication, WebSocket feed health, market data freshness
+    \item \textbf{Regulatory Phase:} Kill switch state verification, compliance rule loading, wash sale detector initialization
+    \item \textbf{Strategy Phase:} Model file availability, version consistency, strategy affinity configuration
+    \item \textbf{Executive Phase:} Memory and CPU resource adequacy, neuromorphic brain region initialization
+\end{enumerate}
+
+Critical failures abort the boot sequence; required failures block trading but allow monitoring; optional failures are logged but permit full operation. The \texttt{PreFlightRunner} supports both sequential and parallel-within-phase execution modes, producing a comprehensive \texttt{BootReport} with Discord-formatted notifications.
 
 \subsection{Runtime Monitoring}
 
 During operation, the CNS Service provides:
 \begin{itemize}
-    \item \textbf{Watchdog Monitoring:} Heartbeat-based service liveness detection
-    \item \textbf{Boot Reports:} Comprehensive system state summary on startup
-    \item \textbf{Prometheus Metrics:} 15+ custom metrics exposed for Grafana dashboards
-    \item \textbf{Alert Integration:} Discord and Slack notifications for critical events
+    \item \textbf{Watchdog Monitoring:} Heartbeat-based component liveness detection with configurable degraded/dead thresholds, per-component criticality levels (Critical, Important, NonEssential), and automatic kill switch triggering when critical components die
+    \item \textbf{Boot Reports:} Comprehensive system state summary with pass/fail/skip counts per phase
+    \item \textbf{Prometheus Metrics:} 15+ custom metrics exposed for Grafana dashboards (6+ pre-built dashboards)
+    \item \textbf{Alert Integration:} Slack, PagerDuty, and generic webhook notifications with severity-based routing
     \item \textbf{Distributed Tracing:} Jaeger integration for cross-service latency analysis
+    \item \textbf{Circuit Breakers:} Per-component circuit breakers with Closed → Open → HalfOpen state machine, configurable failure windows, and recovery timeouts
+    \item \textbf{Reflex Actions:} Automated responses including component restart, throttling, graceful shutdown, and safe command execution with allowlist validation
+    \item \textbf{Neuromorphic Brain Coordinator:} Topological initialization ordering of all 10 brain regions based on dependency graphs, per-region health scoring, and global brain activation/deactivation
+\end{itemize}
+
+\section{Trading Strategies}
+\label{sec:strategies}
+
+The \texttt{strategies} crate implements nine regime-aware trading strategies, each designed for specific market conditions as identified by the ensemble regime detector:
+
+\subsection{Trend-Following Strategies}
+
+\begin{itemize}
+    \item \textbf{EMA Flip:} 8/21 EMA crossover with ATR-based stops, trading pullbacks to the fast EMA in the trend direction
+    \item \textbf{EMA Ribbon Scalper:} 8/13/21 EMA ribbon with volume confirmation for higher-quality pullback entries
+    \item \textbf{Trend Pullback:} Fibonacci retracement entries within established trends, confirmed by RSI divergence and candlestick patterns (pin bars, engulfing)
+    \item \textbf{Momentum Surge:} Detects sudden price surges with volume spikes, entering on the first pullback within the surge
+    \item \textbf{Multi-Timeframe Trend:} EMA 50/200 crossover with ADX strength and higher-timeframe alignment
+\end{itemize}
+
+\subsection{Mean-Reversion Strategies}
+
+\begin{itemize}
+    \item \textbf{Mean Reversion:} Bollinger Bands with RSI confirmation and ATR-based stops
+    \item \textbf{Bollinger Squeeze Breakout:} Detects low-volatility squeeze periods and generates breakout signals when price escapes the bands
+    \item \textbf{VWAP Scalper:} Mean reversion scalping around the Volume-Weighted Average Price with standard deviation bands
+    \item \textbf{Opening Range Breakout:} Trades breakouts above or below the first N candles of a session with volume confirmation
+\end{itemize}
+
+\subsection{Strategy Gating and Affinity}
+
+The \texttt{StrategyGate} module controls which strategies execute based on:
+
+\begin{itemize}
+    \item \textbf{Regime Compatibility:} Each asset can define preferred strategies per regime (e.g., Trending → EMA Flip, MeanReverting → Bollinger Squeeze)
+    \item \textbf{Affinity Scoring:} Strategy-asset affinity tracker with performance-weighted scoring
+    \item \textbf{Allowlists/Denylists:} Per-asset strategy filtering via TOML configuration
+    \item \textbf{Untested Strategy Policy:} Configurable flag to allow or block strategies without historical performance data
+\end{itemize}
+
+\section{Neuromorphic Module: Brain-Region Implementations}
+\label{sec:neuromorphic_impl}
+
+The \texttt{neuromorphic} crate is the largest module in the JANUS codebase, implementing all ten brain regions as production Rust code. Each region is a self-contained submodule with its own configuration, state management, and comprehensive test suite.
+
+\begin{tcolorbox}[colback=codegray, colframe=neurogreen, title=Neuromorphic Crate Structure]
+\begin{verbatim}
+neuromorphic/
+├── visual_cortex/    # GAF, ViViT, preprocessing, UMAP viz
+├── cortex/           # Schemas, knowledge base, planning
+│   └── memory/       # 7 regime schemas + Markov transitions
+├── hippocampus/      # Episodic buffer, SWR, consolidation
+│   └── swr/          # Ripple detection, compressed replay
+├── thalamus/         # Attention, fusion, gating, routing
+│   └── fusion/       # Orderbook, price, volume, sentiment
+├── hypothalamus/     # Position sizing, homeostasis, energy
+│   └── position_sizing/  # Drawdown scaling, Kelly criterion
+├── basal_ganglia/    # Direct/Indirect pathways, OpAL
+│   └── praxeological/  # Go/No-Go signals, confidence
+├── amygdala/         # Threat detection, VPIN, kill switch
+│   └── vpin/         # Calculator, flash crash, toxicity
+├── cerebellum/       # Forward models, error correction
+│   ├── error_correction/  # PID controller, feedback loops
+│   └── forward_models/    # Smith predictor, fill prob
+├── prefrontal/       # LTN, fuzzy logic, conscience, goals
+│   └── ltn/          # Hedges: very, somewhat, extremely
+├── integration/      # Coordinator, message bus, bridges
+│   └── engine/       # Cognitive core, orchestrator
+└── distributed/      # Multi-node coordination
+\end{verbatim}
+\end{tcolorbox}
+
+\subsection{Key Implementation Details}
+
+\textbf{Basal Ganglia — Opponent Actor Learning (OpAL):}
+The \texttt{praxeological} module implements the full Go/No-Go architecture with dopamine-modulated action selection. The \texttt{GoSignal} evaluates action value against adaptive thresholds with dopamine sensitivity, urgency boosting, and facilitation bias. The \texttt{NoGoSignal} evaluates 12 inhibition reasons (risk threshold, position limit, loss limit, high volatility, low liquidity, cooling off, correlation risk, drawdown protection, time restriction, external halt, learned pattern, and custom) with learned inhibition patterns and adaptive thresholds. The actor-critic framework includes Generalized Advantage Estimation (GAE) and TD($\lambda$) learning for stable policy updates, with winner-take-all selection and habit caching for frequently-encountered states.
+
+\textbf{Cerebellum — Forward Models and Error Correction:}
+The \texttt{almgren\_chriss} module implements optimal execution trajectories with permanent/temporary impact coefficients. The \texttt{pid\_controller} provides a full PID implementation with anti-windup, dead band, derivative filtering, cascaded PID, and Ziegler-Nichols auto-tuning. The \texttt{forward\_models} submodule includes adverse selection detection, Smith predictor for latency compensation, order latency estimation, and fill probability prediction.
+
+\textbf{Amygdala — VPIN and Kill Switch:}
+The \texttt{vpin} module implements volume-synchronized probability of informed trading with bulk volume classification, rolling bucket computation, and configurable high/critical thresholds. The \texttt{kill\_switch} provides a four-scope design (per-strategy, per-instrument, per-service, global) with emergency actions (cancel all orders, close all positions, disable trading, send alerts). The fear network integrates reinforcement learning (FNI-RL) to adapt threat responses based on historical outcomes.
+
+\textbf{Cortex — Schema Formation:}
+The \texttt{schemas} module implements all seven regime schemas (Bull, Bear, Ranging, Crisis, Recovery, Bubble, Deflation) with 10 market features (trailing return, realised volatility, average correlation, max drawdown, vol rate of change, momentum signal, mean reversion signal, credit spread, yield curve slope, relative volume), weighted feature-range matching, a full Markov transition matrix with stationary distribution computation, and EMA-smoothed confidence tracking. The cortex also implements a hierarchical RL manager with feudal goal-setting and subgoal generation for multi-level strategic planning.
+
+\textbf{Prefrontal — Fuzzy Logic with Linguistic Hedges:}
+The \texttt{ltn} submodule implements the complete Łukasiewicz fuzzy logic system with five linguistic hedges: \texttt{very} ($x^2$, concentration), \texttt{somewhat} ($\sqrt{x}$, dilation), \texttt{slightly} ($\sqrt{x} - x$), \texttt{extremely} ($x^3$), and \texttt{more\_or\_less} ($\sqrt{x}$, synonym for dilation). A full expression evaluator supports nested hedge application.
+
+\textbf{Thalamus — Multimodal Fusion:}
+Four specialized fusion engines process distinct data streams: \texttt{orderbook\_fusion} (multi-venue book consolidation with weighted mid-price, imbalance detection, and EMA smoothing), \texttt{price\_fusion} (multi-timeframe price action), \texttt{volume\_fusion} (volume profile analysis), and \texttt{sentiment\_fusion} (news and social sentiment signals). The \texttt{gating} submodule implements sensory gates with relevance scoring and threshold-based filtering. External data sources include news feeds, weather data, and celestial/space weather for commodity correlation analysis.
+
+\textbf{Hippocampus — Sharp-Wave Ripple Simulation:}
+The \texttt{swr} submodule implements 11 ripple types (large profit, large loss, novel pattern, market anomaly, strategy breakthrough, risk event, regime change, correlation breakdown, volatility spike, liquidity event, periodic) with priority-weighted detection. The \texttt{compressed\_replay} module provides compressed experience sequences, and \texttt{consolidation\_sync} coordinates the transfer from hippocampal to neocortical storage. The hippocampus also houses a feudal RL worker agent with a skill library and tactical policy for executing subgoals issued by the cortex's strategic planner.
+
+\textbf{Distributed Training Infrastructure:}
+The \texttt{distributed} submodule provides multi-GPU and multi-node training coordination with AllReduce, Parameter Server, and Ring AllReduce gradient synchronization strategies. Distributed data loading supports multiple sharding strategies (Contiguous, RoundRobin, Random, Stratified). The infrastructure includes NCCL GPU-to-GPU communication, gRPC-based inter-node coordination, and distributed checkpointing with cloud storage backends.
+
+\subsection{Supporting Crates}
+
+Beyond the core neuromorphic and service crates, the workspace includes:
+
+\begin{itemize}
+    \item \textbf{vision:} DiffGAF (learnable normalization, polar encoding, Gramian layers), ViViT (factorized encoder with spatial/temporal attention), fully wired \texttt{VisionPipeline} orchestration that chains DiffGAF → ViViT end-to-end as a single differentiable Candle module (with automatic frame splitting, dual-GAF mode, intermediate visualisation, and optional linear projection head), backtest simulation, portfolio optimization (Black-Litterman, Risk Parity, Mean-Variance), production monitoring (circuit breakers, health checks, metrics registry), and live inference pipeline with latency profiling
+    \item \textbf{training:} End-to-end training loop with AdamW/SGD optimizers, warmup+cosine/step/exponential LR schedulers, prioritized experience replay with SWR sampling, gradient clipping, checkpointing with metadata, early stopping, and pluggable callbacks
+    \item \textbf{ml:} LSTM and MLP models via Candle, Double DQN with online/target networks and soft updates, feature engineering (price, volume, technical indicators, normalizers), and dataset management
+    \item \textbf{logic:} Dual-mode LTN system — non-differentiable (ndarray) for inference-time constraint checking and differentiable (Candle) for gradient-based training — with three t-norm families (Łukasiewicz, Product, Gödel), learnable/threshold/similarity predicates, and comprehensive rule composition (ForAll, Exists, Implies, Iff, AndN, OrN)
+    \item \textbf{ltn:} Domain-specific neuro-symbolic engine with 10 market axioms encoded as logical rules (e.g., Trending + Positive Divergence → Long, Low Confidence → Neutral), integrating DSP features through fuzzy predicates with a hybrid supervised-semantic loss function
+    \item \textbf{regime:} Ensemble regime detection combining HMM (Gaussian emissions, Baum-Welch, online parameter updates), indicator-based (ADX, Bollinger Bands, ATR, EMA, RSI), and ensemble fusion with agreement tracking and strategy routing
+    \item \textbf{dsp:} Digital signal processing with FRAMA (Fractal Adaptive Moving Average) and Sevcik fractal dimension estimation producing an 8D feature vector (divergence, alpha, fractal dimension, Hurst exponent, regime, sign, deviation, confidence) at sub-microsecond latency per tick
+    \item \textbf{compliance:} Dedicated \texttt{WashSaleDetector} with full 30-day lookback/lookforward window, partial wash sale handling, cost basis tracking, and position-aware detection; plus \texttt{ComplianceSheriff} enforcing proprietary firm trading rules (daily loss limits, maximum loss thresholds, mandatory stop-losses)
+    \item \textbf{optimizer:} Hyperparameter optimization with configurable samplers, constraints, backtesting integration, and result publishing
+    \item \textbf{data-quality:} Market data validation and anomaly detection
+    \item \textbf{gap-detection:} Multi-layer time series gap detection (sequence ID, heartbeat, statistical, volume-aware) with PostgreSQL persistence
+    \item \textbf{indicators:} Technical indicator library (ADX, ATR, Bollinger Bands, EMA, RSI, MACD) with incremental O(1) per-tick computation
+    \item \textbf{rate-limiter:} Token bucket and sliding window rate limiters with async circuit breaker, exchange-specific algorithms
+    \item \textbf{questdb-writer:} High-performance time series ingestion to QuestDB via ILP, batched writes targeting >100K inserts/sec
 \end{itemize}
 
 \section{Deployment Architecture}
 
 \subsection{Service Orchestration}
 
-The system deploys as five core services plus supporting infrastructure:
+The system deploys as eight services plus supporting infrastructure:
 
 \textbf{Service Topology:}
 \begin{enumerate}
@@ -1431,6 +1578,24 @@ The system deploys as five core services plus supporting infrastructure:
         \item Internal service for health monitoring and preflight validation
         \item Dependencies: All other services (monitoring target)
     \end{itemize}
+
+    \item \textbf{API Service:}
+    \begin{itemize}
+        \item HTTP API gateway for external access
+        \item Dependencies: Forward Service, Backward Service
+    \end{itemize}
+
+    \item \textbf{Registry Service:}
+    \begin{itemize}
+        \item Internal service discovery and registration
+        \item Dependencies: Redis
+    \end{itemize}
+
+    \item \textbf{Optimizer Service:}
+    \begin{itemize}
+        \item Hyperparameter optimization with backtesting integration
+        \item Metrics port: 9092
+    \end{itemize}
 \end{enumerate}
 
 \textbf{Infrastructure:}
@@ -1438,10 +1603,14 @@ The system deploys as five core services plus supporting infrastructure:
     \item \textbf{PostgreSQL} (port 5432): Primary relational storage for signals, portfolios, and performance
     \item \textbf{Redis} (port 6379): Operational state, kill switch coordination, hot-reloadable config
     \item \textbf{QuestDB} (ports 9000/9009): High-performance time series storage for market data
-    \item \textbf{Prometheus} (port 9090): Metrics collection
-    \item \textbf{Grafana} (port 3000): Visualization dashboards (5+ dashboards)
-    \item \textbf{Alertmanager} (port 9093): Alert routing
+    \item \textbf{Qdrant}: Vector similarity search engine for schema pattern matching
+    \item \textbf{Prometheus} (port 9090): Metrics collection with 1700+ lines of alert rules
+    \item \textbf{Grafana} (port 3000): Visualization dashboards (6+ dashboards including strategy, regime, CNS, brain region monitors)
+    \item \textbf{Alertmanager} (port 9093): Alert routing with Discord integration
     \item \textbf{Jaeger} (port 16686): Distributed tracing
+    \item \textbf{Loki + Promtail}: Centralized log aggregation with label-based organization
+    \item \textbf{Authelia}: OpenID Connect / SAML authentication gateway
+    \item \textbf{Nginx}: Reverse proxy with SSL termination
 \end{itemize}
 
 \textbf{Service Communication:}
@@ -1490,32 +1659,33 @@ Project JANUS represents a paradigm shift in quantitative trading: from opaque b
 \subsection*{Key Innovations}
 
 \begin{enumerate}
-    \item \textbf{Neuromorphic Architecture:} Ten biologically plausible brain regions with modular design
-    \item \textbf{Neuro-Symbolic Fusion:} LTNs with linguistic hedges bridge neural networks and logical constraints
-    \item \textbf{Multi-Timescale Memory:} Three-tier hierarchy with sleep-phase consolidation mirrors hippocampal-neocortical transfer
-    \item \textbf{Ensemble Regime Detection:} HMM, statistical, and technical methods fused for robust market state identification
-    \item \textbf{Production-Ready Safety:} Dual-layer kill switch, multi-method anomaly detection, and CNS health monitoring
-    \item \textbf{Pure Rust Stack:} End-to-end training and inference in Rust with high-performance, safe, and maintainable five-service architecture
+    \item \textbf{Neuromorphic Architecture:} Ten biologically plausible brain regions with modular design and distributed training infrastructure
+    \item \textbf{Neuro-Symbolic Fusion:} Dual-mode LTN system with domain-specific axioms and linguistic hedges bridging neural networks and logical constraints
+    \item \textbf{Multi-Timescale Memory:} Three-tier hierarchy with sleep-phase consolidation mirrors hippocampal-neocortical transfer, implementing Complementary Learning Systems theory
+    \item \textbf{Ensemble Regime Detection:} HMM, statistical, and technical methods fused for robust market state identification with strategy routing
+    \item \textbf{Production-Ready Safety:} Four-scope kill switch, multi-method anomaly detection, FNI-RL fear network, and CNS health monitoring with five-phase preflight
+    \item \textbf{Pure Rust Stack:} End-to-end training and inference in Rust with high-performance, safe, and maintainable eight-service architecture
+    \item \textbf{Fractal Signal Processing:} Sub-microsecond DSP pipeline producing 8D feature vectors via FRAMA and Sevcik fractal dimension for regime-aware signal generation
 \end{enumerate}
 
 \subsection*{Future Work}
 
+The following items remain as planned enhancements beyond the current implementation:
+
 \begin{itemize}
-    \item Wilson-Cowan thalamic oscillation models for attention dynamics
+    \item Wilson-Cowan thalamic oscillation models \citep{wilson1972excitatory, wilson2024bidirectional} for neural population attention dynamics
     \item Chronos \citep{ansari2024chronos, ansari2024chronos2} integration for foundation model time series forecasting (Rust-native)
     \item BERT text embeddings for structured sentiment analysis via Candle \citep{candle2024}
-    \item Parametric UMAP for real-time schema monitoring
+    \item Parametric UMAP for real-time schema monitoring (standard UMAP projections are currently recomputed during consolidation)
     \item Quantum computing integration for portfolio optimization \citep{quantum2024portfolio}
-    \item Continual learning without catastrophic forgetting using CLS principles \citep{mcclelland1995complementary}
-    \item Multi-agent systems for distributed trading using feudal hierarchies \citep{vezhnevets2017feudal, feudal2019multi}
-    \item Regulatory AI for automated compliance leveraging LTN constraint satisfaction \citep{badreddine2022logic}
     \item Hardware acceleration using FPGAs \citep{marino2023mevit, vemeko2023fpga, amd2023alveo} and neuromorphic chips
-    \item Enhanced market microstructure analysis using VPIN and flow toxicity metrics \citep{easley2011vpin, easley2012flow}
     \item Generative diffusion models for synthetic market data generation \citep{diffusion2024lob}
     \item Rust-native GPU-accelerated LOB simulator for scalable training \citep{fu2024jaxlob}
     \item Custom GPU kernels via wgpu for Candle-based training acceleration
-    \item Full Qdrant integration as primary vector database for schema storage
+    \item Full Qdrant production integration replacing mock storage layer with real client
 \end{itemize}
+
+\textbf{Already implemented since initial specification:} VPIN flow toxicity calculator with flash crash detection, full PID controller with Ziegler-Nichols auto-tuning, comprehensive wash sale detection in dedicated compliance crate with proprietary firm rule enforcement, nine regime-aware trading strategies with gating and affinity scoring, four-scope kill switch (per-strategy/instrument/service/global), FNI-RL fear network with reinforcement learning adaptation, neuromorphic distributed training infrastructure (multi-GPU/multi-node with AllReduce, Parameter Server, and Ring AllReduce), feudal RL hierarchy with cortex manager and hippocampus worker agents, domain-specific LTN axiom system with 10 market rules and hybrid supervised-semantic loss, complete Markov transition matrix with stationary distribution for regime prediction, 8D DSP feature vector pipeline with sub-microsecond latency, end-to-end VisionPipeline orchestration chaining DiffGAF → ViViT for fully differentiable time-series-to-embedding inference (with dual-GAF, intermediate visualisation, and optional projection head support), and Complementary Learning Systems theory implementation across three-tier memory hierarchy.
 
 \vspace{1cm}
 
