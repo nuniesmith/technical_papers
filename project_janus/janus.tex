@@ -105,7 +105,7 @@
     filecolor=accentgold,
     urlcolor=janusblue,
     citecolor=janusblue,
-    pdftitle={Project JANUS: Complete Technical Specification},
+    pdftitle={Project JANUS\@: Complete Technical Specification},
     pdfauthor={Jordan Smith},
     pdfsubject={Neuromorphic Trading Intelligence},
     pdfkeywords={neuromorphic computing, algorithmic trading, machine learning, Rust, neuroscience},
@@ -173,7 +173,7 @@
 	{\LARGE\bfseries Complete Technical Specification\par}
 	\vspace{1cm}
 
-	{\large\itshape A Brain-Inspired Architecture for Autonomous Financial Systems\par}
+	{\large\itshape A Brain-Inspired Architecture for Autonomous Financial Systems\/\par}
 	\vspace{3cm}
 
 	\begin{tcolorbox}[colback=janusblue!5, colframe=janusblue, title=\textbf{Unified Documentation}, width=0.85\textwidth]
@@ -203,7 +203,7 @@
 	{\large \today\par}
 	\vspace{1cm}
 
-	{\small\itshape ``The god of beginnings and transitions, looking simultaneously to the future and the past.''\par}
+	{\small\itshape ``The god of beginnings and transitions, looking simultaneously to the future and the past.''\/\par} % chktex 38
 
 \end{titlepage}
 
@@ -365,7 +365,7 @@ Divide each frame $\mathbf{G}_k$ into non-overlapping patches:
 \begin{equation}
 	\mathbf{P}_k = \text{Reshape}(\mathbf{G}_k) \in \mathbb{R}^{P \times (p^2)}
 \end{equation}
-where $P = (W/p)^2$ is the number of patches per frame.
+where $P = {(W/p)}^2$ is the number of patches per frame.
 
 \textbf{Spatial Attention:}
 Apply self-attention within each frame:
@@ -694,7 +694,7 @@ The hippocampal buffer stores episodic memories of individual trading events, en
 
 Stores raw experiences during trading, mirroring the role of biological hippocampus in episodic memory formation:
 \begin{equation}
-	\mathcal{D}_{\text{hippo}} = \{(s_t, a_t, r_t, s_{t+1}, \mathbf{c}_t, \mathbf{e}_t)\}_{t=1}^{T}
+	\mathcal{D}_{\text{hippo}} = \{(s_t, a_t, r_t, s_{t+1}, \mathbf{c}_t, \mathbf{e}_t)\}_{t=1}^{T} % chktex 3
 \end{equation}
 where $\mathbf{c}_t$ contains contextual metadata (volatility, spreads, volume) and $\mathbf{e}_t$ contains emotional tags (fear level, confidence, surprise) that bias consolidation priority.
 
@@ -730,7 +730,7 @@ where $\alpha \in [0, 1]$ controls prioritization strength (default $\alpha = 0.
 
 \subsubsection{Importance Sampling Correction}
 \begin{equation}
-	w_i = \left(\frac{1}{N \cdot P(i)}\right)^\beta
+	w_i = \left(\frac{1}{N \cdot P{(i)}}\right)^\beta % chktex 3
 \end{equation}
 where $\beta$ is annealed from $0.4 \to 1.0$ during training via a configurable increment parameter, fully correcting bias at convergence.
 
@@ -790,7 +790,7 @@ The full UMAP loss includes both attraction and repulsion terms:
 		w_{ij} \log(q_{ij}) + (1 - w_{ij}) \log(1 - q_{ij})
 		\right]
 \end{equation}
-where $q_{ij} = \left(1 + \|\mathbf{y}_i - \mathbf{y}_j\|^2\right)^{-1}$.
+where $q_{ij} = {\left(1 + \|\mathbf{y}_i - \mathbf{y}_j\|^2\right)}^{-1}$.
 
 \textbf{Note:} In practice, the repulsion term $(1 - w_{ij})$ is approximated via \emph{negative sampling} to achieve $\mathcal{O}(N)$ complexity. For each positive edge, we sample $k=5$ random negative pairs.
 
@@ -1005,7 +1005,7 @@ The amygdala provides rapid threat detection and fear learning \citep{amygdala20
 
 \textbf{Mahalanobis Distance:}
 \begin{equation}
-	D_M(\mathbf{s}_t) = \sqrt{(\mathbf{s}_t - \boldsymbol{\mu})^T \boldsymbol{\Sigma}^{-1} (\mathbf{s}_t - \boldsymbol{\mu})}
+	D_M(\mathbf{s}_t) = \sqrt{{(\mathbf{s}_t - \boldsymbol{\mu})}^T \boldsymbol{\Sigma}^{-1} (\mathbf{s}_t - \boldsymbol{\mu})}
 \end{equation}
 where $\boldsymbol{\mu}$ is the historical mean state and $\boldsymbol{\Sigma}$ is the covariance matrix.
 
@@ -1199,8 +1199,8 @@ where:
 
 \textbf{Order Book Structure:}
 \begin{align}
-	\mathcal{B}_t & = \{(p_i, q_i) : p_i \in \mathbb{R}^+, q_i \in \mathbb{R}^+ \}_{i=1}^{N_{\text{bid}}} \\
-	\mathcal{A}_t & = \{(p_j, q_j) : p_j \in \mathbb{R}^+, q_j \in \mathbb{R}^+ \}_{j=1}^{N_{\text{ask}}}
+	\mathcal{B}_t & = \{(p_i, q_i) : p_i \in \mathbb{R}^+, q_i \in \mathbb{R}^+ \}_{i=1}^{N_{\text{bid}}} \\ % chktex 3
+	\mathcal{A}_t & = \{(p_j, q_j) : p_j \in \mathbb{R}^+, q_j \in \mathbb{R}^+ \}_{j=1}^{N_{\text{ask}}} % chktex 3
 \end{align}
 
 \subsection{GAF Transformation Algorithm}
@@ -1286,7 +1286,7 @@ The replay buffer maintains experiences with importance-based sampling.
 
 \textbf{Buffer State:}
 \begin{equation}
-	\mathcal{B} = \{(e_i, p_i)\}_{i=1}^{N}
+	\mathcal{B} = \{(e_i, p_i)\}_{i=1}^{N} % chktex 3
 \end{equation}
 where $e_i$ is an experience and $p_i \in \mathbb{R}^+$ is its priority.
 
@@ -1315,7 +1315,7 @@ where $e_i$ is an experience and $p_i \in \mathbb{R}^+$ is its priority.
 
 \textbf{Importance Weights:}
 \begin{equation}
-	w_i = \left(\frac{1}{N \cdot P(i)}\right)^\beta
+	w_i = \left(\frac{1}{N \cdot P{(i)}}\right)^\beta % chktex 3
 \end{equation}
 These weights correct for the non-uniform sampling distribution.
 
@@ -1707,7 +1707,7 @@ The following items remain as planned enhancements beyond the current implementa
 
 	\vspace{0.5cm}
 
-	\textit{``The god of beginnings and transitions, looking simultaneously to the future and the past.''}
+	\textit{``The god of beginnings and transitions, looking simultaneously to the future and the past.''} % chktex 38
 \end{tcolorbox}
 
 \newpage
