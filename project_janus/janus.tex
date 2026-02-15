@@ -974,7 +974,7 @@ The Hypothalamus sits at the second stage of the brain wiring pipeline, translat
 
 \subsection{Basal Ganglia: Action Selection \& Reinforcement Learning}
 
-The basal ganglia implements Opponent Actor Learning (OpAL) \citep{collins2014opponent}, balancing Go (Direct) and No-Go (Indirect) pathways modulated by dopamine \citep{dopamine2020reward}. See Section~\ref{sec:decision_engine} for the complete mathematical formulation.
+The basal ganglia implements Opponent Actor Learning (OpAL) \citep{collins2014opponent}, balancing Go (Direct) and No-Go (Indirect) pathways modulated by dopamine \citep{dopamine2020reward}. High dopamine (bull market/high confidence) amplifies the Direct pathway; low dopamine (bear market/uncertainty) amplifies the Indirect pathway. This creates dynamic risk tolerance that adapts to market volatility, implementing allostatic regulation \citep{sterling2012allostasis} rather than simple homeostatic feedback. The Hypothalamus module (Section~\ref{sec:hypothalamus}) translates regime detection into calibrated risk parameters that modulate dopaminergic signaling throughout the decision pipeline. See Section~\ref{sec:decision_engine} for the complete mathematical formulation.
 
 \subsection{Prefrontal Cortex: Logic, Planning \& Compliance}
 
@@ -1039,7 +1039,7 @@ where $\tau_{\text{danger}}$ is calibrated to a false-positive rate (e.g., $\tau
 	\item \textbf{Cancel All:} Emergency cancellation of all pending orders
 \end{itemize}
 
-\textbf{Fear Extinction:} The fear learning system implements extinction mechanisms \citep{monfils2009extinction}, allowing the system to ``unlearn'' fear when threats have passed. This prevents permanent paralysis after traumatic market events while maintaining protective responses for genuine systemic risks.
+\textbf{Fear Extinction:} The fear learning system implements extinction mechanisms \citep{monfils2009extinction, substantia2016connections}, allowing the system to ``unlearn'' fear when threats have passed. This prevents the agent from becoming permanently paralyzed by a single traumatic market event (e.g., flash crash) while maintaining protective circuit breakers for genuine systemic risks.
 
 \subsection{Cerebellum: Motor Control \& Execution}
 
@@ -1631,30 +1631,6 @@ The system deploys as eight services plus supporting infrastructure:
 
 \textbf{Volume Management:}
 Model artifacts are stored on shared read-only volumes; PostgreSQL and QuestDB use persistent volumes with automated backups; Redis data is ephemeral with configurable persistence; experience buffers rotate daily.
-
-% ============================================
-% PART 6: ADVANCED NEUROSCIENCE INTEGRATION
-% ============================================
-\newpage
-\part{Advanced Neuroscience Integration}
-\label{part:advanced_neuro}
-\setcounter{section}{0}
-
-\section{Thalamic Oscillations and Attentional Gating}
-
-The Thalamus functions as the ``gatekeeper'' of perception in JANUS, regulating the flow of visual and numerical data into the decision engine. Wilson-Cowan mean-field models \citep{wilson1972excitatory, wilson2024bidirectional} are planned for simulating the oscillatory dynamics of neural populations to generate ``attention masks'' that suppress noise and amplify signal.
-
-Currently, the Thalamus module implements attentional gating through multi-head cross-attention with saliency computation and gating mechanisms (Section~\ref{sec:thalamus}). The Thalamic Reticular Nucleus provides attentional gating \citep{thalamus2018attention, halassa2017thalamic}, enabling JANUS to focus computational resources on the most informative market data streams.
-
-\section{Dopaminergic Modulation and Market Regimes}
-
-The balance between Direct (Go) and Indirect (No-Go) pathways is modulated by a simulated dopamine signal \citep{dopamine2020reward}. High dopamine (bull market/high confidence) amplifies the Direct pathway; low dopamine (bear market/uncertainty) amplifies the Indirect pathway. This creates dynamic risk tolerance that adapts to market volatility, implementing allostatic regulation \citep{sterling2012allostasis} rather than simple homeostatic feedback.
-
-The Hypothalamus module (Section~\ref{sec:hypothalamus}) translates regime detection into calibrated risk parameters that modulate dopaminergic signaling throughout the decision pipeline.
-
-\section{Fear Extinction and Adaptive Risk Management}
-
-The Amygdala module implements fear extinction mechanisms \citep{monfils2009extinction, substantia2016connections}, allowing the system to ``unlearn'' fear when threats have passed. This prevents the agent from becoming permanently paralyzed by a single traumatic market event (e.g., flash crash), while maintaining protective circuit breakers for genuine systemic risks.
 
 % ============================================
 % CONCLUSION
