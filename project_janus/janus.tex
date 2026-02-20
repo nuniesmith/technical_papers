@@ -38,9 +38,10 @@
 % --- CONFIGURATION ---
 \onehalfspacing
 \setlength{\headheight}{18pt}
-\emergencystretch=1em          % Allow extra inter-word stretch before creating overfull hboxes
-\tolerance=1000                % Accept slightly looser line breaks to avoid overflow
-\hbadness=5000                 % Suppress cosmetically insignificant underfull hbox warnings
+\emergencystretch=3em          % Allow extra inter-word stretch before creating overfull hboxes
+\tolerance=2000                % Accept slightly looser line breaks to avoid overflow
+\hbadness=10000                % Suppress cosmetically insignificant underfull hbox warnings
+\hfuzz=2pt                     % Ignore overfull hboxes smaller than 2pt
 
 \definecolor{janusblue}{RGB}{0, 51, 102}
 \definecolor{accentgold}{RGB}{204, 153, 51}
@@ -54,55 +55,55 @@
 
 % --- UNICODE CHARACTER DECLARATIONS ---
 % Some characters below are already defined by inputenc/babel/amssymb.
-% Temporarily suppress "Redefining Unicode character" warnings, then restore.
+% Use a helper that silently redefines if already present.
 \makeatletter
-\let\nuc@savedwarn\PackageWarning
-\renewcommand{\PackageWarning}[2]{}%
+\newcommand{\safeunicodechar}[2]{%
+  \@ifundefined{u8:\detokenize{#1}}%
+    {\newunicodechar{#1}{#2}}%
+    {\begingroup\let\PackageWarning\@gobbletwo\newunicodechar{#1}{#2}\endgroup}%
+}
 \makeatother
-\newunicodechar{▼}{\ensuremath{\blacktriangledown}}
-\newunicodechar{→}{\ensuremath{\rightarrow}}
-\newunicodechar{←}{\ensuremath{\leftarrow}}
-\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
-\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
-\newunicodechar{…}{\ldots}
-\newunicodechar{≥}{\ensuremath{\geq}}
-\newunicodechar{≤}{\ensuremath{\leq}}
-\newunicodechar{≠}{\ensuremath{\neq}}
-\newunicodechar{≈}{\ensuremath{\approx}}
-\newunicodechar{∈}{\ensuremath{\in}}
-\newunicodechar{∉}{\ensuremath{\notin}}
-\newunicodechar{∧}{\ensuremath{\wedge}}
-\newunicodechar{∨}{\ensuremath{\vee}}
-\newunicodechar{¬}{\ensuremath{\neg}}
-\newunicodechar{×}{\ensuremath{\times}}
-\newunicodechar{÷}{\ensuremath{\div}}
-\newunicodechar{∞}{\ensuremath{\infty}}
-\newunicodechar{∑}{\ensuremath{\sum}}
-\newunicodechar{∏}{\ensuremath{\prod}}
-\newunicodechar{∫}{\ensuremath{\int}}
-\newunicodechar{√}{\ensuremath{\sqrt}}
-\newunicodechar{∂}{\ensuremath{\partial}}
-\newunicodechar{∇}{\ensuremath{\nabla}}
-\newunicodechar{α}{\ensuremath{\alpha}}
-\newunicodechar{β}{\ensuremath{\beta}}
-\newunicodechar{γ}{\ensuremath{\gamma}}
-\newunicodechar{δ}{\ensuremath{\delta}}
-\newunicodechar{ε}{\ensuremath{\epsilon}}
-\newunicodechar{θ}{\ensuremath{\theta}}
-\newunicodechar{λ}{\ensuremath{\lambda}}
-\newunicodechar{μ}{\ensuremath{\mu}}
-\newunicodechar{π}{\ensuremath{\pi}}
-\newunicodechar{σ}{\ensuremath{\sigma}}
-\newunicodechar{τ}{\ensuremath{\tau}}
-\newunicodechar{φ}{\ensuremath{\phi}}
-\newunicodechar{ω}{\ensuremath{\omega}}
-\newunicodechar{Δ}{\ensuremath{\Delta}}
-\newunicodechar{Σ}{\ensuremath{\Sigma}}
-\newunicodechar{Π}{\ensuremath{\Pi}}
-\newunicodechar{Ω}{\ensuremath{\Omega}}
-\makeatletter
-\let\PackageWarning\nuc@savedwarn
-\makeatother
+\safeunicodechar{▼}{\ensuremath{\blacktriangledown}}
+\safeunicodechar{→}{\ensuremath{\rightarrow}}
+\safeunicodechar{←}{\ensuremath{\leftarrow}}
+\safeunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\safeunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\safeunicodechar{…}{\ldots}
+\safeunicodechar{≥}{\ensuremath{\geq}}
+\safeunicodechar{≤}{\ensuremath{\leq}}
+\safeunicodechar{≠}{\ensuremath{\neq}}
+\safeunicodechar{≈}{\ensuremath{\approx}}
+\safeunicodechar{∈}{\ensuremath{\in}}
+\safeunicodechar{∉}{\ensuremath{\notin}}
+\safeunicodechar{∧}{\ensuremath{\wedge}}
+\safeunicodechar{∨}{\ensuremath{\vee}}
+\safeunicodechar{¬}{\ensuremath{\neg}}
+\safeunicodechar{×}{\ensuremath{\times}}
+\safeunicodechar{÷}{\ensuremath{\div}}
+\safeunicodechar{∞}{\ensuremath{\infty}}
+\safeunicodechar{∑}{\ensuremath{\sum}}
+\safeunicodechar{∏}{\ensuremath{\prod}}
+\safeunicodechar{∫}{\ensuremath{\int}}
+\safeunicodechar{√}{\ensuremath{\sqrt}}
+\safeunicodechar{∂}{\ensuremath{\partial}}
+\safeunicodechar{∇}{\ensuremath{\nabla}}
+\safeunicodechar{α}{\ensuremath{\alpha}}
+\safeunicodechar{β}{\ensuremath{\beta}}
+\safeunicodechar{γ}{\ensuremath{\gamma}}
+\safeunicodechar{δ}{\ensuremath{\delta}}
+\safeunicodechar{ε}{\ensuremath{\epsilon}}
+\safeunicodechar{θ}{\ensuremath{\theta}}
+\safeunicodechar{λ}{\ensuremath{\lambda}}
+\safeunicodechar{μ}{\ensuremath{\mu}}
+\safeunicodechar{π}{\ensuremath{\pi}}
+\safeunicodechar{σ}{\ensuremath{\sigma}}
+\safeunicodechar{τ}{\ensuremath{\tau}}
+\safeunicodechar{φ}{\ensuremath{\phi}}
+\safeunicodechar{ω}{\ensuremath{\omega}}
+\safeunicodechar{Δ}{\ensuremath{\Delta}}
+\safeunicodechar{Σ}{\ensuremath{\Sigma}}
+\safeunicodechar{Π}{\ensuremath{\Pi}}
+\safeunicodechar{Ω}{\ensuremath{\Omega}}
 
 % --- MATH OPERATORS ---
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -111,13 +112,20 @@
 \DeclareMathOperator{\sigmoid}{sigmoid}
 
 % --- HYPERREF CONFIGURATION ---
+% Prevent \@ internals from leaking into PDF bookmark strings
+\makeatletter
+\pdfstringdefDisableCommands{%
+  \def\@{}%
+  \def\spacefactor{}%
+}
+\makeatother
 \hypersetup{
     colorlinks=true,
     linkcolor=janusblue,
     filecolor=accentgold,
     urlcolor=janusblue,
     citecolor=janusblue,
-    pdftitle={Project JANUS: A Neuromorphic Architecture for Crowding-Resistant Autonomous Trading},
+    pdftitle={Project JANUS: A Neuromorphic Architecture for Crowding-Resistant Trading},
     pdfauthor={Jordan Smith},
     pdfsubject={Neuromorphic Trading Intelligence},
     pdfkeywords={neuromorphic computing, algorithmic trading, machine learning, Rust, neuroscience},
@@ -185,7 +193,7 @@
 	{\LARGE\bfseries Technical Specification \& Theoretical Foundations\par}
 	\vspace{1cm}
 
-	{\large\itshape Brain-Inspired Multi-Region Architecture Integrating Neuro-Symbolic Reasoning,\\Complementary Learning Systems, and Engineered Heterogeneity\/\par}
+	{\large\itshape Brain-Inspired Multi-Region Architecture Integrating\\Neuro-Symbolic Reasoning, Complementary Learning Systems,\\and Engineered Heterogeneity\/\par}
 	\vspace{3cm}
 
 	\begin{tcolorbox}[colback=janusblue!5, colframe=janusblue, title=\textbf{Unified Documentation}, width=0.85\textwidth]
@@ -248,15 +256,22 @@ No prior published system maps multiple brain regions to distinct trading subsys
 \setcounter{section}{0}
 
 \section*{Overview}
+\phantomsection\addcontentsline{toc}{section}{Overview}
 
 \subsection{The Epistemological Transition to Quant 4.0}
 \label{sec:quant4}
 
-The trajectory of algorithmic trading has historically been defined by a tension between interpretability and capability. We are currently witnessing a phase transition from the ``black box'' empiricism of deep learning \citep{lecun2015deep} toward a new paradigm of Neuro-Symbolic integration \citep{marra2024neurosymbolic, garcez2023neurosymbolic}. Project JANUS stands at the vanguard of this transition, termed \textbf{Quant 4.0}. This architecture does not merely iterate on existing statistical methods but fundamentally reimagines the financial agent as a biological entity---one that perceives, reasons, remembers, and fears.
+The trajectory of algorithmic trading has historically been defined by a tension between interpretability and capability.
+We are currently witnessing a phase transition from the ``black box'' empiricism of deep learning \citep{lecun2015deep} toward a new paradigm of Neuro-Symbolic integration \citep{marra2024neurosymbolic, garcez2023neurosymbolic}.
+Project JANUS stands at the vanguard of this transition, termed \textbf{Quant 4.0}.
+This architecture does not merely iterate on existing statistical methods but fundamentally reimagines the financial agent as a biological entity---one that perceives, reasons, remembers, and fears.
 
-The intellectual foundation rests on three convergent programs: (i)~neuroscience-inspired AI \citep{hassabis2017neuroscience}, which argues that understanding the computational principles of the brain remains the richest source of algorithmic innovation; (ii)~the Adaptive Markets Hypothesis \citep{lo2004adaptive, lo2017adaptive}, which replaces the Efficient Markets assumption with an evolutionary framework where market agents adapt, compete, and are selected; and (iii)~neuro-symbolic reasoning \citep{garcez2023neurosymbolic, badreddine2022logic}, which bridges the gap between statistical pattern recognition and logical constraint satisfaction.
+The intellectual foundation rests on three convergent programs:
+(i)~neuroscience-inspired AI \citep{hassabis2017neuroscience}, which argues that understanding the computational principles of the brain remains the richest source of algorithmic innovation;
+(ii)~the Adaptive Markets Hypothesis \citep{lo2004adaptive, lo2017adaptive}, which replaces the Efficient Markets assumption with an evolutionary framework where market agents adapt, compete, and are selected; and
+(iii)~neuro-symbolic reasoning \citep{garcez2023neurosymbolic, badreddine2022logic}, which bridges the gap between statistical pattern recognition and logical constraint satisfaction.
 
-\subsubsection{Historical Evolution of Quantitative Finance}
+\subsubsection*{Historical Evolution of Quantitative Finance}
 
 \begin{itemize}
 	\item \textbf{Quant 1.0 (1980s--1990s):} Era of heuristics and expert systems with high interpretability but extreme rigidity
@@ -276,7 +291,10 @@ The \textit{square-root impact law}---stating that the price impact of a metaord
 
 The canonical empirical demonstration is the August 2007 quant meltdown \citep{khandani2011quants}, where quantitative equity funds that had developed models independently suffered coordinated losses because their strategies had converged on similar factor exposures. \citet{stein2009crowding} formalized this as a coordination problem: individual traders cannot observe how many others pursue the same strategy, creating negative externalities through crowded-trade effects and leverage decisions.
 
-Subsequent empirical work has confirmed crowding's destructive potential. \citet{vankralingen2021crowded} showed that market clustering---measured against a maximum-entropy null model---has a \textit{causal} effect on tail risk, even after controlling for standard risk drivers. \citet{brown2022crowded} demonstrated that crowded stocks outperform non-crowded stocks on average but with substantially elevated tail risk. \citet{lou2022comomentum} proposed ``comomentum'' (high-frequency abnormal return correlation among momentum stocks) as a crowding measure, finding sharp reversals when comomentum is high.
+Subsequent empirical work has confirmed crowding's destructive potential.
+\citet{vankralingen2021crowded} showed that market clustering---measured against a maximum-entropy null model---has a \textit{causal} effect on tail risk, even after controlling for standard risk drivers.
+\citet{brown2022crowded} demonstrated that crowded stocks outperform non-crowded stocks on average but with substantially elevated tail risk.
+\citet{lou2022comomentum} proposed ``comomentum'' (high-frequency abnormal return correlation among momentum stocks) as a crowding measure, finding sharp reversals when comomentum is high.
 
 \subsubsection{Why Current Systems Are Vulnerable}
 
@@ -411,7 +429,8 @@ The visual subsystem transforms time series data into spatiotemporal images, ena
 
 \subsection{Mathematical Foundation: Gramian Angular Fields}
 
-Time series are encoded into polar coordinates and projected onto Gramian matrices, creating 2D representations that preserve temporal correlations \citep{wang2015imaging}. Research by \citet{chen2020encoding} has validated that GAF-based encodings of financial candlestick data substantially outperform raw time-series inputs in classification tasks by capturing multi-scale temporal structures.
+Time series are encoded into polar coordinates and projected onto Gramian matrices, creating 2D representations that preserve temporal correlations \citep{wang2015imaging}.
+Research by \citet{chen2020encoding} has validated that GAF-based encodings of financial candlestick data substantially outperform raw time-series inputs in classification tasks by capturing multi-scale temporal structures.
 
 \subsubsection{Input Preprocessing}
 
@@ -535,23 +554,24 @@ The ensemble classifier identifies seven market regimes, each mapped to distinct
 
 \begin{table}[htbp]
 	\centering
+	\small
 	\begin{tabularx}{\textwidth}{|l|L|L|}
 		\hline
-		\textbf{Regime} & \textbf{Characteristics}                         & \textbf{System Behavior}            \\
+		\textbf{Regime} & \textbf{Characteristics}                    & \textbf{System Behavior}           \\
 		\hline
-		Bull            & Sustained upward trend, expanding volume         & Amplify Direct (Go) pathway         \\
+		Bull            & Sustained upward trend, expanding volume    & Amplify Direct (Go) pathway        \\
 		\hline
-		Bear            & Sustained downward trend, risk-off sentiment     & Amplify Indirect (No-Go) pathway    \\
+		Bear            & Sustained downward trend, risk-off          & Amplify Indirect (No-Go) pathway   \\
 		\hline
-		Ranging         & Low directional conviction, bounded price action & Favor mean-reversion strategies     \\
+		Ranging         & Low directional conviction, bounded action  & Favor mean-reversion strategies    \\
 		\hline
-		Crisis          & Extreme volatility, correlation breakdown        & Engage Amygdala circuit breakers    \\
+		Crisis          & Extreme volatility, correlation breakdown   & Engage Amygdala circuit breakers   \\
 		\hline
-		Recovery        & Post-crisis normalization, decreasing volatility & Gradually release risk constraints  \\
+		Recovery        & Post-crisis normalization, lower volatility & Gradually release risk constraints \\
 		\hline
-		Bubble          & Parabolic price acceleration, euphoric sentiment & Heighten caution via Hypothalamus   \\
+		Bubble          & Parabolic acceleration, euphoric sentiment  & Heighten caution via Hypothalamus  \\
 		\hline
-		Deflation       & Sustained contraction, liquidity withdrawal      & Reduce position sizing aggressively \\
+		Deflation       & Sustained contraction, liquidity withdrawal & Reduce position sizing             \\
 		\hline
 	\end{tabularx}
 \end{table}
@@ -560,7 +580,9 @@ The detected regime feeds into the Hypothalamus module for homeostatic regulatio
 
 \section{Logic Tensor Networks: Symbolic Reasoning Engine}
 
-LTNs bridge neural networks and first-order logic, enabling differentiable constraint satisfaction \citep{badreddine2022logic, serafini2016ltn}. This neuro-symbolic approach allows JANUS to enforce regulatory and risk constraints directly within the gradient descent optimization, a capability absent in pure deep learning systems \citep{marra2024neurosymbolic, garcez2023neurosymbolic}. No prior work applies LTN to financial decision-making; this represents a novel contribution of JANUS.
+LTNs bridge neural networks and first-order logic, enabling differentiable constraint satisfaction \citep{badreddine2022logic, serafini2016ltn}.
+This neuro-symbolic approach allows JANUS to enforce regulatory and risk constraints directly within gradient descent optimization, a capability absent in pure deep learning systems \citep{marra2024neurosymbolic, garcez2023neurosymbolic}.
+No prior work applies LTN to financial decision-making; this represents a novel contribution of~JANUS.
 
 \subsection{Mathematical Foundation}
 
@@ -583,7 +605,7 @@ Following \citet{badreddine2022logic}, we employ fuzzy logic operators based on 
 
 \subsubsection{Conjunction (AND)}
 
-For training, we use Product Logic to ensure smooth gradients:
+For training, we use Product Logic to ensure smooth~gradients:
 \begin{equation}
 	u \land v = u \cdot v
 \end{equation}
@@ -766,13 +788,15 @@ In production, decisions traverse a six-stage pipeline that chains brain regions
 
 This pipeline is operationally richer than the abstract dual-pathway model, reflecting the biological reality that action selection involves coordination across multiple brain regions.
 
-\subsection{Cerebellar Forward Model \citep{wolpert1998cerebellum, sokolov2017cerebellum}}
+\subsection{\texorpdfstring{Cerebellar Forward Model \citep{wolpert1998cerebellum, sokolov2017cerebellum}}{Cerebellar Forward Model}}
 
 The Cerebellar module simulates market dynamics to predict execution outcomes before committing to a trade.
 
 \subsubsection{Market Impact Prediction}
 
-Following the Almgren-Chriss framework \citep{almgren2001optimal, markwick2023almgren}, the model predicts slippage and volatility. To detect predatory environments, JANUS employs the VPIN (Volume-Synchronized Probability of Informed Trading) metric \citep{easley2011vpin, easley2012flow}, which serves as a proxy for ``Flow Toxicity''---the probability that the counterparty has superior information. High VPIN levels often precede flash crashes and feed into the Amygdala circuit for threat detection.
+Following the Almgren-Chriss framework \citep{almgren2001optimal, markwick2023almgren}, the model predicts slippage and volatility.
+To detect predatory environments, JANUS employs the VPIN (Volume-Synchronized Probability of Informed Trading) metric \citep{easley2011vpin, easley2012flow}, which serves as a proxy for ``Flow Toxicity''---the probability that the counterparty has superior information.
+High VPIN levels often precede flash crashes and feed into the Amygdala circuit for threat detection.
 \begin{equation}
 	\hat{p}_{t+1} = f_{\text{cerebellum}}(\mathbf{s}_t, \mathbf{a}_t)
 \end{equation}
@@ -805,7 +829,7 @@ JANUS Backward represents the ``sleep state'' of the system, responsible for mem
 	\item \textbf{Signal Persistence and Analytics} via PostgreSQL repositories
 \end{itemize}
 
-The Backward service runs on a cold path during off-market hours, performing computationally intensive operations to distill daily experiences into long-term knowledge, effectively replicating the biological process of memory consolidation during sleep \citep{buzsaki2015hippocampal}.
+The Backward service runs on a cold path during off-market hours, performing computationally intensive operations to distill daily experiences into long-term knowledge, effectively replicating the biological process of memory consolidation during sleep~\citep{buzsaki2015hippocampal}.
 
 \section{Memory Hierarchy: Three-Timescale Architecture}
 
@@ -821,7 +845,7 @@ Stores raw experiences during trading, mirroring the role of biological hippocam
 \begin{equation}
 	\mathcal{D}_{\text{hippo}} = \{(s_t, a_t, r_t, s_{t+1}, \mathbf{c}_t, \mathbf{e}_t)\}_{t=1}^{T} % chktex 3
 \end{equation}
-where $\mathbf{c}_t$ contains contextual metadata (volatility, spreads, volume) and $\mathbf{e}_t$ contains emotional tags (fear level, confidence, surprise) that bias consolidation priority.
+where $\mathbf{c}_t$ contains contextual metadata (volatility, spreads, volume) and $\mathbf{e}_t$ contains emotional tags (fear level, confidence, surprise) that bias consolidation~priority.
 
 \subsubsection{Pattern Separation}
 
@@ -845,7 +869,7 @@ Compute TD-error based priority:
 \begin{equation}
 	p_i = |\delta_i| + \epsilon
 \end{equation}
-where $\delta_i = r_i + \gamma \max_{a'} Q(s_{i+1}, a') - Q(s_i, a_i)$ and $\epsilon = 10^{-6}$ ensures numerical stability.
+where $\delta_i = r_i + \gamma \max_{a'} Q(s_{i+1}, a') - Q(s_i, a_i)$ and $\epsilon = 10^{-6}$ ensures numerical~stability.
 
 \subsubsection{Sampling Probability}
 \begin{equation}
@@ -1078,11 +1102,12 @@ The Thalamus functions as the ``gatekeeper'' of perception in JANUS, regulating 
 	\item Specialized fusion engines: order book, price, volume, and sentiment
 	\item External data source integration (news, weather, celestial/space weather)
 	\item Signal routing to downstream brain regions
-	\item \textbf{Chronos Time Series Forecasting:} ONNX-based inference pipeline \citep{ansari2024chronos, ansari2024chronos2} with quantile-based tokenization, configurable presets (T5-Tiny/Small/Base), and confidence-interval forecast output
-	\item \textbf{BERT Sentiment Analysis:} FinBERT/DistilBERT sentiment embeddings \citep{candle2024} running natively in Rust via Candle, producing \texttt{[CLS]} embeddings stored in Qdrant for regime-aware sentiment aggregation
+	\item \textbf{Chronos Time Series Forecasting:} ONNX-based inference pipeline \citep{ansari2024chronos, ansari2024chronos2} with quantile-based tokenization, configurable presets (T5-Tiny/\allowbreak{}Small/\allowbreak{}Base), and confidence-interval forecast~output
+	\item \textbf{BERT Sentiment Analysis:} FinBERT/\allowbreak{}DistilBERT sentiment embeddings \citep{candle2024} running natively in Rust via Candle, producing \texttt{[CLS]} embeddings stored in Qdrant for regime-aware sentiment~aggregation
 \end{itemize}
 
-The Thalamic Reticular Nucleus provides attentional gating, enabling JANUS to focus computational resources on the most informative market data streams. Wilson-Cowan mean-field models \citep{wilson1972excitatory, wilson2024bidirectional} implement oscillatory attention dynamics, modeling coupled excitatory-inhibitory neural populations via ODEs with Hilbert-transform-based amplitude/phase estimation, bifurcation analysis, neuromodulator-driven regime switching, and fixed-point stability classification.
+The Thalamic Reticular Nucleus provides attentional gating, enabling JANUS to focus computational resources on the most informative market data streams.
+Wilson-Cowan mean-field models \citep{wilson1972excitatory, wilson2024bidirectional} implement oscillatory attention dynamics, modeling coupled excitatory-inhibitory neural populations via ODEs with Hilbert-transform-based amplitude/phase estimation, bifurcation analysis, neuromodulator-driven regime switching, and fixed-point stability~classification.
 
 \subsection{Hypothalamus: Homeostatic Regulation}
 \label{sec:hypothalamus}
@@ -1104,7 +1129,13 @@ The Hypothalamus sits at the second stage of the brain wiring pipeline, translat
 
 \subsection{Basal Ganglia: Action Selection \& Reinforcement Learning}
 
-The basal ganglia implements Opponent Actor Learning (OpAL) \citep{collins2014opponent, jaskir2023opal}, balancing Go (Direct) and No-Go (Indirect) pathways modulated by dopamine \citep{schultz1997reward}. \citet{jaskir2023opal} extended OpAL with dynamic dopamine modulation, normalized prediction errors, and uncertainty-adjusted learning rates (OpAL*), demonstrating robust advantages in sparse reward environments and large action spaces---conditions directly analogous to financial markets. High dopamine (bull market/high confidence) amplifies the Direct pathway; low dopamine (bear market/uncertainty) amplifies the Indirect pathway. This creates dynamic risk tolerance that adapts to market volatility, implementing allostatic regulation \citep{sterling2012allostasis} rather than simple homeostatic feedback. The Hypothalamus module (Section~\ref{sec:hypothalamus}) translates regime detection into calibrated risk parameters that modulate dopaminergic signaling throughout the decision pipeline. \textbf{No prior work applies OpAL or any basal ganglia computational model to financial decision-making.} See Section~\ref{sec:decision_engine} for the complete mathematical formulation.
+The basal ganglia implements Opponent Actor Learning (OpAL) \citep{collins2014opponent, jaskir2023opal}, balancing Go (Direct) and No-Go (Indirect) pathways modulated by dopamine \citep{schultz1997reward}.
+\citet{jaskir2023opal} extended OpAL with dynamic dopamine modulation, normalized prediction errors, and uncertainty-adjusted learning rates (OpAL*), demonstrating robust advantages in sparse reward environments and large action spaces---conditions directly analogous to financial markets.
+High dopamine (bull market/high confidence) amplifies the Direct pathway; low dopamine (bear market/uncertainty) amplifies the Indirect pathway.
+This creates dynamic risk tolerance that adapts to market volatility, implementing allostatic regulation \citep{sterling2012allostasis} rather than simple homeostatic feedback.
+The Hypothalamus module (Section~\ref{sec:hypothalamus}) translates regime detection into calibrated risk parameters that modulate dopaminergic signaling throughout the decision pipeline.
+\textbf{No prior work applies OpAL or any basal ganglia computational model to financial decision-making.}
+See Section~\ref{sec:decision_engine} for the complete mathematical formulation.
 
 \subsection{Prefrontal Cortex: Logic, Planning \& Compliance}
 
@@ -1463,7 +1494,7 @@ Schemas are formed by clustering experience embeddings and storing centroids.
 		\State \textbf{Output:} Updated schema database
 		\State
 		\State Extract embeddings: $\mathbf{h}_i = \text{Embed}(e_i)$ for $i = 1, \ldots, N$
-		\State Cluster: $\mathcal{C} = \{C_1, \ldots, C_K\} \leftarrow \text{K-means}(\{\mathbf{h}_i\}, K)$
+		\State Cluster: $\mathcal{C} \leftarrow \text{K-means}(\{\mathbf{h}_i\}, K)$
 		\For{$k = 1$ to $K$}
 		\State Compute centroid: $\mathbf{z}_k = \frac{1}{|C_k|} \sum_{i \in C_k} \mathbf{h}_i$
 		\State Compute statistics:
@@ -1493,7 +1524,7 @@ Each schema $k$ stores:
 \section{Execution Service}
 \label{sec:execution}
 
-The Execution Service is a dedicated microservice responsible for multi-exchange order routing, providing a clean separation between decision-making (Forward Service) and order management.
+The Execution Service is a dedicated microservice responsible for multi-exchange order routing, providing a clean separation between decision-making (Forward~Service) and order~management.
 
 \subsection{Multi-Exchange Support}
 
@@ -1508,7 +1539,8 @@ The service supports multiple cryptocurrency exchanges through a unified adapter
 	\item \textbf{Kucoin:} Legacy connector maintained for backward compatibility
 \end{itemize}
 
-Each adapter implements a common \texttt{ExchangeAdapter} trait, enabling transparent exchange selection at runtime. The \texttt{normalizer} module translates exchange-specific order responses into canonical JANUS types.
+Each adapter implements a common \texttt{ExchangeAdapter} trait, enabling transparent exchange selection at runtime.
+The \texttt{normalizer} module translates exchange-specific order responses into canonical JANUS~types.
 
 \subsection{Service Interface}
 
@@ -1534,7 +1566,7 @@ The system provides production execution algorithms:
 \section{CNS Service: System Health Monitoring}
 \label{sec:cns}
 
-The Central Nervous System (CNS) Service provides system-wide health monitoring and operational safety, analogous to the autonomic nervous system's regulation of vital functions.
+The Central Nervous System (CNS) Service provides system-wide health monitoring and operational safety, analogous to the autonomic nervous system's regulation of vital~functions.
 
 \subsection{Preflight Validation}
 
@@ -1633,60 +1665,95 @@ neuromorphic/
 
 \subsection{Key Implementation Details}
 
-\textbf{Basal Ganglia — Opponent Actor Learning (OpAL):}
-The \texttt{praxeological} module implements the full Go/No-Go architecture with dopamine-modulated action selection. The \texttt{GoSignal} evaluates action value against adaptive thresholds with dopamine sensitivity, urgency boosting, and facilitation bias. The \texttt{NoGoSignal} evaluates 12 inhibition reasons (risk threshold, position limit, loss limit, high volatility, low liquidity, cooling off, correlation risk, drawdown protection, time restriction, external halt, learned pattern, and custom) with learned inhibition patterns and adaptive thresholds. The actor-critic framework includes Generalized Advantage Estimation (GAE) and TD($\lambda$) learning for stable policy updates, with winner-take-all selection and habit caching for frequently-encountered states.
+\begin{sloppypar}
 
-\textbf{Cerebellum — Forward Models and Error Correction:}
-The \texttt{almgren\_chriss} module implements optimal execution trajectories with permanent/temporary impact coefficients. The \texttt{pid\_controller} provides a full PID implementation with anti-windup, dead band, derivative filtering, cascaded PID, and Ziegler-Nichols auto-tuning. The \texttt{forward\_models} submodule includes adverse selection detection, Smith predictor for latency compensation, order latency estimation, and fill probability prediction.
+	\textbf{Basal Ganglia --- Opponent Actor Learning (OpAL):}
+	The \texttt{praxeological} module implements the full Go/No-Go architecture with dopamine-modulated action selection.
+	The \texttt{GoSignal} evaluates action value against adaptive thresholds with dopamine sensitivity, urgency boosting, and facilitation bias.
+	The \texttt{NoGoSignal} evaluates 12 inhibition reasons (risk threshold, position limit, loss limit, high volatility, low liquidity, cooling off, correlation risk, drawdown protection, time restriction, external halt, learned pattern, and custom) with learned inhibition patterns and adaptive thresholds.
+	The actor-critic framework includes Generalized Advantage Estimation (GAE) and TD($\lambda$) learning for stable policy updates, with winner-take-all selection and habit caching for frequently-encountered states.
 
-\textbf{Amygdala — VPIN and Kill Switch:}
-The \texttt{vpin} module implements volume-synchronized probability of informed trading with bulk volume classification, rolling bucket computation, and configurable high/critical thresholds. The \texttt{kill\_switch} provides a four-scope design (per-strategy, per-instrument, per-service, global) with emergency actions (cancel all orders, close all positions, disable trading, send alerts). The fear network integrates reinforcement learning (FNI-RL) to adapt threat responses based on historical outcomes.
+	\textbf{Cerebellum --- Forward Models and Error Correction:}
+	The \texttt{almgren\_chriss} module implements optimal execution trajectories with permanent/temporary impact coefficients.
+	The \texttt{pid\_controller} provides a full PID implementation with anti-windup, dead band, derivative filtering, cascaded PID, and Ziegler-Nichols auto-tuning.
+	The \texttt{forward\_models} submodule includes adverse selection detection, Smith predictor for latency compensation, order latency estimation, and fill probability prediction.
 
-\textbf{Cortex — Schema Formation:}
-The \texttt{schemas} module implements all seven regime schemas (Bull, Bear, Ranging, Crisis, Recovery, Bubble, Deflation) with 10 market features (trailing return, realised volatility, average correlation, max drawdown, vol rate of change, momentum signal, mean reversion signal, credit spread, yield curve slope, relative volume), weighted feature-range matching, a full Markov transition matrix with stationary distribution computation, and EMA-smoothed confidence tracking. The cortex also implements a hierarchical RL manager with feudal goal-setting and subgoal generation for multi-level strategic planning.
+	\textbf{Amygdala --- VPIN and Kill Switch:}
+	The \texttt{vpin} module implements volume-synchronized probability of informed trading with bulk volume classification, rolling bucket computation, and configurable high/critical thresholds.
+	The \texttt{kill\_switch} provides a four-scope design (per-strategy, per-instrument, per-service, global) with emergency actions (cancel all orders, close all positions, disable trading, send alerts).
+	The fear network integrates reinforcement learning (FNI-RL) to adapt threat responses based on historical outcomes.
 
-\textbf{Prefrontal — Fuzzy Logic with Linguistic Hedges:}
-The \texttt{ltn} submodule implements the complete Łukasiewicz fuzzy logic system with five linguistic hedges: \texttt{very} ($x^2$, concentration), \texttt{somewhat} ($\sqrt{x}$, dilation), \texttt{slightly} ($\sqrt{x} - x$), \texttt{extremely} ($x^3$), and \texttt{more\_or\_less} ($\sqrt{x}$, synonym for dilation). A full expression evaluator supports nested hedge application.
+	\textbf{Cortex --- Schema Formation:}
+	The \texttt{schemas} module implements all seven regime schemas (Bull, Bear, Ranging, Crisis, Recovery, Bubble, Deflation) with 10 market features (trailing return, realised volatility, average correlation, max drawdown, vol rate of change, momentum signal, mean reversion signal, credit spread, yield curve slope, relative volume), weighted feature-range matching, a full Markov transition matrix with stationary distribution computation, and EMA-smoothed confidence tracking.
+	The cortex also implements a hierarchical RL manager with feudal goal-setting and subgoal generation for multi-level strategic planning.
 
-\textbf{Thalamus — Multimodal Fusion:}
-Four specialized fusion engines process distinct data streams: \texttt{orderbook\_fusion} (multi-venue book consolidation with weighted mid-price, imbalance detection, and EMA smoothing), \texttt{price\_fusion} (multi-timeframe price action), \texttt{volume\_fusion} (volume profile analysis), and \texttt{sentiment\_fusion} (news and social sentiment signals). The \texttt{gating} submodule implements Wilson-Cowan oscillatory dynamics \citep{wilson1972excitatory, wilson2024bidirectional} with Hilbert-transform-based amplitude/phase estimation, bifurcation analysis, and neuromodulator-driven regime switching, alongside sensory gates with relevance scoring and threshold-based filtering. The \texttt{sources} submodule integrates Chronos time series forecasting \citep{ansari2024chronos, ansari2024chronos2} via ONNX inference with quantile tokenization and confidence intervals, BERT/FinBERT sentiment embeddings \citep{candle2024} running natively via Candle with Qdrant-backed storage, plus news feeds, weather data, and celestial/space weather for commodity correlation analysis.
+	\textbf{Prefrontal --- Fuzzy Logic with Linguistic Hedges:}
+	The \texttt{ltn} submodule implements the complete Łukasiewicz fuzzy logic system with five linguistic hedges: \texttt{very}~($x^2$, concentration), \texttt{somewhat}~($\sqrt{x}$, dilation), \texttt{slightly}~($\sqrt{x} - x$), \texttt{extremely}~($x^3$), and \texttt{more\_or\_less}~($\sqrt{x}$, synonym for dilation).
+	A full expression evaluator supports nested hedge application.
 
-\textbf{Hippocampus — Sharp-Wave Ripple Simulation:}
-The \texttt{swr} submodule implements 11 ripple types (large profit, large loss, novel pattern, market anomaly, strategy breakthrough, risk event, regime change, correlation breakdown, volatility spike, liquidity event, periodic) with priority-weighted detection, inspired by biological SWR replay \citep{wilson1994replay, buzsaki2015hippocampal}. The \texttt{compressed\_replay} module provides compressed experience sequences, and \texttt{consolidation\_sync} coordinates the transfer from hippocampal to neocortical storage, implementing CLS theory \citep{kumaran2016cls}. The hippocampus also houses a feudal RL worker agent with a skill library and tactical policy for executing subgoals issued by the cortex's strategic planner. A regime-conditional DDPM diffusion model \citep{coletta2024conditional} generates synthetic market data for training data augmentation, with configurable noise schedules (linear, cosine, quadratic), Min-SNR loss weighting, and automated quality assessment comparing synthetic vs.\ real feature distributions.
+	\textbf{Thalamus --- Multimodal Fusion:}
+	Four specialized fusion engines process distinct data streams:
+	\texttt{orderbook\_fusion} (multi-venue book consolidation with weighted mid-price, imbalance detection, and EMA smoothing),
+	\texttt{price\_fusion} (multi-timeframe price action),
+	\texttt{volume\_fusion} (volume profile analysis), and
+	\texttt{sentiment\_fusion} (news and social sentiment signals).
+	The \texttt{gating} submodule implements Wilson-Cowan oscillatory dynamics \citep{wilson1972excitatory, wilson2024bidirectional} with Hilbert-transform-based amplitude/phase estimation, bifurcation analysis, and neuromodulator-driven regime switching, alongside sensory gates with relevance scoring and threshold-based filtering.
+	The \texttt{sources} submodule integrates Chronos time series forecasting \citep{ansari2024chronos, ansari2024chronos2} via ONNX inference with quantile tokenization and confidence intervals, BERT/FinBERT sentiment embeddings \citep{candle2024} running natively via Candle with Qdrant-backed storage, plus news feeds, weather data, and celestial/space weather for commodity correlation analysis.
+
+	\textbf{Hippocampus --- Sharp-Wave Ripple Simulation:}
+	The \texttt{swr} submodule implements 11 ripple types (large profit, large loss, novel pattern, market anomaly, strategy breakthrough, risk event, regime change, correlation breakdown, volatility spike, liquidity event, periodic) with priority-weighted detection, inspired by biological SWR replay \citep{wilson1994replay, buzsaki2015hippocampal}.
+	The \texttt{compressed\_replay} module provides compressed experience sequences, and \texttt{consolidation\_sync} coordinates the transfer from hippocampal to neocortical storage, implementing CLS theory \citep{kumaran2016cls}.
+	The hippocampus also houses a feudal RL worker agent with a skill library and tactical policy for executing subgoals issued by the cortex's strategic planner.
+	A regime-conditional DDPM diffusion model \citep{coletta2024conditional} generates synthetic market data for training data augmentation, with configurable noise schedules (linear, cosine, quadratic), Min-SNR loss weighting, and automated quality assessment comparing synthetic vs.\ real feature distributions.
+
+\end{sloppypar}
 
 \textbf{Distributed Training Infrastructure:}
 The \texttt{distributed} submodule provides multi-GPU and multi-node training coordination with AllReduce, Parameter Server, and Ring AllReduce gradient synchronization strategies. Distributed data loading supports multiple sharding strategies (Contiguous, RoundRobin, Random, Stratified). The infrastructure includes NCCL GPU-to-GPU communication, gRPC-based inter-node coordination, and distributed checkpointing with cloud storage backends.
 
 \textbf{GPU Compute Infrastructure:}
-The \texttt{gpu} submodule provides custom wgpu compute kernels for hardware-accelerated numerical operations: MatMul, Softmax, LayerNorm, Attention, GELU, Reduce, Embedding Lookup, and Pairwise Distance. The module includes a device manager, buffer pool, kernel registry, and a Candle tensor bridge for CPU↔GPU data transfer. All GPU functionality is gated behind a \texttt{gpu} feature flag, with graceful CPU fallback when unavailable.
+\begin{sloppypar}
 
-\textbf{Prefrontal — Quantum-Inspired Portfolio Optimization:}
-The \texttt{planning} submodule includes quantum-inspired portfolio optimizers \citep{mugel2022dynamic}: a QAOA (Quantum Approximate Optimization Algorithm) simulator for combinatorial asset selection via QUBO formulation, a VQE (Variational Quantum Eigensolver) portfolio optimizer for continuous weight optimization using parameterized circuits, and simulated quantum annealing for escaping local minima in non-convex portfolio landscapes. These complement classical Mean-Variance, Risk Parity, and Black-Litterman optimizers.
+	\textbf{GPU Compute Infrastructure:}
+	The \texttt{gpu} submodule provides custom wgpu compute kernels for hardware-accelerated numerical operations: MatMul, Softmax, LayerNorm, Attention, GELU, Reduce, Embedding Lookup, and Pairwise Distance.
+	The module includes a device manager, buffer pool, kernel registry, and a Candle tensor bridge for CPU\allowbreak{}↔\allowbreak{}GPU data transfer.
+	All GPU functionality is gated behind a \texttt{gpu} feature flag, with graceful CPU fallback when unavailable.
 
-\textbf{Cerebellum — LOB Simulator:}
-The \texttt{lob\_simulator} module provides a full limit order book simulator \citep{fu2024jaxlob} with price-time priority matching, support for Limit, Market, IOC, FOK, Post-Only, Iceberg, Stop, and Stop-Limit order types, self-trade prevention, maker/taker fee computation, L2/L3 snapshots, VWAP and weighted mid-price calculations, Almgren-Chriss market impact estimation, order event history, and configurable tick/lot sizing. The simulator enables parallel training data generation, solving the data scarcity problem for reinforcement learning.
+	\textbf{Prefrontal --- Quantum-Inspired Portfolio Optimization:}
+	The \texttt{planning} submodule includes quantum-inspired portfolio optimizers \citep{mugel2022dynamic}:
+	a QAOA (Quantum Approximate Optimization Algorithm) simulator for combinatorial asset selection via QUBO formulation,
+	a VQE (Variational Quantum Eigensolver) portfolio optimizer for continuous weight optimization using parameterized circuits,
+	and simulated quantum annealing for escaping local minima in non-convex portfolio landscapes.
+	These complement classical Mean-Variance, Risk Parity, and Black-Litterman optimizers.
+
+	\textbf{Cerebellum --- LOB Simulator:}
+	The \texttt{lob\_simulator} module provides a full limit order book simulator \citep{fu2024jaxlob} with price-time priority matching, support for Limit, Market, IOC, FOK, Post-Only, Iceberg, Stop, and Stop-Limit order types, self-trade prevention, maker/taker fee computation, L2/L3 snapshots, VWAP and weighted mid-price calculations, Almgren-Chriss market impact estimation, order event history, and configurable tick/lot sizing.
+	The simulator enables parallel training data generation, solving the data scarcity problem for reinforcement~learning.
+
+\end{sloppypar}
 
 \subsection{Supporting Crates}
 
-Beyond the core neuromorphic and service crates, the workspace includes:
+The modular Rust workspace includes dedicated crates:
 
-\begin{itemize}
-	\item \textbf{vision:} DiffGAF (learnable normalization, polar encoding, Gramian layers) and ViViT (factorized encoder with spatial/temporal attention) connected via a fully wired \texttt{VisionPipeline} that chains the two end-to-end as a single differentiable Candle module with automatic frame splitting, dual-GAF mode, and optional projection head. Also includes backtest simulation, portfolio optimization (Black-Litterman, Risk Parity, Mean-Variance), production monitoring with circuit breakers, live inference with latency profiling, and parametric UMAP \citep{mcinnes2018umap} with drift detection and Qdrant-backed cluster persistence
-	\item \textbf{training:} End-to-end training loop with AdamW/SGD optimizers, learning rate schedulers (warmup+cosine, step, exponential), prioritized experience replay with SWR sampling, gradient clipping, checkpointing with metadata, early stopping, and pluggable callbacks
-	\item \textbf{ml:} LSTM and MLP models via Candle, Double DQN with online/target networks and soft updates, feature engineering (price, volume, technical indicators, normalizers), and dataset management
-	\item \textbf{logic:} Dual-mode LTN system — non-differentiable (ndarray) for inference-time constraint checking and differentiable (Candle) for gradient-based training — with three t-norm families (Łukasiewicz, Product, Gödel), learnable/threshold/similarity predicates, and comprehensive rule composition (ForAll, Exists, Implies, Iff, AndN, OrN)
-	\item \textbf{ltn:} Domain-specific neuro-symbolic engine with 10 market axioms encoded as logical rules (e.g., Trending + Positive Divergence → Long, Low Confidence → Neutral), integrating DSP features through fuzzy predicates with a hybrid supervised-semantic loss function
-	\item \textbf{regime:} Ensemble regime detection combining HMM (Gaussian emissions, Baum-Welch, online parameter updates), indicator-based (ADX, Bollinger Bands, ATR, EMA, RSI), and ensemble fusion with agreement tracking and strategy routing
-	\item \textbf{dsp:} Digital signal processing with FRAMA (Fractal Adaptive Moving Average) and Sevcik fractal dimension estimation producing an 8D feature vector (divergence, alpha, fractal dimension, Hurst exponent, regime, sign, deviation, confidence) at sub-microsecond latency per tick
-	\item \textbf{lob:} Standalone limit order book crate with matching engine, fill probability models, L2 replay, latency simulation, and Almgren-Chriss market impact estimation
-	\item \textbf{compliance:} Dedicated \texttt{WashSaleDetector} with full 30-day lookback/lookforward window, partial wash sale handling, cost basis tracking, and position-aware detection; plus \texttt{ComplianceSheriff} enforcing proprietary firm trading rules (daily loss limits, maximum loss thresholds, mandatory stop-losses)
-	\item \textbf{optimizer:} Hyperparameter optimization with configurable samplers, constraints, backtesting integration, and result publishing
-	\item \textbf{data-quality:} Market data validation and anomaly detection
-	\item \textbf{gap-detection:} Multi-layer time series gap detection (sequence ID, heartbeat, statistical, volume-aware) with PostgreSQL persistence
-	\item \textbf{indicators:} Technical indicator library (ADX, ATR, Bollinger Bands, EMA, RSI, MACD) with incremental O(1) per-tick computation
-	\item \textbf{rate-limiter:} Token bucket and sliding window rate limiters with async circuit breaker, exchange-specific algorithms
-	\item \textbf{questdb-writer:} High-performance time series ingestion to QuestDB via ILP, batched writes targeting >100K inserts/sec
-	\item \textbf{memory:} Three-tier memory hierarchy with production Qdrant vector database client (circuit breaker, exponential backoff retries, TLS, mock fallback), predefined collections for market regimes, episodic memory, sentiment embeddings, and schema prototypes, plus prioritized experience replay buffer
+\begin{itemize}[leftmargin=*]
+	\begin{sloppypar}
+		\item \textbf{training:} End-to-end training loop with AdamW/SGD optimizers, learning rate schedulers (warmup+cosine, step, exponential), prioritized experience replay with SWR sampling, gradient clipping, checkpointing with metadata, early stopping, and pluggable callbacks
+		\item \textbf{ml:} LSTM and MLP models via Candle, Double DQN with online/target networks and soft updates, feature engineering (price, volume, technical indicators, normalizers), and dataset management
+		\item \textbf{logic:} Dual-mode LTN system---non-differentiable (ndarray) for inference-time constraint checking and differentiable (Candle) for gradient-based training---with three t-norm families (Łukasiewicz, Product, G\"odel), learnable/\allowbreak{}threshold/\allowbreak{}similarity predicates, and comprehensive rule composition (ForAll, Exists, Implies, Iff, AndN, OrN)
+		\item \textbf{ltn:} Domain-specific neuro-symbolic engine with 10 market axioms encoded as logical rules (e.g., Trending~+ Positive Divergence~$\rightarrow$~Long, Low Confidence~$\rightarrow$~Neutral), integrating DSP features through fuzzy predicates with a hybrid supervised-semantic loss function
+		\item \textbf{regime:} Ensemble regime detection combining HMM (Gaussian emissions, Baum-Welch, online parameter updates), indicator-based (ADX, Bollinger Bands, ATR, EMA, RSI), and ensemble fusion with agreement tracking and strategy routing
+		\item \textbf{dsp:} Digital signal processing with FRAMA (Fractal Adaptive Moving Average) and Sevcik fractal dimension estimation producing an 8D feature vector (divergence, alpha, fractal dimension, Hurst exponent, regime, sign, deviation, confidence) at sub-microsecond latency per tick
+		\item \textbf{lob:} Standalone limit order book crate with matching engine, fill probability models, L2 replay, latency simulation, and Almgren-Chriss market impact estimation
+		\item \textbf{compliance:} Dedicated \texttt{WashSaleDetector} with full 30-day lookback/\allowbreak{}lookforward window, partial wash sale handling, cost basis tracking, and position-aware detection; plus \texttt{ComplianceSheriff} enforcing proprietary firm trading rules (daily loss limits, maximum loss thresholds, mandatory stop-losses)
+		\item \textbf{optimizer:} Hyperparameter optimization with configurable samplers, constraints, backtesting integration, and result publishing
+		\item \textbf{data-quality:} Market data validation and anomaly detection
+		\item \textbf{gap-detection:} Multi-layer time series gap detection (sequence ID, heartbeat, statistical, volume-aware) with PostgreSQL persistence
+		\item \textbf{indicators:} Technical indicator library (ADX, ATR, Bollinger Bands, EMA, RSI, MACD) with incremental O(1) per-tick computation
+		\item \textbf{rate-limiter:} Token bucket and sliding window rate limiters with async circuit breaker, exchange-specific algorithms
+		\item \textbf{questdb-writer:} High-performance time series ingestion to QuestDB via ILP, batched writes targeting {>}100K inserts/sec
+		\item \textbf{memory:} Three-tier memory hierarchy with production Qdrant vector database client (circuit breaker, exponential backoff retries, TLS, mock fallback), predefined collections for market regimes, episodic memory, sentiment embeddings, and schema prototypes, plus prioritized experience replay buffer
+	\end{sloppypar}
 \end{itemize}
 
 \section{Deployment Architecture}
