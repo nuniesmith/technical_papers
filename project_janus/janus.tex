@@ -254,24 +254,23 @@ No prior published system maps multiple brain regions to distinct trading subsys
 \part{Main Architecture}
 \label{part:main}
 \setcounter{section}{0}
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\Roman{section}.\arabic{subsection}}
 
-\section*{Overview}
-\phantomsection\addcontentsline{toc}{section}{Overview}
-
-\subsection{The Epistemological Transition to Quant 4.0}
+\section{The Epistemological Transition to Quant 4.0}
 \label{sec:quant4}
 
 The trajectory of algorithmic trading has historically been defined by a tension between interpretability and capability.
 We are currently witnessing a phase transition from the ``black box'' empiricism of deep learning \citep{lecun2015deep} toward a new paradigm of Neuro-Symbolic integration \citep{marra2024neurosymbolic, garcez2023neurosymbolic}.
 Project JANUS stands at the vanguard of this transition, termed \textbf{Quant 4.0}.
-This architecture does not merely iterate on existing statistical methods but fundamentally reimagines the financial agent as a biological entity---one that perceives, reasons, remembers, and fears.
+This architecture reimagines the financial agent as a biological entity---one that perceives, reasons, remembers, and fears.
 
 The intellectual foundation rests on three convergent programs:
 (i)~neuroscience-inspired AI \citep{hassabis2017neuroscience}, which argues that understanding the computational principles of the brain remains the richest source of algorithmic innovation;
 (ii)~the Adaptive Markets Hypothesis \citep{lo2004adaptive, lo2017adaptive}, which replaces the Efficient Markets assumption with an evolutionary framework where market agents adapt, compete, and are selected; and
 (iii)~neuro-symbolic reasoning \citep{garcez2023neurosymbolic, badreddine2022logic}, which bridges the gap between statistical pattern recognition and logical constraint satisfaction.
 
-\subsubsection*{Historical Evolution of Quantitative Finance}
+\subsection*{Historical Evolution of Quantitative Finance}
 
 \begin{itemize}
 	\item \textbf{Quant 1.0 (1980s--1990s):} Era of heuristics and expert systems with high interpretability but extreme rigidity
@@ -280,12 +279,69 @@ The intellectual foundation rests on three convergent programs:
 	\item \textbf{Quant 4.0 (JANUS):} Neuro-Symbolic AI achieving adaptability of deep learning with reliability of rule-based systems, grounded in neuroscience
 \end{itemize}
 
-\subsection{Resilience to Strategy Crowding and Co-Impact}
+\section{The Doya--Hassabis Framework: Neuroscience-Inspired Architecture}
+\label{sec:doya_hassabis}
+
+JANUS's multi-region architecture applies functional brain-region decomposition to trading system design, grounded in the Doya--Hassabis framework of neuroscience-inspired AI \citep{doya1999computations, hassabis2017neuroscience}.
+
+\subsection{Functional Brain-Region Decomposition}
+
+\citet{doya1999computations} proposed the canonical functional decomposition of brain regions by learning type:
+
+\begin{itemize}
+	\item \textbf{Cerebellum} $\rightarrow$ supervised learning (forward models, error correction)
+	\item \textbf{Basal ganglia} $\rightarrow$ reinforcement learning (reward-driven action selection)
+	\item \textbf{Cerebral cortex} $\rightarrow$ unsupervised learning (schema formation, pattern discovery)
+\end{itemize}
+
+\citet{doya2002metalearning} extended this framework to show that neuromodulators (dopamine, serotonin, norepinephrine, acetylcholine) regulate meta-parameters of learning---learning rate, discount factor, exploration--exploitation balance---providing a biologically grounded mechanism for adaptive parameter control. \citet{caligiore2019superlearning} formalized the ``super-learning hypothesis,'' demonstrating that the integration of learning processes \textit{across} cortex, cerebellum, and basal ganglia produces capabilities exceeding any single region.
+
+\subsection{From Neuroscience to Architecture}
+
+\citet{hassabis2017neuroscience} articulated the programmatic statement for neuroscience-inspired AI: the goal is \textit{functional} inspiration, not biological simulation. JANUS adopts this position, with brain-region mappings in Part~\ref{part:neuro} justified by functional analogy---each region implements a computational principle (e.g., supervised error correction, reinforcement-driven action selection, episodic memory replay) that addresses a specific trading requirement.
+
+This approach is further validated by \citet{yamakawa2021whole}, who proposed the ``whole brain architecture'' approach as a systematic method for developing artificial general intelligence by referencing brain structure, and by \citet{caligiore2017consensus}, who established consensus on the functional interactions between cerebellum, basal ganglia, and cortex.
+
+\subsection{Complementary Learning Systems}
+
+The separation of JANUS into Forward (System~1) and Backward (System~2) services directly implements Complementary Learning Systems (CLS) theory \citep{mcclelland1995complementary}. \citet{kumaran2016cls} updated CLS theory (``CLS 2.0''), establishing that intelligent agents require both a fast-learning system (hippocampus, for rapid encoding of specific experiences) and a slow-learning system (neocortex, for gradual extraction of statistical regularities). JANUS maps these to:
+
+\begin{itemize}
+	\item \textbf{Forward Service (hippocampal analogue):} Rapid encoding of each trading episode with episodic specificity
+	\item \textbf{Backward Service (neocortical analogue):} Slow consolidation of episodic memories into generalized market schemas through sharp-wave ripple replay \citep{wilson1994replay, buzsaki2015hippocampal}
+\end{itemize}
+
+\citet{masset2025multitimescale} recently demonstrated that dopaminergic neurons encode reward prediction errors at diverse temporal discount factors, providing direct biological validation for JANUS's three-timescale memory architecture (short-term hippocampal buffer, medium-term SWR consolidation, long-term neocortical schemas).
+
+\section{The Dual-Process Architecture}
+\label{sec:dual_process}
+
+JANUS separates real-time perception and action from offline memory consolidation, implementing Dual-Process Theory \citep{kahneman2011thinking, evans2008dual, evans2013dualprocess} as a concrete engineering design. The system divides into two complementary services:
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabularx}{\textwidth}{|l|l|L|L|}
+		\hline
+		\textbf{Service} & \textbf{Persona} & \textbf{Cognitive Role}         & \textbf{Biological Analogue} \\
+		\hline
+		Forward Service  & Janus Bifrons    & Perception \& Action (System~1) & Basal Ganglia \& Thalamus    \\
+		Backward Service & Janus Consivius  & Memory \& Learning (System~2)   & Hippocampus \& Neocortex     \\
+		\hline
+	\end{tabularx}
+\end{table}
+
+This separation allows JANUS to optimize for latency on the hot path (Forward Service) while reserving heavy computational resources for consolidation and schema formation on the cold path (Backward Service), implementing CLS theory \citep{mcclelland1995complementary, kumaran2016cls}.
+
+In addition to the core Forward and Backward services, the production system deploys three supporting services: an \textbf{Execution Service} for multi-exchange order routing, a \textbf{Data Service} for centralized market data management, and a \textbf{CNS (Central Nervous System) Service} for system-wide health monitoring and preflight validation (Section~\ref{sec:cns}).
+
+\textbf{Note:} The detailed mathematical specifications for each component are presented in Parts~\ref{part:forward}--\ref{part:rust} below, followed by limitations (Part~\ref{part:limitations}) and validation framework (Part~\ref{part:validation}).
+
+\section{Resilience to Strategy Crowding and Co-Impact}
 \label{sec:crowding}
 
-A central motivation for JANUS's multi-region, heterogeneous architecture is the growing empirical evidence that strategy crowding poses systemic risk to algorithmic trading systems. This section establishes the theoretical and empirical foundation for JANUS's crowding-resistance mechanism.
+Strategy crowding---the convergence of multiple algorithmic trading systems on similar positions---poses systemic risk through amplified co-impact costs and correlated drawdowns. JANUS's multi-region, heterogeneous architecture is designed to resist these effects.
 
-\subsubsection{The Problem: Co-Impact and Algorithmic Herding}
+\subsection{Co-Impact and Algorithmic Herding}
 
 The \textit{square-root impact law}---stating that the price impact of a metaorder scales as $\Delta p \sim \sigma \sqrt{Q/V}$, where $Q$ is order volume and $V$ is daily volume---is one of the most robust empirical regularities in market microstructure \citep{toth2011anomalous, bouchaud2018trades, bucci2019crossover}. \citet{bucci2020coimpact} extended this framework to show how \textit{simultaneous} institutional metaorders interact through net order flow: when $N$ agents each trade $Q/N$, the market responds to aggregate flow without distinguishing individual metaorders. Critically, co-impact introduces a finite intercept $I_0$ that grows with sign correlation among agents---meaning correlated (crowded) trading amplifies impact costs beyond what single-agent models predict.
 
@@ -296,7 +352,7 @@ Subsequent empirical work has confirmed crowding's destructive potential.
 \citet{brown2022crowded} demonstrated that crowded stocks outperform non-crowded stocks on average but with substantially elevated tail risk.
 \citet{lou2022comomentum} proposed ``comomentum'' (high-frequency abnormal return correlation among momentum stocks) as a crowding measure, finding sharp reversals when comomentum is high.
 
-\subsubsection{Why Current Systems Are Vulnerable}
+\subsection{Vulnerability in Current Systems}
 
 Contemporary algorithmic trading systems are particularly susceptible to crowding for three reasons:
 
@@ -306,7 +362,7 @@ Contemporary algorithmic trading systems are particularly susceptible to crowdin
 	\item \textbf{AI crowd effects:} \citet{stillman2024neurosymbolic} demonstrates that groups of homogeneous neuro-symbolic traders in virtual markets produce \textit{price suppression}, directly illustrating the risks of AI crowd homogeneity
 \end{enumerate}
 
-\subsubsection{JANUS's Defense: Engineered Heterogeneity}
+\subsection{JANUS's Defense: Engineered Heterogeneity}
 
 JANUS addresses crowding through \textit{engineered heterogeneity}: each deployment is configured to produce idiosyncratic order flow that minimizes cross-instance correlation. This is grounded in two key theoretical results:
 
@@ -342,63 +398,6 @@ The heterogeneity is implemented across multiple brain regions:
 
 \textbf{Important caveat:} The literature supports heterogeneity as a mechanism for crowding \textit{resistance}, not crowding \textit{immunity}. The 2007 quant quake demonstrated that independently developed strategies can converge on similar factor exposures despite nominal diversity \citep{khandani2011quants}. Evolutionary dynamics research shows that crowding effects can emerge even in heterogeneous populations when memory sizes are small. We therefore claim crowding resistance, not elimination, and note that empirical validation via multi-agent simulation is required (see Part~\ref{part:validation}).
 
-\subsection{The Doya--Hassabis Framework: Neuroscience-Inspired Architecture}
-\label{sec:doya_hassabis}
-
-JANUS's multi-region architecture is not a loose metaphor but a principled application of functional brain-region decomposition to system design. This section establishes the scientific foundation.
-
-\subsubsection{Functional Brain-Region Decomposition}
-
-\citet{doya1999computations} proposed the canonical functional decomposition of brain regions by learning type:
-
-\begin{itemize}
-	\item \textbf{Cerebellum} $\rightarrow$ supervised learning (forward models, error correction)
-	\item \textbf{Basal ganglia} $\rightarrow$ reinforcement learning (reward-driven action selection)
-	\item \textbf{Cerebral cortex} $\rightarrow$ unsupervised learning (schema formation, pattern discovery)
-\end{itemize}
-
-\citet{doya2002metalearning} extended this framework to show that neuromodulators (dopamine, serotonin, norepinephrine, acetylcholine) regulate meta-parameters of learning---learning rate, discount factor, exploration--exploitation balance---providing a biologically grounded mechanism for adaptive parameter control. \citet{caligiore2019superlearning} formalized the ``super-learning hypothesis,'' demonstrating that the integration of learning processes \textit{across} cortex, cerebellum, and basal ganglia produces capabilities exceeding any single region.
-
-\subsubsection{From Neuroscience to Architecture}
-
-\citet{hassabis2017neuroscience} articulated the programmatic statement for neuroscience-inspired AI: the goal is \textit{functional} inspiration, not biological simulation. JANUS adopts this position explicitly. The brain-region mappings in Part~\ref{part:neuro} are justified by functional analogy---each region implements a computational principle (e.g., supervised error correction, reinforcement-driven action selection, episodic memory replay) that addresses a specific trading requirement. We do not claim that the implementations are biologically realistic at the cellular or circuit level.
-
-This approach is further validated by \citet{yamakawa2021whole}, who proposed the ``whole brain architecture'' approach as a systematic method for developing artificial general intelligence by referencing brain structure, and by \citet{caligiore2017consensus}, who established consensus on the functional interactions between cerebellum, basal ganglia, and cortex.
-
-\subsubsection{Complementary Learning Systems}
-
-The separation of JANUS into Forward (System~1) and Backward (System~2) services directly implements Complementary Learning Systems (CLS) theory \citep{mcclelland1995complementary}. \citet{kumaran2016cls} updated CLS theory (``CLS 2.0''), establishing that intelligent agents require both a fast-learning system (hippocampus, for rapid encoding of specific experiences) and a slow-learning system (neocortex, for gradual extraction of statistical regularities). JANUS maps these to:
-
-\begin{itemize}
-	\item \textbf{Forward Service (hippocampal analogue):} Rapid encoding of each trading episode with episodic specificity
-	\item \textbf{Backward Service (neocortical analogue):} Slow consolidation of episodic memories into generalized market schemas through sharp-wave ripple replay \citep{wilson1994replay, buzsaki2015hippocampal}
-\end{itemize}
-
-\citet{masset2025multitimescale} recently demonstrated that dopaminergic neurons encode reward prediction errors at diverse temporal discount factors, providing direct biological validation for JANUS's three-timescale memory architecture (short-term hippocampal buffer, medium-term SWR consolidation, long-term neocortical schemas).
-
-\subsection{The Dual-Process Architecture}
-\label{sec:dual_process}
-
-The architectural philosophy of JANUS mirrors the Dual-Process Theory of cognition \citep{kahneman2011thinking, evans2008dual, evans2013dualprocess}. The foundational insight from behavioral economics---that human cognition operates through fast, intuitive processes (System~1) and slow, deliberative processes (System~2) \citep{kahneman1979prospect}---has been extensively studied but \textit{never operationalized as a computational trading architecture}. JANUS is the first system to implement this separation as a concrete engineering design:
-
-\begin{table}[htbp]
-	\centering
-	\begin{tabularx}{\textwidth}{|l|l|L|L|}
-		\hline
-		\textbf{Service} & \textbf{Persona} & \textbf{Cognitive Role}         & \textbf{Biological Analogue} \\
-		\hline
-		Forward Service  & Janus Bifrons    & Perception \& Action (System~1) & Basal Ganglia \& Thalamus    \\
-		Backward Service & Janus Consivius  & Memory \& Learning (System~2)   & Hippocampus \& Neocortex     \\
-		\hline
-	\end{tabularx}
-\end{table}
-
-This separation allows JANUS to optimize for latency on the hot path (Forward Service) while reserving heavy computational resources for consolidation and schema formation on the cold path (Backward Service), implementing CLS theory \citep{mcclelland1995complementary, kumaran2016cls}.
-
-In addition to the core Forward and Backward services, the production system deploys three supporting services: an \textbf{Execution Service} for multi-exchange order routing, a \textbf{Data Service} for centralized market data management, and a \textbf{CNS (Central Nervous System) Service} for system-wide health monitoring and preflight validation (Section~\ref{sec:cns}).
-
-\textbf{Note:} The detailed mathematical specifications for each component are presented in Parts~\ref{part:forward}--\ref{part:rust} below, followed by limitations (Part~\ref{part:limitations}) and validation framework (Part~\ref{part:validation}).
-
 % ============================================
 % PART 2: FORWARD SERVICE
 % ============================================
@@ -406,6 +405,8 @@ In addition to the core Forward and Backward services, the production system dep
 \part{Forward Service (Janus Bifrons)}
 \label{part:forward}
 \setcounter{section}{0}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 
 % Forward Service Content
 \section*{Abstract}
