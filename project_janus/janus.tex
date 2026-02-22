@@ -15,6 +15,7 @@
 \usepackage{xcolor}
 \usepackage{fancyhdr}
 \usepackage{titlesec}
+\usepackage{tocloft}
 \usepackage{enumitem}
 \usepackage{tcolorbox}
 \usepackage{tabularx}
@@ -149,6 +150,23 @@
 \titleformat{\subsection}
   {\large\bfseries\color{janusblue}}
   {\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{janusblue}}
+  {\thesubsubsection}{1em}{}
+
+% --- UNIFIED NUMBERING SCHEME ---
+% Parts: I, II, III  |  Sections: I.1, I.2  |  Subsections: I.1a, I.1b  |  Subsubsections: I.1a.i, I.1a.ii
+\renewcommand{\thesection}{\thepart.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection\alph{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\roman{subsubsection}}
+
+% --- TOC NUMBER WIDTHS ---
+% Widen number columns so Part-prefixed numbers (e.g. VII.9a, III.1b.v) don't overflow into titles
+\setlength{\cftsecnumwidth}{3.5em}
+\setlength{\cftsubsecnumwidth}{5em}
+\setlength{\cftsubsubsecnumwidth}{6.5em}
+\setlength{\cftsubsecindent}{3.5em}
+\setlength{\cftsubsubsecindent}{8.5em}
 
 % --- CODE LISTINGS STYLE ---
 \lstdefinestyle{rust}{
@@ -249,8 +267,6 @@ No prior published system maps multiple brain regions to distinct trading subsys
 \part{Main Architecture}
 \label{part:main}
 \setcounter{section}{0}
-\renewcommand{\thesection}{\Roman{section}}
-\renewcommand{\thesubsection}{\Roman{section}.\arabic{subsection}}
 
 \section{The Epistemological Transition to Quant 4.0}
 \label{sec:quant4}
@@ -400,8 +416,6 @@ The heterogeneity is implemented across multiple brain regions:
 \part{Forward Service (Janus Bifrons)}
 \label{part:forward}
 \setcounter{section}{0}
-\renewcommand{\thesection}{\arabic{section}}
-\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 
 % Forward Service Content
 \section*{Abstract}
