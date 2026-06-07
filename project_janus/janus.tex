@@ -24,6 +24,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{mathtools}
+\usepackage{float}             % enables the [H] float specifier to lock tables in place
 
 % --- BIBLIOGRAPHY ---
 \usepackage[style=authoryear,backend=biber,natbib=true,sorting=nyt,maxbibnames=99]{biblatex}
@@ -126,7 +127,7 @@
     filecolor=accentgold,
     urlcolor=janusblue,
     citecolor=janusblue,
-    pdftitle={Project JANUS: A Neuromorphic Architecture for Crowding-Resistant Trading},
+    pdftitle={Project JANUS: A Neuromorphic Architecture for Autonomous Trading},
     pdfauthor={Jordan Smith},
     pdfsubject={Neuromorphic Trading Intelligence},
     pdfkeywords={neuromorphic computing, algorithmic trading, machine learning, Rust, neuroscience},
@@ -230,7 +231,7 @@
 	\vspace{0.3cm}
 
 	{\large\bfseries Date\par}
-	{\large \today\par}
+	{\large March 29, 2026\par}
 	\vspace{0.3cm}
 
 	{\small\itshape ``The god of beginnings and transitions, looking simultaneously to the future and the past.''\/\par} % chktex 38
@@ -244,7 +245,7 @@
 
 Project JANUS is a neuromorphic trading architecture that maps ten functionally distinct brain regions---basal ganglia, hippocampus, cerebellum, thalamus, hypothalamus, prefrontal cortex, amygdala, visual cortex, neocortex, and central nervous system---to specialized trading subsystems within a unified autonomous agent. Grounded in the Doya--Hassabis framework of neuroscience-inspired AI \citep{doya1999computations, hassabis2017neuroscience}, JANUS implements a dual-process architecture separating real-time perception and action (System~1, Forward Service) from offline memory consolidation and schema formation (System~2, Backward Service), following Complementary Learning Systems theory \citep{mcclelland1995complementary, kumaran2016cls}.
 
-A central design objective is \textit{crowding resistance}: the mitigation of co-impact costs \citep{bucci2020coimpact} and strategy crowding risk \citep{khandani2011quants, stein2009crowding} through engineered heterogeneity across deployments. Each JANUS instance is parameterized to produce idiosyncratic order flow, reducing cross-instance correlation and increasing effective market capacity \citep{demiguel2021crowding, wagner2011diversity}. The system integrates neuro-symbolic reasoning via Logic Tensor Networks \citep{badreddine2022logic} for differentiable constraint satisfaction, video vision transformers for visual pattern recognition \citep{arnab2021vivit}, Opponent Actor Learning for basal ganglia decision-making \citep{collins2014opponent, jaskir2023opal}, and a three-timescale memory hierarchy inspired by hippocampal sharp-wave ripple replay \citep{wilson1994replay, masset2025multitimescale}.
+A central design objective is \textit{crowding resistance}: the mitigation of co-impact costs \citep{bucci2020coimpact} and strategy crowding risk \citep{khandani2011quants, stein2009crowding} through engineered heterogeneity across deployments. Each JANUS instance is parameterized to produce idiosyncratic order flow, reducing cross-instance correlation and increasing effective market capacity \citep{demiguel2021crowding, wagner2011diversity}. The architecture brings together neuro-symbolic reasoning via Logic Tensor Networks \citep{badreddine2022logic} for differentiable constraint satisfaction, video vision transformers for visual pattern recognition \citep{arnab2021vivit}, Opponent Actor Learning for basal ganglia decision-making \citep{collins2014opponent, jaskir2023opal}, and a three-timescale memory hierarchy inspired by hippocampal sharp-wave ripple replay \citep{wilson1994replay, masset2025multitimescale}. These subsystems differ in deployment maturity: the production trading path is a deterministic regime/rule engine, while the neuromorphic and deep-learning components that constitute the cognitive core are implemented as standalone modules not yet wired into the live inference loop (Section~\ref{sec:implementation_status}).
 
 No prior published system maps multiple brain regions to distinct trading subsystems. This paper presents the theoretical foundations, mathematical specifications, neuromorphic architecture, and Rust implementation of JANUS, along with a candid assessment of limitations and a proposed validation framework.
 
@@ -308,8 +309,8 @@ The principal contributions of this work are:
 \begin{enumerate}
 	\item \textbf{Neuromorphic architecture:} The first trading system to map ten functionally distinct brain regions to specialized subsystems, grounded in the Doya--Hassabis framework \citep{doya1999computations, hassabis2017neuroscience} and the super-learning hypothesis \citep{caligiore2019superlearning}.
 	\item \textbf{Crowding resistance via engineered heterogeneity:} A systematic approach to reducing co-impact costs through parameterized diversity across deployments \citep{wagner2011diversity, demiguel2021crowding}.
-	\item \textbf{Neuro-symbolic fusion:} The first application of Logic Tensor Networks \citep{badreddine2022logic} to financial decision-making, with dual-mode inference (differentiable for training, crisp for execution).
-	\item \textbf{Opponent Actor Learning for trading:} The first application of basal ganglia computational models \citep{collins2014opponent, jaskir2023opal} to financial action selection.
+	\item \textbf{Neuro-symbolic fusion:} The first application of Logic Tensor Networks \citep{badreddine2022logic} to financial decision-making, formulating regulatory and risk constraints as differentiable fuzzy-logic axioms.
+	\item \textbf{Opponent Actor Learning for trading:} A design for financial action selection based on basal ganglia computational models \citep{collins2014opponent, jaskir2023opal}---to our knowledge the first such application to trading.
 	\item \textbf{Three-timescale memory:} A Complementary Learning Systems architecture \citep{mcclelland1995complementary, kumaran2016cls} with biologically inspired sharp-wave ripple replay.
 	\item \textbf{Production Rust implementation:} An end-to-end Rust-native ML stack with eight-service deployment architecture.
 \end{enumerate}
@@ -900,7 +901,7 @@ These techniques augment classical Mean-Variance, Risk Parity, and Black-Litterm
 \subsection{Action Selection via Opponent Actor Learning}
 \label{sec:basal_ganglia}
 
-Action selection in JANUS is mediated by a model of the Basal Ganglia, comprising Direct (``Go'') and Indirect (``No-Go'') pathways \citep{collins2014opponent, foster2013hierarchical}. This architecture, known as Opponent Actor Learning (OpAL), creates dynamic risk tolerance that adapts to market conditions.
+Action selection in JANUS is designed to be mediated by a model of the Basal Ganglia, comprising Direct (``Go'') and Indirect (``No-Go'') pathways \citep{collins2014opponent, foster2013hierarchical}. This architecture, known as Opponent Actor Learning (OpAL), creates dynamic risk tolerance that adapts to market conditions.
 \citet{jaskir2023opal} extended OpAL with dynamic dopamine modulation, normalized prediction errors, and uncertainty-adjusted learning rates (OpAL*), demonstrating robust advantages in sparse reward environments and large action spaces---conditions directly analogous to financial markets.
 \textbf{No prior work applies OpAL or any basal ganglia computational model to financial decision-making.}
 
@@ -1449,6 +1450,11 @@ During operation, the CNS Service provides:
 
 No system of JANUS's complexity can be presented without candid engagement with its limitations.
 
+\subsection{Research-to-Production Maturity Gap}
+\label{sec:maturity_gap}
+
+The subsystems described in this paper differ in deployment maturity, and we state the gap plainly. The live trading path is a deterministic regime/rule engine---technical indicators $\rightarrow$ regime detection $\rightarrow$ homeostatic position scaling $\rightarrow$ threat filtering $\rightarrow$ execution gating---and the brain wiring pipeline (Section~\ref{sec:basal_ganglia}) that orchestrates it is rule-based rather than neural. Its safety, compliance, and signal-processing infrastructure (kill switch, wash-sale/prop-firm compliance, VPIN flow-toxicity, the fractal DSP pipeline, ensemble regime detection, and Wilson-Cowan thalamic dynamics) is implemented and live. By contrast, the neuromorphic and deep-learning subsystems that constitute the cognitive core---OpAL action selection (Section~\ref{sec:basal_ganglia}), the LTN constraint engine (Section~\ref{sec:ltn}), the DiffGAF/ViViT vision stack (Section~\ref{sec:perception}), and the three-timescale memory hierarchy (Section~\ref{sec:memory})---are implemented as standalone modules and validated in isolation, but are not yet integrated into the live inference loop, and no trained model weights currently drive live decisions. Wiring these modules into the hot path, exporting trained weights, and validating end-to-end behavior is the primary thrust of ongoing work; Section~\ref{sec:implementation_status} gives a per-component breakdown of maturity.
+
 \subsection{The Brain Metaphor Critique}
 
 Every generation projects its latest technology onto the brain: clocks, telephone switchboards, computers, and now neural networks. Critics may argue that JANUS's brain-region mapping is the latest instance of this pattern. We acknowledge the validity of this concern and offer two defenses:
@@ -1496,7 +1502,7 @@ As discussed in Section~\ref{sec:heterogeneity}, the literature supports heterog
 
 \citet{wan2024ltn_efficiency} found that LTN workloads exhibit a fundamental hardware utilization challenge: symbolic operations are memory-bounded while neural operations are compute-bounded, creating inefficiencies on standard hardware. As the axiom count grows, LTN inference latency may conflict with hot-path requirements.
 
-\textbf{Mitigations:} JANUS implements a dual-mode LTN system: strict mode (full axiom evaluation) for the cold path and approximate mode (reduced axiom set with cached evaluations) for the hot path.
+\textbf{Mitigations:} JANUS adopts a dual-mode LTN design: strict mode (full axiom evaluation) for the cold path and approximate mode (reduced axiom set with cached evaluations) for the hot path.
 
 \subsection{Adversarial Robustness}
 
@@ -1516,7 +1522,7 @@ Empirical claims require a rigorous experimental protocol. This section describe
 
 \subsection{Multi-Agent LOB Simulation}
 
-The primary validation of JANUS's crowding-resistance claim requires multi-agent simulation using the Rust-native GPU-accelerated limit order book simulator \citep{fu2024jaxlob}.
+The primary validation of JANUS's crowding-resistance claim requires multi-agent simulation using the Rust-native limit order book simulator \citep{fu2024jaxlob} (CPU matching engine; GPU acceleration is planned).
 
 \textbf{Experimental conditions:}
 \begin{itemize}
@@ -1578,14 +1584,14 @@ Project JANUS represents a paradigm shift in quantitative trading: from opaque b
 \begin{enumerate}
 	\item \textbf{Neuromorphic Architecture:} Ten functionally motivated brain regions with modular design, distributed training infrastructure, and Wilson-Cowan oscillatory dynamics \citep{doya1999computations, caligiore2019superlearning}
 	\item \textbf{Crowding Resistance:} Engineered heterogeneity across deployments reducing co-impact costs and cross-instance correlation \citep{wagner2011diversity, demiguel2021crowding}
-	\item \textbf{Neuro-Symbolic Fusion:} Dual-mode LTN system with domain-specific axioms and linguistic hedges bridging neural networks and logical constraints \citep{badreddine2022logic}
+	\item \textbf{Neuro-Symbolic Fusion:} LTN constraint engine with domain-specific axioms and linguistic hedges bridging neural networks and logical constraints \citep{badreddine2022logic}
 	\item \textbf{Multi-Timescale Memory:} Three-tier hierarchy with sleep-phase consolidation mirrors hippocampal--neocortical transfer, implementing CLS theory \citep{kumaran2016cls, masset2025multitimescale}
-	\item \textbf{OpAL Decision Engine:} First application of basal ganglia computational models to financial action selection \citep{collins2014opponent, jaskir2023opal}
+	\item \textbf{OpAL Decision Engine (design):} An Opponent Actor Learning module for financial action selection \citep{collins2014opponent, jaskir2023opal}---to our knowledge the first application of a basal ganglia computational model to this problem
 	\item \textbf{Ensemble Regime Detection:} HMM, statistical, and technical methods fused for robust market state identification with strategy routing
-	\item \textbf{Production-Ready Safety:} Four-scope kill switch, multi-method anomaly detection, FNI-RL fear network, and CNS health monitoring with five-phase preflight
+	\item \textbf{Production-Ready Safety:} Dual-layer kill switch (in-process + Redis) with four breaker actions (freeze, safe-mode, cancel-all), multi-method anomaly detection, FNI-RL fear network, and CNS health monitoring with five-phase preflight
 	\item \textbf{Pure Rust Stack:} End-to-end training and inference in Rust \citep{matsakis2014rust} with high-performance, safe, and maintainable eight-service architecture
 	\item \textbf{Fractal Signal Processing:} Sub-microsecond DSP pipeline producing 8D feature vectors via FRAMA and Sevcik fractal dimension for regime-aware signal generation
-	\item \textbf{GPU Compute Infrastructure:} Custom wgpu kernels (MatMul, Softmax, LayerNorm, Attention, GELU) with Candle tensor bridge for hardware-accelerated inference
+	\item \textbf{GPU Compute Infrastructure:} WGSL compute kernels (MatMul, Softmax, LayerNorm, Attention, GELU, Reduce) with a Candle tensor bridge---authored with CPU-reference execution; GPU dispatch pending
 \end{enumerate}
 
 \subsection{Future Work}
@@ -1599,10 +1605,11 @@ The following items remain as planned enhancements beyond the current implementa
 \end{itemize}
 
 \subsection{Implementation Status}
+\label{sec:implementation_status}
 
-The following components have been implemented since initial specification:
+Implementation maturity varies by subsystem, and we summarize it here rather than presenting every component as live. The production trading path is a deterministic regime/rule engine (technical indicators $\rightarrow$ regime detection $\rightarrow$ homeostatic position scaling $\rightarrow$ threat filtering $\rightarrow$ execution gating); its safety, compliance, and signal-processing infrastructure is implemented and live. The neuromorphic and deep-learning subsystems that constitute the cognitive core (Sections~\ref{sec:perception}--\ref{sec:memory})---notably OpAL action selection, the LTN constraint engine, and the DiffGAF/ViViT vision stack---are implemented as standalone modules and validated in isolation, but are not yet wired into the live inference loop; integrating them is ongoing work (Section~\ref{sec:maturity_gap}). The table below describes each component at its current maturity, annotated as live, standalone, or scaffolded/planned where the distinction matters.
 
-\begin{table}[htbp]
+\begin{table}[H]
 	\centering
 	\small
 	\begin{tabularx}{\textwidth}{|l|L|}
@@ -1617,25 +1624,25 @@ The following components have been implemented since initial specification:
 		\hline
 		Strategies         & Nine regime-aware strategies with gating and affinity scoring                                                           \\
 		\hline
-		Safety             & Four-scope kill switch, FNI-RL fear network                                                                             \\
+		Safety             & Kill switch (in-process + Redis) with four breaker actions---freeze/safe-mode/cancel-all; FNI-RL fear network                                                                             \\
 		\hline
 		Training           & Multi-GPU/multi-node with AllReduce, Parameter Server, Ring AllReduce                                                   \\
 		\hline
 		Feudal RL          & Cortex manager and hippocampus worker agents                                                                            \\
 		\hline
-		LTN                & 10 market axioms with hybrid supervised-semantic loss                                                                   \\
+		LTN                & 10 signal-logic axioms with fuzzy-logic loss (standalone)                                                                   \\
 		\hline
 		Regime             & Markov transition matrix with stationary distribution                                                                   \\
 		\hline
-		DSP                & 8D feature vector pipeline with sub-microsecond latency                                                                 \\
+		DSP                & 8D feature vector pipeline (FRAMA + Sevcik), incremental per-tick                                                                 \\
 		\hline
-		Vision             & End-to-end DiffGAF $\rightarrow$ ViViT pipeline with dual-GAF                                                           \\
+		Vision             & DiffGAF $\rightarrow$ ViViT pipeline (dual-GAF)---standalone, not yet in live loop                                                           \\
 		\hline
 		CLS Memory         & Three-tier hierarchy with sleep-phase consolidation                                                                     \\
 		\hline
 		Thalamus           & Wilson-Cowan oscillation models \citep{wilson1972excitatory, wilson2024bidirectional} with Hilbert-transform estimation \\
 		\hline
-		Forecasting        & Chronos \citep{ansari2024chronos, ansari2024chronos2} via ONNX inference                                                \\
+		Forecasting        & Chronos tokenizer \citep{ansari2024chronos, ansari2024chronos2} with statistical-baseline forecasting (ONNX serving scaffolded, not wired)                                                \\
 		\hline
 		NLP                & BERT/FinBERT sentiment via Candle \citep{candle2024} with Qdrant storage                                                \\
 		\hline
@@ -1643,11 +1650,11 @@ The following components have been implemented since initial specification:
 		\hline
 		Quantum            & QAOA, VQE, simulated annealing \citep{mugel2022dynamic}                                                                 \\
 		\hline
-		Synthetic Data     & Regime-conditional DDPM diffusion models \citep{coletta2024conditional}                                                 \\
+		Synthetic Data     & Regime-conditional DDPM diffusion models \citep{coletta2024conditional} (Min-SNR/EMA scaffolded)                                                 \\
 		\hline
-		LOB Simulator      & GPU-accelerated matching engine \citep{fu2024jaxlob} with Almgren-Chriss impact                                         \\
+		LOB Simulator      & CPU matching engine \citep{fu2024jaxlob} with Almgren-Chriss impact (GPU acceleration planned)                                         \\
 		\hline
-		GPU Kernels        & Custom wgpu (MatMul, Softmax, LayerNorm, Attention, GELU, Reduce)                                                       \\
+		GPU Kernels        & WGSL compute kernels (MatMul, Softmax, LayerNorm, Attention, GELU, Reduce)---authored; CPU-reference execution, GPU dispatch pending                                                       \\
 		\hline
 		Qdrant Client      & Circuit breaker, exponential backoff, TLS, mock fallback                                                                \\
 		\hline
@@ -1658,7 +1665,7 @@ The following components have been implemented since initial specification:
 
 \begin{tcolorbox}[colback=janusblue!5, colframe=janusblue, title=\textbf{Repository \& Contact}]
 	\centering
-	\textbf{GitHub:} \url{https://github.com/nuniesmith/fks}
+	\textbf{GitHub:} \url{https://github.com/nuniesmith/janus}
 
 	\vspace{0.5cm}
 
