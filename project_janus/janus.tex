@@ -193,26 +193,30 @@
 \begin{document}
 
 % --- TITLE PAGE ---
+% Single-spaced and compact so the whole title page (through the date and
+% epigraph) fits on ONE page — the document's \onehalfspacing previously
+% pushed the Author/Date block onto a nearly-empty second page.
 \begin{titlepage}
+	\singlespacing
 	\centering
-	\vspace*{1cm}
+	\vspace*{0.4cm}
 
 	{\Huge\bfseries\color{janusblue} Project JANUS\par}
 	\vspace{0.3cm}
 	{\Large\color{accentgold} A Neuromorphic Architecture for Autonomous Trading\par}
-	\vspace{1cm}
+	\vspace{0.8cm}
 
 	{\LARGE\bfseries Technical Specification \& Theoretical Foundations\par}
-	\vspace{0.5cm}
+	\vspace{0.4cm}
 
 	{\large\itshape Brain-Inspired Multi-Region Architecture Integrating\\Neuro-Symbolic Reasoning, Complementary Learning Systems,\\and Engineered Heterogeneity\/\par}
-	\vspace{1cm}
+	\vspace{0.8cm}
 
 	\begin{tcolorbox}[colback=janusblue!5, colframe=janusblue, title=\textbf{Unified Documentation}, width=0.85\textwidth]
 		\singlespacing\small
 		This document consolidates all theoretical foundations and technical specifications of Project JANUS\@:
 		\begin{enumerate}[leftmargin=1.5cm, itemsep=1pt, parsep=1pt, topsep=2pt]
-			\item \textbf{\textcolor{janusblue}{Introduction}} — Motivation, crowding resistance, and contributions
+			\item \textbf{\textcolor{janusblue}{Introduction}} — The Quant 4.0 paradigm, crowding resistance, and contributions
 			\item \textbf{\textcolor{janusblue}{Related Work}} — Neuroscience-inspired AI, neuro-symbolic reasoning, and crowding literature
 			\item \textbf{\textcolor{forwardblue}{System Architecture}} — Dual-process design, brain-region mapping, and engineered heterogeneity
 			\item \textbf{\textcolor{forwardblue}{Perception and Feature Extraction}} — DiffGAF, ViViT, regime detection, and multimodal fusion
@@ -226,13 +230,10 @@
 
 	\vfill
 
-	{\large\bfseries Author\par}
-	{\large Jordan Smith\par}
-	\vspace{0.3cm}
-
-	{\large\bfseries Date\par}
+	{\large\bfseries Jordan Smith\par}
+	\vspace{0.15cm}
 	{\large March 29, 2026\par}
-	\vspace{0.3cm}
+	\vspace{0.5cm}
 
 	{\small\itshape ``The god of beginnings and transitions, looking simultaneously to the future and the past.''\/\par} % chktex 38
 
@@ -263,22 +264,6 @@ No prior published system maps multiple brain regions to distinct trading subsys
 \section{Introduction}
 \label{sec:introduction}
 
-\subsection{Motivation: Strategy Crowding and Co-Impact}
-\label{sec:crowding_motivation}
-
-Strategy crowding---the convergence of multiple algorithmic trading systems on similar positions---poses systemic risk through amplified co-impact costs and correlated drawdowns.
-
-The \textit{square-root impact law}---stating that the price impact of a metaorder scales as $\Delta p \sim \sigma \sqrt{Q/V}$, where $Q$ is order volume and $V$ is daily volume---is one of the most robust empirical regularities in market microstructure \citep{toth2011anomalous, bouchaud2018trades, bucci2019crossover}. \citet{bucci2020coimpact} extended this framework to show how \textit{simultaneous} institutional metaorders interact through net order flow: when $N$ agents each trade $Q/N$, the market responds to aggregate flow without distinguishing individual metaorders. Critically, co-impact introduces a finite intercept $I_0$ that grows with sign correlation among agents---meaning correlated (crowded) trading amplifies impact costs beyond what single-agent models predict.
-
-The canonical empirical demonstration is the August 2007 quant meltdown \citep{khandani2011quants}, where quantitative equity funds that had developed models independently suffered coordinated losses because their strategies had converged on similar factor exposures. \citet{stein2009crowding} formalized this as a coordination problem: individual traders cannot observe how many others pursue the same strategy, creating negative externalities through crowded-trade effects and leverage decisions.
-
-Subsequent empirical work has confirmed crowding's destructive potential.
-\citet{vankralingen2021crowded} showed that market clustering---measured against a maximum-entropy null model---has a \textit{causal} effect on tail risk, even after controlling for standard risk drivers.
-\citet{brown2022crowded} demonstrated that crowded stocks outperform non-crowded stocks on average but with substantially elevated tail risk.
-\citet{lou2022comomentum} proposed ``comomentum'' (high-frequency abnormal return correlation among momentum stocks) as a crowding measure, finding sharp reversals when comomentum is high.
-
-Contemporary algorithmic trading systems are particularly susceptible to crowding. As firms adopt similar pre-trained foundation models, output homogeneity increases regardless of nominal strategy differences. \citet{baltas2019arp} classifies alternative risk premia (ARP) into \textit{divergence premia} (e.g., momentum---self-reinforcing, no fundamental anchor) and \textit{convergence premia} (e.g., value---self-correcting), showing that divergence premia underperform following crowded periods; \citet{volpati2020zooming} identifies significant and increasing crowding in Fama--French factors. Furthermore, \citet{stillman2024neurosymbolic} demonstrates that groups of homogeneous neuro-symbolic traders in virtual markets produce \textit{price suppression}, directly illustrating the risks of AI crowd homogeneity. JANUS's multi-region, heterogeneous architecture is designed to resist these effects, as detailed in Section~\ref{sec:heterogeneity}.
-
 \subsection{The Quant 4.0 Paradigm}
 \label{sec:quant4}
 
@@ -300,6 +285,22 @@ The intellectual foundation rests on three convergent programs:
 	\item \textbf{Quant 3.0 (2010s--Present):} Deep learning hegemony with LSTMs, Transformers \citep{vaswani2017attention}, and deep reinforcement learning \citep{sutton2018reinforcement}
 	\item \textbf{Quant 4.0 (JANUS):} Neuro-Symbolic AI achieving adaptability of deep learning with reliability of rule-based systems, grounded in neuroscience
 \end{itemize}
+
+\subsection{A Secondary Motivation: Strategy Crowding and Co-Impact}
+\label{sec:crowding_motivation}
+
+The Quant 4.0 transition carries a structural risk of its own: as firms converge on similar architectures and pre-trained foundation models, output homogeneity increases regardless of nominal strategy differences. This motivates JANUS's second design concern. Strategy crowding---the convergence of multiple algorithmic trading systems on similar positions---poses systemic risk through amplified co-impact costs and correlated drawdowns.
+
+The \textit{square-root impact law}---stating that the price impact of a metaorder scales as $\Delta p \sim \sigma \sqrt{Q/V}$, where $Q$ is order volume and $V$ is daily volume---is one of the most robust empirical regularities in market microstructure \citep{toth2011anomalous, bouchaud2018trades, bucci2019crossover}. \citet{bucci2020coimpact} extended this framework to show how \textit{simultaneous} institutional metaorders interact through net order flow: when $N$ agents each trade $Q/N$, the market responds to aggregate flow without distinguishing individual metaorders. Critically, co-impact introduces a finite intercept $I_0$ that grows with sign correlation among agents---meaning correlated (crowded) trading amplifies impact costs beyond what single-agent models predict.
+
+The canonical empirical demonstration is the August 2007 quant meltdown \citep{khandani2011quants}, where quantitative equity funds that had developed models independently suffered coordinated losses because their strategies had converged on similar factor exposures. \citet{stein2009crowding} formalized this as a coordination problem: individual traders cannot observe how many others pursue the same strategy, creating negative externalities through crowded-trade effects and leverage decisions.
+
+Subsequent empirical work has confirmed crowding's destructive potential.
+\citet{vankralingen2021crowded} showed that market clustering---measured against a maximum-entropy null model---has a \textit{causal} effect on tail risk, even after controlling for standard risk drivers.
+\citet{brown2022crowded} demonstrated that crowded stocks outperform non-crowded stocks on average but with substantially elevated tail risk.
+\citet{lou2022comomentum} proposed ``comomentum'' (high-frequency abnormal return correlation among momentum stocks) as a crowding measure, finding sharp reversals when comomentum is high.
+
+Contemporary algorithmic trading systems are particularly susceptible. \citet{baltas2019arp} classifies alternative risk premia (ARP) into \textit{divergence premia} (e.g., momentum---self-reinforcing, no fundamental anchor) and \textit{convergence premia} (e.g., value---self-correcting), showing that divergence premia underperform following crowded periods; \citet{volpati2020zooming} identifies significant and increasing crowding in Fama--French factors. Furthermore, \citet{stillman2024neurosymbolic} demonstrates that groups of homogeneous neuro-symbolic traders in virtual markets produce \textit{price suppression}, directly illustrating the risks of AI crowd homogeneity. JANUS's multi-region, heterogeneous architecture is designed to resist these effects, as detailed in Section~\ref{sec:heterogeneity}.
 
 \subsection{Contributions}
 \label{sec:contributions}
