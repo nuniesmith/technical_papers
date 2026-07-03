@@ -1303,7 +1303,7 @@ The \texttt{indicators} crate complements the DSP pipeline with classical techni
 
 \subsubsection{Service Topology}
 
-The system deploys as eight services plus supporting infrastructure (see Figure in Section~\ref{sec:topology} for the component diagram):
+The system comprises eight services plus supporting infrastructure (see Figure in Section~\ref{sec:topology} for the component diagram). In the current production deployment these run as modules of a single unified binary: a supervisor process spawns the Data, Forward, Backward, CNS, and API modules in-process (with per-module health reporting and restart policies), which eliminates inter-service serialization on the hot path while preserving the logical boundaries below. The standalone-service topology remains supported for horizontally scaled deployments.
 
 \begin{enumerate}
 	\item \textbf{Forward Service:}
@@ -1328,7 +1328,7 @@ The system deploys as eight services plus supporting infrastructure (see Figure 
 	      Internal service discovery and registration. Dependencies: Redis.
 
 	\item \textbf{Optimizer Service:}
-	      Hyperparameter optimization with backtesting integration. Metrics port: 9092.
+	      Hyperparameter optimization with backtesting integration (metrics on the unified \texttt{:9090} endpoint in single-binary mode).
 \end{enumerate}
 
 \textbf{Infrastructure:}
@@ -1337,13 +1337,12 @@ The system deploys as eight services plus supporting infrastructure (see Figure 
 	\item \textbf{Redis} (port 6379): Operational state, kill switch coordination, hot-reloadable config
 	\item \textbf{QuestDB} (ports 9000/9009): High-performance time series storage for market data
 	\item \textbf{Qdrant}: Vector similarity search engine for schema pattern matching
-	\item \textbf{Prometheus} (port 9090): Metrics collection with 1700+ lines of alert rules
-	\item \textbf{Grafana} (port 3000): Visualization dashboards (6+ dashboards including strategy, regime, CNS, brain region monitors)
+	\item \textbf{Prometheus} (port 9090): Metrics collection with a curated alert-rule set, audited so that every rule references an exported metric (data-quality SLOs, host safety, per-bot performance)
+	\item \textbf{Grafana} (port 3000): Visualization dashboards (signal pipeline, data-quality SLOs, operations, per-bot performance)
 	\item \textbf{Alertmanager} (port 9093): Alert routing with Discord integration
 	\item \textbf{Jaeger} (port 16686): Distributed tracing
 	\item \textbf{Loki + Promtail}: Centralized log aggregation with label-based organization
-	\item \textbf{Authelia}: OpenID Connect / SAML authentication gateway
-	\item \textbf{Nginx}: Reverse proxy with SSL termination
+	\item \textbf{Nginx}: Reverse proxy with TLS termination and internal-token injection (deployments sit behind a WireGuard-based private network)
 \end{itemize}
 
 \textbf{Service Communication:}
@@ -1453,7 +1452,7 @@ No system of JANUS's complexity can be presented without candid engagement with 
 \subsection{Research-to-Production Maturity Gap}
 \label{sec:maturity_gap}
 
-The subsystems described in this paper differ in deployment maturity, and we state the gap plainly. The live trading path is a deterministic regime/rule engine---technical indicators $\rightarrow$ regime detection $\rightarrow$ homeostatic position scaling $\rightarrow$ threat filtering $\rightarrow$ execution gating---and the brain wiring pipeline (Section~\ref{sec:basal_ganglia}) that orchestrates it is rule-based rather than neural. Its safety, compliance, and signal-processing infrastructure (kill switch, wash-sale/prop-firm compliance, VPIN flow-toxicity, the fractal DSP pipeline, ensemble regime detection, and Wilson-Cowan thalamic dynamics) is implemented and live. By contrast, the neuromorphic and deep-learning subsystems that constitute the cognitive core---OpAL action selection (Section~\ref{sec:basal_ganglia}), the LTN constraint engine (Section~\ref{sec:ltn}), the DiffGAF/ViViT vision stack (Section~\ref{sec:perception}), and the three-timescale memory hierarchy (Section~\ref{sec:memory})---are implemented as standalone modules and validated in isolation, but are not yet integrated into the live inference loop, and no trained model weights currently drive live decisions. Wiring these modules into the hot path, exporting trained weights, and validating end-to-end behavior is the primary thrust of ongoing work; Section~\ref{sec:implementation_status} gives a per-component breakdown of maturity.
+The subsystems described in this paper differ in deployment maturity, and we state the gap plainly. The live trading path is a deterministic regime/rule engine---technical indicators $\rightarrow$ regime detection $\rightarrow$ homeostatic position scaling $\rightarrow$ threat filtering $\rightarrow$ execution gating---and the brain wiring pipeline (Section~\ref{sec:basal_ganglia}) that orchestrates it is rule-based rather than neural. Its safety, compliance, and signal-processing infrastructure (kill switch, wash-sale/prop-firm compliance, VPIN flow-toxicity, the fractal DSP pipeline, ensemble regime detection, and Wilson-Cowan thalamic dynamics) is implemented and live, as is its observability layer: generated signals are persisted from the in-process signal bus to Redis for the read APIs and operator UI, and a data-completeness SLI computed in the live ingestion path backs a data-loss SLO alert (which, on its first armed day, surfaced a silently dead exchange stream caused by an upstream ticker migration). By contrast, the neuromorphic and deep-learning subsystems that constitute the cognitive core---OpAL action selection (Section~\ref{sec:basal_ganglia}), the LTN constraint engine (Section~\ref{sec:ltn}), the DiffGAF/ViViT vision stack (Section~\ref{sec:perception}), and the three-timescale memory hierarchy (Section~\ref{sec:memory})---are implemented as standalone modules and validated in isolation, but are not yet integrated into the live inference loop, and no trained model weights currently drive live decisions. Wiring these modules into the hot path, exporting trained weights, and validating end-to-end behavior is the primary thrust of ongoing work; Section~\ref{sec:implementation_status} gives a per-component breakdown of maturity.
 
 \subsection{The Brain Metaphor Critique}
 
